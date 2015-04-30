@@ -44,7 +44,7 @@ Supercell, so there's no way of telling that it's in use.
 ## OK, how do I make it go?
 
 To run the proxy you'll need Java 8, a copy of the proxy, and a copy of the game. Download barchomat 
-[here](barchomat.jar). The proxy reads game logic (hit points, dps etc for the various characters and buildings) from 
+[here][3]. The proxy reads game logic (hit points, dps etc for the various characters and buildings) from 
 the android version of executable, which you'll need to find yourself (Google "clash of clans apk"). Put the proxy and 
 the game executable in the same directory and start the proxy from the command line:
 
@@ -96,3 +96,4 @@ We've described the protocol packet structure in a collection of JSON files, so 
  
 [1]: http://www.thekelleys.org.uk/dnsmasq/doc.html
 [2]: https://github.com/simsong/tcpflow
+[3]: https://github.com/sir-barchable/barchomat/releases/
