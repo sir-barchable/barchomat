@@ -12,6 +12,7 @@ import sir.barchable.clash.model.ObjectType;
 import sir.barchable.clash.model.Point;
 import sir.barchable.clash.model.json.Village;
 import sir.barchable.clash.model.json.WarVillage;
+import sir.barchable.clash.protocol.Pdu;
 import sir.barchable.clash.proxy.MessageTap;
 import sir.barchable.clash.proxy.ProxySession;
 
@@ -39,7 +40,7 @@ public class VillageAnalyzer implements MessageTap {
     }
 
     @Override
-    public void onMessage(int id, Map<String, Object> message) {
+    public void onMessage(Pdu.ID id, Map<String, Object> message) {
         String homeVillage = (String) message.get("homeVillage");
         String warVillage = (String) message.get("warVillage");
 
@@ -60,7 +61,7 @@ public class VillageAnalyzer implements MessageTap {
         }
     }
 
-    private void analyzeHomeVillage(int id, Map<String, Object> message, Village village) {
+    private void analyzeHomeVillage(Pdu.ID id, Map<String, Object> message, Village village) {
         ProxySession.SessionData sessionData = ProxySession.getSession().getSessionData();
 
         int age = (Integer) message.get("age");
@@ -99,6 +100,14 @@ public class VillageAnalyzer implements MessageTap {
 
         for (Village.Building building : village.buildings) {
             int typeId = building.data;
+            String buildingName;
+            try {
+                buildingName = logic.getSubTypeName(typeId);
+            } catch (IllegalArgumentException e) {
+                log.warn("Unknown building of type {}. Perhaps you need a logic update.", typeId);
+                continue;
+            }
+
             int level = building.lvl == null || building.lvl == -1 ? 0 : building.lvl;
 
             if (typeId == ObjectType.TOWN_HALL) {
@@ -184,7 +193,7 @@ public class VillageAnalyzer implements MessageTap {
             new Loot(thGold, thElixir, 0)
         );
 
-        if (id == OwnHomeData.id()) {
+        if (id == OwnHomeData) {
             // OwnHomeData. Remember town hall level for loot calculations
             sessionData.setUserName(userName);
             sessionData.setUserId(userId);
@@ -223,7 +232,7 @@ public class VillageAnalyzer implements MessageTap {
         log.info("Collectors: {}", loot.getCollectorLoot());
         log.info("Total: {}", loot.total());
 
-        if (id != OwnHomeData.id()) {
+        if (id != OwnHomeData) {
             // Apply raid penalty
             if (sessionData.getTownHallLevel() == 0) {
                 log.warn("User town hall level not set, can't calculate loot penalty.");
@@ -248,7 +257,7 @@ public class VillageAnalyzer implements MessageTap {
         }
     }
 
-    private void analyzeWarVillage(int id, Map<String, Object> message, WarVillage village) {
+    private void analyzeWarVillage(Pdu.ID id, Map<String, Object> message, WarVillage village) {
         ProxySession.SessionData sessionData = ProxySession.getSession().getSessionData();
 
         Map<String, Object> user = (Map<String, Object>) message.get("user");
@@ -267,6 +276,13 @@ public class VillageAnalyzer implements MessageTap {
 
         for (WarVillage.Building building : village.buildings) {
             int typeId = building.data;
+            String buildingName;
+            try {
+                buildingName = logic.getSubTypeName(typeId);
+            } catch (IllegalArgumentException e) {
+                log.warn("Unknown building of type {}. Perhaps you need a logic update.", typeId);
+                continue;
+            }
             int level = building.lvl == null || building.lvl == -1 ? 0 : building.lvl;
 
             //

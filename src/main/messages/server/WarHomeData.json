@@ -5,7 +5,9 @@
     {"name": "userId", "type": "LONG"},
     {"name": "homeId", "type": "LONG"},
     {"name": "warVillage", "type": "ZIP_STRING"},
-    {"name": "user", "type": "?UserComponent"},
+    {"type": "INT"},
+    {"type": "BOOLEAN"},
+    {"name": "user", "type": "UserComponent"},
     {"name": "resources", "type": "ResourceListComponent"}
   ]
 }

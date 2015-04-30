@@ -24,6 +24,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
  */
 public final class LogicParser {
     private static final Logger log = LoggerFactory.getLogger(LogicParser.class);
+    private static final String NAME_KEY = "Name";
     private static Pattern CSV_ENTRY_PATTERN = Pattern.compile("^.*logic.(\\w+)\\.csv$");
 
     public static void main(String[] args) throws IOException {
@@ -60,6 +61,7 @@ public final class LogicParser {
                 String path = entry.toString();
                 Matcher matcher = CSV_ENTRY_PATTERN.matcher(path);
                 if (matcher.matches()) {
+                    log.debug("Loading {}", path);
                     try {
                         try (FileInputStream in = new FileInputStream(entry.toFile())) {
                             logic.put(matcher.group(1), loadLogicFile(in));
@@ -82,6 +84,7 @@ public final class LogicParser {
                 String path = entry.getName();
                 Matcher matcher = CSV_ENTRY_PATTERN.matcher(path);
                 if (matcher.matches()) {
+                    log.debug("Loading {}", path);
                     try (
                         InputStream in = newClashLzmaInputStream(jar.getInputStream(entry))
                     ) {
@@ -135,8 +138,10 @@ public final class LogicParser {
         List<String[]> lines = reader.readAll();
         String[] header = lines.get(0);
         Logic.Data.Type[] types = parseTypes(lines.get(1));
-        if (!"Name".equals(header[0]) || types[0] != Logic.Data.Type.STRING) {
-            throw new ResourceException("Expected Name field in column 0");
+        if (!NAME_KEY.equals(header[0]) || types[0] != Logic.Data.Type.STRING) {
+            log.debug("Forcing Name column");
+            header[0] = NAME_KEY;
+            types[0] = Logic.Data.Type.STRING;
         }
 
         ArrayList<Logic.Data> logic = new ArrayList<>();

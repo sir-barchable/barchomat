@@ -120,6 +120,19 @@ public class Village {
         public Boolean air_mode5;
         public Boolean air_mode_d5;
 
+        public Integer aim_angle;
+        public Integer aim_angle_draft;
+        public Integer aim_angle_war;
+        public Integer aim_angle_draft_war;
+        public Integer aim_angle2;
+        public Integer aim_angle_d2;
+        public Integer aim_angle3;
+        public Integer aim_angle_d3;
+        public Integer aim_angle4;
+        public Integer aim_angle_d4;
+        public Integer aim_angle5;
+        public Integer aim_angle_d5;
+
         public Integer[][] units;
         public Integer unit_req_time;
         public Integer clan_mail_time;

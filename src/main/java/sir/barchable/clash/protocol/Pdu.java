@@ -152,6 +152,7 @@ public class Pdu {
         AvatarStreamEntryRemoved(24418),
         LeagueMemberList(24503),
         GlobalChatLine(24715),
+        WarHomeData(25000),
         Disconnected(25892),
         LogicDeviceLinkCodeResponse(26002),
         LogicDeviceLinkNewDeviceLinked(26003),

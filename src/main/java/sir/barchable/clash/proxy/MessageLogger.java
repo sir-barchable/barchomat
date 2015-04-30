@@ -38,7 +38,7 @@ public class MessageLogger {
 
     public MessageTap tapFor(ID messageId, String field) {
         return (id, message) -> {
-            if (id == messageId.id()) {
+            if (id == messageId) {
 
                 // Hack to ignore empty EndClientTurns...
                 if (messageId == EndClientTurn) {

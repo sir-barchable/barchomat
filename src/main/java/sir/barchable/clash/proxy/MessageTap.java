@@ -1,5 +1,7 @@
 package sir.barchable.clash.proxy;
 
+import sir.barchable.clash.protocol.Pdu;
+
 import java.util.Map;
 
 /**
@@ -7,5 +9,5 @@ import java.util.Map;
  *         Date: 18/04/15
  */
 public interface MessageTap {
-    void onMessage(int id, Map<String, Object> message);
+    void onMessage(Pdu.ID id, Map<String, Object> message);
 }

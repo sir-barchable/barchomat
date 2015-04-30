@@ -25,6 +25,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static sir.barchable.clash.protocol.Pdu.ID.EndClientTurn;
 import static sir.barchable.clash.protocol.Pdu.ID.OwnHomeData;
+import static sir.barchable.clash.protocol.Pdu.ID.WarHomeData;
 
 /**
  * Clash proxy.
@@ -143,7 +144,8 @@ public class ClashProxy {
         filterChain = filterChain.addAfter(new MessageTapFilter(
             messageReader,
             new VillageAnalyzer(logic),
-            logger.tapFor(EndClientTurn)
+            logger.tapFor(EndClientTurn),
+            logger.tapFor(WarHomeData, "warVillage")
         ));
 
         //

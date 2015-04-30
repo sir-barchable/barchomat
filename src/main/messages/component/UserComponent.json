@@ -32,6 +32,7 @@
     {"type": "BOOLEAN"},
     {"type": "INT"},
     {"type": "INT"},
+    {"type": "INT"},
     {"type": "INT"}
   ]
 }
