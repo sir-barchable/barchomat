@@ -1,0 +1,12 @@
+{
+  "id": 1,
+  "name": "TroopRequest",
+  "extends": "AllianceStreamEntry",
+  "fields": [
+    {"type": "INT"},
+    {"type": "INT"},
+    {"type": "INT"},
+    {"name": "donations", "type": "AllianceDonation[]"},
+    {"name": "text", "type": "?STRING"}
+  ]
+}

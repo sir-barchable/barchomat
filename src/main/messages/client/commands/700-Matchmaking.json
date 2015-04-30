@@ -1,0 +1,11 @@
+{
+  "id": 700,
+  "name": "Matchmaking",
+  "extends": "CommandComponent",
+  "comment": "Next village during attack selection",
+  "fields": [
+    {"type": "INT"},
+    {"type": "INT"},
+    {"name": "tick", "type": "INT"}
+  ]
+}

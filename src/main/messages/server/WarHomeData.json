@@ -1,0 +1,11 @@
+{
+  "id": 25000,
+  "name": "WarHomeData",
+  "fields": [
+    {"name": "userId", "type": "LONG"},
+    {"name": "homeId", "type": "LONG"},
+    {"name": "warVillage", "type": "ZIP_STRING"},
+    {"name": "user", "type": "?UserComponent"},
+    {"name": "resources", "type": "ResourceListComponent"}
+  ]
+}

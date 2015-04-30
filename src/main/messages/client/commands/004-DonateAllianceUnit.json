@@ -1,0 +1,13 @@
+{
+  "id": 4,
+  "name": "DonateAllianceUnit",
+  "extends": "CommandComponent",
+  "comment": "Donate in response to troop request",
+  "fields": [
+    {"type": "INT"},
+    {"name": "messageId", "type": "INT"},
+    {"name": "unitId", "type": "INT"},
+    {"type": "INT"},
+    {"name": "tick", "type": "INT"}
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "id": 2,
+  "name": "Chat",
+  "extends": "AllianceStreamEntry",
+  "fields": [
+    {"name": "text", "type": "STRING"}
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "comment": "Mail stream. Clan mail, defense, etc. ID is 24411 (if and when this work is done...)",
+  "name": "AvatarStream",
+  "fields": [
+    {"name": "entries", "type": "AvatarStreamEntry[]"}
+  ]
+}

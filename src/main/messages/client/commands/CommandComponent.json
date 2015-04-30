@@ -1,0 +1,6 @@
+{
+  "name": "CommandComponent",
+  "fields": [
+    {"name": "id", "type": "INT"}
+  ]
+}

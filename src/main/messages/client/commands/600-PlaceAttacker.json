@@ -1,0 +1,11 @@
+{
+  "id": 600,
+  "name": "PlaceAttacker",
+  "extends": "CommandComponent",
+  "fields": [
+    {"name": "x", "type": "INT"},
+    {"name": "y", "type": "INT"},
+    {"name": "unitType", "type": "INT"},
+    {"name": "tick", "type": "INT"}
+  ]
+}

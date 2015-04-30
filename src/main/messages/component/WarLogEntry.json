@@ -1,0 +1,24 @@
+{
+  "name": "WarLogEntry",
+  "fields": [
+    {"name": "clanId", "type": "LONG"},
+    {"name": "clanName", "type": "STRING"},
+    {"type": "INT"},
+    {"name": "clanLevel", "type": "INT"},
+    {"name": "enemyClanId", "type": "LONG"},
+    {"name": "enemyClanName", "type": "STRING"},
+    {"type": "INT"},
+    {"name": "enemyClanLevel", "type": "INT"},
+    {"name": "stars", "type": "INT"},
+    {"name": "enemyStars", "type": "INT"},
+    {"name": "attacksUsed", "type": "INT"},
+    {"name": "enemyAttacksUsed", "type": "INT"},
+    {"type": "INT"},
+    {"type": "INT"},
+    {"type": "INT"},
+    {"type": "BYTE"},
+    {"type": "INT"},
+    {"type": "INT"},
+    {"type": "INT"}
+  ]
+}

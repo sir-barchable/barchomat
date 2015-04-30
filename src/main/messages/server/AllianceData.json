@@ -1,0 +1,9 @@
+{
+  "id": 24324,
+  "name": "AllianceData2",
+  "fields": [
+    {"name": "clanDescription", "type": "STRING"},
+    {"type": "BYTE[25]"},
+    {"name": "clanName", "type": "STRING"}
+  ]
+}

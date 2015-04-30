@@ -1,0 +1,11 @@
+{
+  "id": 501,
+  "name": "MoveBuilding",
+  "extends": "CommandComponent",
+  "fields": [
+    {"name": "x", "type": "INT"},
+    {"name": "y", "type": "INT"},
+    {"name": "buildingId", "type": "INT"},
+    {"name": "tick", "type": "INT"}
+  ]
+}
