@@ -84,7 +84,7 @@ public class ProxySession {
         Pipe serverPipe = new Pipe(serverConnection.getName(), serverConnection.getIn(), clientConnection.getOut());
 
         KeyFilter keyListener = new KeyFilter();
-        PduFilter loginFilter = filterChain.addBefore(keyListener);
+        PduFilter loginFilter = filterChain.addAfter(keyListener);
 
         try {
             // First capture the login message from the client

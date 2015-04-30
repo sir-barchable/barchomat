@@ -1,0 +1,6 @@
+*.class
+*.jar
+
+.idea
+*.iml
+*.apk
