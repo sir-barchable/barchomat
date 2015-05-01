@@ -1,8 +1,5 @@
 package sir.barchable.clash.protocol;
 
-import sir.barchable.util.BitOutputStream;
-
-import java.io.ByteArrayOutputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -21,9 +18,4 @@ public class Message {
     public void set(String key, Object value) {
         fields.put(key, value);
     }
-
-//    public Pdu serialize() {
-//        MessageOutputStream out = new MessageOutputStream(new BitOutputStream(new ByteArrayOutputStream()));
-//    }
 }
-

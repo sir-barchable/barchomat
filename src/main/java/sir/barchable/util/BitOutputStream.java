@@ -14,7 +14,7 @@ import java.io.OutputStream;
  */
 public class BitOutputStream extends OutputStream {
     private OutputStream out;
-    private int bitField;
+    private int bitField = -1;
     private int mask;
 
     public BitOutputStream(OutputStream out) {
