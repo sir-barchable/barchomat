@@ -14,6 +14,7 @@ import sir.barchable.clash.protocol.Pdu;
 import sir.barchable.clash.protocol.ProtocolTool;
 import sir.barchable.clash.protocol.TypeFactory;
 import sir.barchable.clash.proxy.Connection;
+import sir.barchable.clash.proxy.MessageLogger;
 import sir.barchable.clash.proxy.MessageTapFilter;
 import sir.barchable.clash.proxy.ProxySession;
 import sir.barchable.util.Hex;
@@ -120,7 +121,8 @@ public class Main {
         File serverFile = new File(workingDir, "server.stream");
         MessageTapFilter tapFilter = new MessageTapFilter(
             messageReader,
-            new VillageAnalyzer(LogicParser.loadLogic(logicFile))
+            new VillageAnalyzer(LogicParser.loadLogic(logicFile)),
+            new MessageLogger(new OutputStreamWriter(System.out)).tapFor(Pdu.ID.WarHomeData, "warVillage")
         );
         try (
             // Client connection

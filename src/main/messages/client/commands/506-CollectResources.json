@@ -1,9 +1,0 @@
-{
-  "id": 506,
-  "name": "CollectResources",
-  "extends": "CommandComponent",
-  "fields": [
-    {"name": "buildingId", "type": "INT"},
-    {"name": "tick", "type": "INT"}
-  ]
-}

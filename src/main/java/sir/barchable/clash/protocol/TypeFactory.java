@@ -8,7 +8,6 @@ import sir.barchable.clash.protocol.Protocol.MessageDefinition;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -29,11 +28,6 @@ public class TypeFactory {
      * A map from message type name -> definition
      */
     private Map<String, MessageDefinition> types = new LinkedHashMap<>();
-
-    /**
-     * A map from message type name -> sub type list
-     */
-    private Map<String, Map<Integer, MessageDefinition>> subTypes = new LinkedHashMap<>();
 
     public enum Primitive {
         BOOLEAN, BYTE, INT, LONG, STRING, ZIP_STRING;
@@ -60,40 +54,10 @@ public class TypeFactory {
     }
 
     private void init(Protocol protocol) {
-
-        // Populate the type maps
+        // Populate the type map
         for (MessageDefinition messageDefinition : protocol.getMessages()) {
             String name = messageDefinition.getName();
-            String superType = messageDefinition.getExtends();
-            if (superType != null) {
-                addSubType(superType, messageDefinition);
-            } else {
-                types.put(name, messageDefinition);
-            }
-        }
-
-        // Sanity checks
-        for (String superType : subTypes.keySet()) {
-            if (!types.containsKey(superType)) {
-                // The super type isn't in the type map, probably a typo in the name
-                throw new TypeException("Orphaned subtype of " + superType);
-            }
-            if (types.get(superType).getField(ID_FIELD) == null) {
-                // No 'id' field, there's no way to resolve the subtype
-                throw new TypeException("ID field required to resolve subtypes of " + superType);
-            }
-        }
-    }
-
-    private void addSubType(String type, MessageDefinition messageDefinition) {
-        Map<Integer, MessageDefinition> subTypeDefinitions = subTypes.get(type);
-        if (subTypeDefinitions == null) {
-            subTypeDefinitions = new LinkedHashMap<>();
-            subTypes.put(type, subTypeDefinitions);
-        }
-        int id = messageDefinition.getId();
-        if (subTypeDefinitions.put(id, messageDefinition) != null) {
-            throw new TypeException("Duplicated subtype ID " + id + " of " + type);
+            types.put(name, messageDefinition);
         }
     }
 
@@ -115,6 +79,15 @@ public class TypeFactory {
         return Optional.empty();
     }
 
+    public MessageDefinition getMessageDefinitionForId(int id) {
+        Optional<String> messageName = getMessageNameForId(id);
+        if (messageName.isPresent()) {
+            return types.get(messageName.get());
+        } else {
+            return null;
+        }
+    }
+
     public Type parse(String definition) {
         Matcher matcher = TYPE_PATTERN.matcher(definition);
         if (!matcher.matches()) {
@@ -131,7 +104,7 @@ public class TypeFactory {
         int length = (arraySize == null) ? 0 : Integer.parseInt(arraySize);
 
         if (struct != null) {
-            return new Type(isOptional, name, isArray, length, struct, subTypes.get(name));
+            return new Type(isOptional, name, isArray, length, struct);
         } else {
             try {
                 return new Type(isOptional, name, isArray, length, Primitive.valueOf(name));
@@ -150,16 +123,14 @@ public class TypeFactory {
         private boolean array;
         private int length;
         private MessageDefinition struct;
-        private Map<Integer, MessageDefinition> subTypes;
         private Primitive primitiveType;
 
-        public Type(boolean optional, String name, boolean array, int length, MessageDefinition struct, Map<Integer, MessageDefinition> subTypes) {
+        public Type(boolean optional, String name, boolean array, int length, MessageDefinition struct) {
             this.optional = optional;
             this.name = name;
             this.array = array;
             this.length = length;
             this.struct = struct;
-            this.subTypes = subTypes;
         }
 
         public Type(boolean optional, String name, boolean array, int length, Primitive primitiveType) {
@@ -192,10 +163,6 @@ public class TypeFactory {
 
         public MessageDefinition getStruct() {
             return struct;
-        }
-
-        public Map<Integer, MessageDefinition> getSubTypes() {
-            return subTypes;
         }
 
         public Primitive getPrimitiveType() {

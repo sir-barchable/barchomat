@@ -15,6 +15,7 @@ import sir.barchable.clash.model.json.WarVillage;
 import sir.barchable.clash.protocol.Pdu;
 import sir.barchable.clash.proxy.MessageTap;
 import sir.barchable.clash.proxy.ProxySession;
+import sir.barchable.clash.proxy.SessionData;
 
 import java.io.IOException;
 import java.util.*;
@@ -62,7 +63,7 @@ public class VillageAnalyzer implements MessageTap {
     }
 
     private void analyzeHomeVillage(Pdu.ID id, Map<String, Object> message, Village village) {
-        ProxySession.SessionData sessionData = ProxySession.getSession().getSessionData();
+        SessionData sessionData = ProxySession.getSession().getSessionData();
 
         int age = (Integer) message.get("age");
 
@@ -258,12 +259,10 @@ public class VillageAnalyzer implements MessageTap {
     }
 
     private void analyzeWarVillage(Pdu.ID id, Map<String, Object> message, WarVillage village) {
-        ProxySession.SessionData sessionData = ProxySession.getSession().getSessionData();
+        SessionData sessionData = ProxySession.getSession().getSessionData();
 
-        Map<String, Object> user = (Map<String, Object>) message.get("user");
-        String userName = (String) user.get("userName");
-        Long userId = (Long) user.get("userId");
-
+        long userId = (long) village.avatar_id_high << 32 | village.avatar_id_low & 0xffffffffl;
+        String userName = village.name;
         String clanName = village.alliance_name;
 
         int dpsTotal = 0;

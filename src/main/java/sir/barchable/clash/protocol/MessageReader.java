@@ -1,6 +1,9 @@
 package sir.barchable.clash.protocol;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sir.barchable.clash.protocol.Protocol.MessageDefinition;
+import sir.barchable.clash.protocol.Protocol.MessageDefinition.Extension;
 import sir.barchable.clash.protocol.Protocol.MessageDefinition.FieldDefinition;
 
 import java.io.ByteArrayInputStream;
@@ -10,20 +13,25 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- *
  * @author Sir Barchable
  *         Date: 6/04/15
  */
 public class MessageReader {
+    private static final Logger log = LoggerFactory.getLogger(MessageReader.class);
 
-    private TypeFactory typeParser;
+    private TypeFactory typeFactory;
 
     public MessageReader() {
         this(new TypeFactory());
     }
 
-    public MessageReader(TypeFactory typeParser) {
-        this.typeParser = typeParser;
+    public MessageReader(TypeFactory typeFactory) {
+        this.typeFactory = typeFactory;
+    }
+
+    public Message newMessage(Pdu.ID id) {
+        MessageDefinition definition = typeFactory.getMessageDefinitionForId(id.id());
+        return new Message(definition);
     }
 
     /**
@@ -33,7 +41,7 @@ public class MessageReader {
      * @return a map of field names -> field values, or null if the message ID isn't recognized
      */
     public Map<String, Object> readMessage(Pdu pdu) {
-        Optional<String> messageName = typeParser.getMessageNameForId(pdu.getId());
+        Optional<String> messageName = typeFactory.getMessageNameForId(pdu.getId());
         if (messageName.isPresent()) {
             try {
                 MessageInputStream in = new MessageInputStream(new ByteArrayInputStream(pdu.getPayload()));
@@ -55,7 +63,7 @@ public class MessageReader {
             throw new NullPointerException("null definition");
         }
 
-        return readValue(typeParser.parse(typeName), in);
+        return readValue(typeFactory.parse(typeName), in);
     }
 
     /**
@@ -166,22 +174,24 @@ public class MessageReader {
                 }
             }
 
-            // Extra fields from sub type?
-            if (definition.getSubTypes() != null) {
+            // Extra fields from extension?
+            if (struct.getExtensions() != null) {
                 Integer id = (Integer) fields.get(TypeFactory.ID_FIELD);
                 if (id == null) {
                     throw new PduException("id field missing from " + definition.getName());
                 }
-                MessageDefinition subTypeDefinition = definition.getSubTypes().get(id);
-                if (subTypeDefinition != null) {
+                Extension extension = struct.getExtension(id);
+                if (extension != null) {
                     // Read extension to the struct
-                    for (FieldDefinition field : subTypeDefinition.getFields()) {
+                    for (FieldDefinition field : extension.getFields()) {
                         fieldIndex++;
                         Object value = readValue(field.getType(), in);
                         if (field.getName() != null) {
                             fields.put(field.getName(), value);
                         }
                     }
+                } else {
+                    log.warn("No extension of {} with id {}", definition.getName(), id);
                 }
             }
         } catch (RuntimeException | IOException e) {

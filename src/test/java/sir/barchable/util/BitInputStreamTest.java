@@ -61,7 +61,7 @@ public class BitInputStreamTest {
         byte[] bits = new byte[numBytes];
         ThreadLocalRandom.current().nextBytes(bits);
         BigInteger n = new BigInteger(bits);
-        InputStream src = new ByteArrayInputStream(swapEndian(n.toByteArray()));
+        InputStream src = new ByteArrayInputStream(Bits.swapEndian(n.toByteArray()));
         BitInputStream in = new BitInputStream(src);
 
         int numBits = numBytes * 8;
@@ -70,19 +70,4 @@ public class BitInputStreamTest {
         }
     }
 
-    /**
-     * In place endian swap for byte arrays
-     *
-     * @param bytes the bytes to swap the endianness of
-     * @return the reordered input array
-     */
-    public static byte[] swapEndian(byte[] bytes) {
-        for (int ia = 0; ia < bytes.length / 2; ia++) {
-            int ib = bytes.length - 1 - ia;
-            byte a = bytes[ia];
-            bytes[ia] = bytes[ib];
-            bytes[ib] = a;
-        }
-        return bytes;
-    }
 }

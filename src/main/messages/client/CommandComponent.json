@@ -1,0 +1,92 @@
+{
+  "name": "CommandComponent",
+  "fields": [
+    {"name": "id", "type": "INT"}
+  ],
+  "extensions": [
+    {
+      "id": 4,
+      "comment": "Donate unit in response to troop request",
+      "fields": [
+        {"type": "INT"},
+        {"name": "messageId", "type": "INT"},
+        {"name": "unitId", "type": "INT"},
+        {"type": "INT"},
+        {"name": "tick", "type": "INT"}
+      ]
+    }, {
+      "id": 10,
+      "comment": "Donate unit to clan war castle",
+      "fields": [
+        {"type": "INT"},
+        {"name": "homeId", "type": "INT"},
+        {"name": "unitId", "type": "INT"},
+        {"name": "index", "type": "INT"},
+        {"name": "tick", "type": "INT"}
+      ]
+    }, {
+      "id": 501,
+      "comment": "Move building",
+      "fields": [
+        {"name": "x", "type": "INT"},
+        {"name": "y", "type": "INT"},
+        {"name": "buildingId", "type": "INT"},
+        {"name": "tick", "type": "INT"}
+      ]
+    }, {
+      "id": 506,
+      "comment": "Collect resources",
+      "fields": [
+        {"name": "buildingId", "type": "INT"},
+        {"name": "tick", "type": "INT"}
+      ]
+    }, {
+      "id": 508,
+      "comment": "Train troops",
+      "fields": [
+        {"name": "buildingId", "type": "INT"},
+        {"type": "INT"},
+        {"name": "unitType", "type": "INT"},
+        {"name": "count", "type": "INT"},
+        {"name": "tick", "type": "INT"}
+      ]
+    }, {
+      "id": 509,
+      "comment": "Cancel troop production",
+      "fields": [
+        {"name": "buildingId", "type": "INT"},
+        {"type": "INT"},
+        {"name": "unitType", "type": "INT"},
+        {"name": "count", "type": "INT"},
+        {"type": "INT"},
+        {"name": "tick", "type": "INT"}
+      ]
+    }, {
+      "id": 600,
+      "comment": "Place attacker",
+      "fields": [
+        {"name": "x", "type": "INT"},
+        {"name": "y", "type": "INT"},
+        {"name": "unitType", "type": "INT"},
+        {"name": "tick", "type": "INT"}
+      ]
+    }, {
+      "id": 604,
+      "comment": "Cast spell",
+      "fields": [
+        {"name": "x", "type": "INT"},
+        {"name": "y", "type": "INT"},
+        {"name": "spellType", "type": "INT"},
+        {"name": "tick", "type": "INT"}
+      ]
+    }, {
+      "id": 700,
+      "comment": "Next village during attack selection",
+      "fields": [
+        {"type": "INT"},
+        {"type": "INT"},
+        {"name": "tick", "type": "INT"}
+      ]
+    }
+  ]
+}

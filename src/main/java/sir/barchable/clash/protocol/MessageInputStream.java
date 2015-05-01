@@ -60,19 +60,19 @@ public class MessageInputStream extends InputStream {
         return (ch1 << 24) + (ch2 << 16) + (ch3 << 8) + ch4;
     }
 
-    private byte[] readBuffer = new byte[8];
+    private byte[] buffer = new byte[8];
 
     public long readLong() throws IOException {
-        readArray(readBuffer, 0, 8);
+        readArray(buffer);
         return
-            ((long) readBuffer[0] << 56) +
-            ((long) (readBuffer[1] & 255) << 48) +
-            ((long) (readBuffer[2] & 255) << 40) +
-            ((long) (readBuffer[3] & 255) << 32) +
-            ((long) (readBuffer[4] & 255) << 24) +
-            ((readBuffer[5] & 255) << 16) +
-            ((readBuffer[6] & 255) << 8) +
-            ((readBuffer[7] & 255));
+            ((long) buffer[0] << 56) +
+            ((long) (buffer[1] & 255) << 48) +
+            ((long) (buffer[2] & 255) << 40) +
+            ((long) (buffer[3] & 255) << 32) +
+            ((long) (buffer[4] & 255) << 24) +
+            ((buffer[5] & 255) << 16) +
+            ((buffer[6] & 255) << 8) +
+            ((buffer[7] & 255));
     }
 
     public String readString() throws IOException {

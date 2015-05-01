@@ -7,164 +7,153 @@
       "type" : "STRING"
     } ]
   }, {
-    "id" : 4,
-    "extends" : "CommandComponent",
-    "name" : "DonateAllianceUnit",
-    "comment" : "Donate in response to troop request",
-    "fields" : [ {
-      "type" : "INT"
-    }, {
-      "name" : "messageId",
-      "type" : "INT"
-    }, {
-      "name" : "unitId",
-      "type" : "INT"
-    }, {
-      "type" : "INT"
-    }, {
-      "name" : "tick",
-      "type" : "INT"
-    } ]
-  }, {
-    "id" : 10,
-    "extends" : "CommandComponent",
-    "name" : "DonateAllianceWarUnit",
-    "comment" : "Donate troops for war",
-    "fields" : [ {
-      "type" : "INT"
-    }, {
-      "name" : "homeId",
-      "type" : "INT"
-    }, {
-      "name" : "unitId",
-      "type" : "INT"
-    }, {
-      "name" : "index",
-      "type" : "INT"
-    }, {
-      "name" : "tick",
-      "type" : "INT"
-    } ]
-  }, {
-    "id" : 501,
-    "extends" : "CommandComponent",
-    "name" : "MoveBuilding",
-    "fields" : [ {
-      "name" : "x",
-      "type" : "INT"
-    }, {
-      "name" : "y",
-      "type" : "INT"
-    }, {
-      "name" : "buildingId",
-      "type" : "INT"
-    }, {
-      "name" : "tick",
-      "type" : "INT"
-    } ]
-  }, {
-    "id" : 506,
-    "extends" : "CommandComponent",
-    "name" : "CollectResources",
-    "fields" : [ {
-      "name" : "buildingId",
-      "type" : "INT"
-    }, {
-      "name" : "tick",
-      "type" : "INT"
-    } ]
-  }, {
-    "id" : 508,
-    "extends" : "CommandComponent",
-    "name" : "TrainUnit",
-    "fields" : [ {
-      "name" : "buildingId",
-      "type" : "INT"
-    }, {
-      "type" : "INT"
-    }, {
-      "name" : "unitType",
-      "type" : "INT"
-    }, {
-      "name" : "count",
-      "type" : "INT"
-    }, {
-      "name" : "tick",
-      "type" : "INT"
-    } ]
-  }, {
-    "id" : 509,
-    "extends" : "CommandComponent",
-    "name" : "CancelUnitProduction",
-    "fields" : [ {
-      "name" : "buildingId",
-      "type" : "INT"
-    }, {
-      "type" : "INT"
-    }, {
-      "name" : "unitType",
-      "type" : "INT"
-    }, {
-      "name" : "count",
-      "type" : "INT"
-    }, {
-      "type" : "INT"
-    }, {
-      "name" : "tick",
-      "type" : "INT"
-    } ]
-  }, {
-    "id" : 600,
-    "extends" : "CommandComponent",
-    "name" : "PlaceAttacker",
-    "fields" : [ {
-      "name" : "x",
-      "type" : "INT"
-    }, {
-      "name" : "y",
-      "type" : "INT"
-    }, {
-      "name" : "unitType",
-      "type" : "INT"
-    }, {
-      "name" : "tick",
-      "type" : "INT"
-    } ]
-  }, {
-    "id" : 604,
-    "extends" : "CommandComponent",
-    "name" : "CastSpell",
-    "fields" : [ {
-      "name" : "x",
-      "type" : "INT"
-    }, {
-      "name" : "y",
-      "type" : "INT"
-    }, {
-      "name" : "spellType",
-      "type" : "INT"
-    }, {
-      "name" : "tick",
-      "type" : "INT"
-    } ]
-  }, {
-    "id" : 700,
-    "extends" : "CommandComponent",
-    "name" : "Matchmaking",
-    "comment" : "Next village during attack selection",
-    "fields" : [ {
-      "type" : "INT"
-    }, {
-      "type" : "INT"
-    }, {
-      "name" : "tick",
-      "type" : "INT"
-    } ]
-  }, {
     "name" : "CommandComponent",
     "fields" : [ {
       "name" : "id",
       "type" : "INT"
+    } ],
+    "extensions" : [ {
+      "id" : 4,
+      "comment" : "Donate unit in response to troop request",
+      "fields" : [ {
+        "type" : "INT"
+      }, {
+        "name" : "messageId",
+        "type" : "INT"
+      }, {
+        "name" : "unitId",
+        "type" : "INT"
+      }, {
+        "type" : "INT"
+      }, {
+        "name" : "tick",
+        "type" : "INT"
+      } ]
+    }, {
+      "id" : 10,
+      "comment" : "Donate unit to clan war castle",
+      "fields" : [ {
+        "type" : "INT"
+      }, {
+        "name" : "homeId",
+        "type" : "INT"
+      }, {
+        "name" : "unitId",
+        "type" : "INT"
+      }, {
+        "name" : "index",
+        "type" : "INT"
+      }, {
+        "name" : "tick",
+        "type" : "INT"
+      } ]
+    }, {
+      "id" : 501,
+      "comment" : "Move building",
+      "fields" : [ {
+        "name" : "x",
+        "type" : "INT"
+      }, {
+        "name" : "y",
+        "type" : "INT"
+      }, {
+        "name" : "buildingId",
+        "type" : "INT"
+      }, {
+        "name" : "tick",
+        "type" : "INT"
+      } ]
+    }, {
+      "id" : 506,
+      "comment" : "Collect resources",
+      "fields" : [ {
+        "name" : "buildingId",
+        "type" : "INT"
+      }, {
+        "name" : "tick",
+        "type" : "INT"
+      } ]
+    }, {
+      "id" : 508,
+      "comment" : "Train troops",
+      "fields" : [ {
+        "name" : "buildingId",
+        "type" : "INT"
+      }, {
+        "type" : "INT"
+      }, {
+        "name" : "unitType",
+        "type" : "INT"
+      }, {
+        "name" : "count",
+        "type" : "INT"
+      }, {
+        "name" : "tick",
+        "type" : "INT"
+      } ]
+    }, {
+      "id" : 509,
+      "comment" : "Cancel troop production",
+      "fields" : [ {
+        "name" : "buildingId",
+        "type" : "INT"
+      }, {
+        "type" : "INT"
+      }, {
+        "name" : "unitType",
+        "type" : "INT"
+      }, {
+        "name" : "count",
+        "type" : "INT"
+      }, {
+        "type" : "INT"
+      }, {
+        "name" : "tick",
+        "type" : "INT"
+      } ]
+    }, {
+      "id" : 600,
+      "comment" : "Place attacker",
+      "fields" : [ {
+        "name" : "x",
+        "type" : "INT"
+      }, {
+        "name" : "y",
+        "type" : "INT"
+      }, {
+        "name" : "unitType",
+        "type" : "INT"
+      }, {
+        "name" : "tick",
+        "type" : "INT"
+      } ]
+    }, {
+      "id" : 604,
+      "comment" : "Cast spell",
+      "fields" : [ {
+        "name" : "x",
+        "type" : "INT"
+      }, {
+        "name" : "y",
+        "type" : "INT"
+      }, {
+        "name" : "spellType",
+        "type" : "INT"
+      }, {
+        "name" : "tick",
+        "type" : "INT"
+      } ]
+    }, {
+      "id" : 700,
+      "comment" : "Next village during attack selection",
+      "fields" : [ {
+        "type" : "INT"
+      }, {
+        "type" : "INT"
+      }, {
+        "name" : "tick",
+        "type" : "INT"
+      } ]
     } ]
   }, {
     "id" : 14102,
@@ -451,6 +440,8 @@
       "type" : "INT"
     }, {
       "type" : "INT"
+    }, {
+      "type" : "INT"
     } ]
   }, {
     "name" : "UserHeaderComponent",
@@ -521,6 +512,122 @@
     }, {
       "name" : "clanName",
       "type" : "STRING"
+    } ]
+  }, {
+    "id" : 24311,
+    "name" : "AllianceStream",
+    "fields" : [ {
+      "name" : "entries",
+      "type" : "AllianceStreamEntry[]"
+    } ]
+  }, {
+    "id" : 24312,
+    "name" : "AllianceStreamEntry",
+    "fields" : [ {
+      "name" : "id",
+      "type" : "INT"
+    }, {
+      "type" : "INT"
+    }, {
+      "name" : "messageId",
+      "type" : "INT"
+    }, {
+      "type" : "BYTE"
+    }, {
+      "name" : "userId",
+      "type" : "LONG"
+    }, {
+      "name" : "homeId",
+      "type" : "LONG"
+    }, {
+      "name" : "userName",
+      "type" : "STRING"
+    }, {
+      "type" : "INT"
+    }, {
+      "type" : "INT"
+    }, {
+      "type" : "INT"
+    }, {
+      "type" : "INT"
+    } ],
+    "extensions" : [ {
+      "id" : 1,
+      "comment" : "Troop request",
+      "fields" : [ {
+        "type" : "INT"
+      }, {
+        "type" : "INT"
+      }, {
+        "type" : "INT"
+      }, {
+        "name" : "donations",
+        "type" : "AllianceDonation[]"
+      }, {
+        "name" : "text",
+        "type" : "?STRING"
+      } ]
+    }, {
+      "id" : 2,
+      "comment" : "Send chat line",
+      "fields" : [ {
+        "name" : "text",
+        "type" : "STRING"
+      } ]
+    }, {
+      "id" : 3,
+      "comment" : "Accept/reject a join request",
+      "fields" : [ {
+        "name" : "text",
+        "type" : "STRING"
+      }, {
+        "name" : "actionedByUserName",
+        "type" : "STRING"
+      }, {
+        "name" : "action",
+        "type" : "INT"
+      } ]
+    }, {
+      "id" : 4,
+      "comment" : "Join or leave",
+      "fields" : [ {
+        "name" : "action",
+        "type" : "INT"
+      }, {
+        "name" : "actionedByUserId",
+        "type" : "LONG"
+      }, {
+        "name" : "actionedByUserName",
+        "type" : "STRING"
+      } ]
+    }, {
+      "id" : 5,
+      "comment" : "Share replay",
+      "fields" : [ {
+        "type" : "INT"
+      }, {
+        "type" : "INT"
+      }, {
+        "type" : "INT"
+      }, {
+        "type" : "BYTE"
+      }, {
+        "name" : "text",
+        "type" : "STRING"
+      }, {
+        "name" : "enemyName",
+        "type" : "STRING"
+      }, {
+        "name" : "replay",
+        "type" : "STRING",
+        "comment" : "JSON description of battle"
+      }, {
+        "type" : "INT"
+      }, {
+        "type" : "INT"
+      }, {
+        "type" : "INT"
+      } ]
     } ]
   }, {
     "name" : "AvatarStream",
@@ -594,6 +701,35 @@
     }, {
       "name" : "clan",
       "type" : "?ClanIdComponent"
+    } ]
+  }, {
+    "id" : 20103,
+    "name" : "LoginFailed",
+    "fields" : [ {
+      "name" : "failureReason",
+      "type" : "INT"
+    }, {
+      "name" : "fingerPrint",
+      "type" : "STRING"
+    }, {
+      "name" : "hostName",
+      "type" : "STRING"
+    }, {
+      "name" : "downloadUrl",
+      "type" : "STRING"
+    }, {
+      "name" : "appStoreUrl",
+      "type" : "STRING"
+    }, {
+      "type" : "INT"
+    }, {
+      "type" : "INT"
+    }, {
+      "type" : "BYTE"
+    }, {
+      "type" : "STRING"
+    }, {
+      "type" : "STRING"
     } ]
   }, {
     "id" : 20104,
@@ -685,126 +821,21 @@
       "type" : "ResourceListComponent"
     } ]
   }, {
-    "id" : 1,
-    "extends" : "AllianceStreamEntry",
-    "name" : "TroopRequest",
+    "id" : 24326,
+    "name" : "TrapData",
     "fields" : [ {
       "type" : "INT"
     }, {
-      "type" : "INT"
-    }, {
-      "type" : "INT"
-    }, {
-      "name" : "donations",
-      "type" : "AllianceDonation[]"
-    }, {
-      "name" : "text",
-      "type" : "?STRING"
-    } ]
-  }, {
-    "id" : 2,
-    "extends" : "AllianceStreamEntry",
-    "name" : "Chat",
-    "fields" : [ {
-      "name" : "text",
-      "type" : "STRING"
-    } ]
-  }, {
-    "id" : 3,
-    "extends" : "AllianceStreamEntry",
-    "name" : "ActionRequest",
-    "comment" : "Accept/reject a join request",
-    "fields" : [ {
-      "name" : "text",
-      "type" : "STRING"
-    }, {
-      "name" : "actionedByUserName",
-      "type" : "STRING"
-    }, {
-      "name" : "action",
-      "type" : "INT"
-    } ]
-  }, {
-    "id" : 4,
-    "extends" : "AllianceStreamEntry",
-    "name" : "Membership",
-    "comment" : "Join or leave",
-    "fields" : [ {
-      "name" : "action",
-      "type" : "INT"
-    }, {
-      "name" : "actionedByUserId",
-      "type" : "LONG"
-    }, {
-      "name" : "actionedByUserName",
-      "type" : "STRING"
-    } ]
-  }, {
-    "id" : 5,
-    "extends" : "AllianceStreamEntry",
-    "name" : "ShareReplay",
-    "fields" : [ {
-      "type" : "INT"
-    }, {
-      "type" : "INT"
-    }, {
-      "type" : "INT"
-    }, {
-      "type" : "BYTE"
-    }, {
-      "name" : "text",
-      "type" : "STRING"
-    }, {
-      "name" : "enemyName",
-      "type" : "STRING"
-    }, {
-      "name" : "replay",
-      "type" : "STRING",
-      "comment" : "JSON description of battle"
-    }, {
-      "type" : "INT"
-    }, {
-      "type" : "INT"
-    }, {
-      "type" : "INT"
-    } ]
-  }, {
-    "id" : 24311,
-    "name" : "AllianceStream",
-    "fields" : [ {
-      "name" : "entries",
-      "type" : "AllianceStreamEntry[]"
-    } ]
-  }, {
-    "id" : 24312,
-    "name" : "AllianceStreamEntry",
-    "fields" : [ {
-      "name" : "id",
-      "type" : "INT"
-    }, {
-      "type" : "INT"
-    }, {
-      "name" : "messageId",
-      "type" : "INT"
-    }, {
-      "type" : "BYTE"
-    }, {
-      "name" : "userId",
-      "type" : "LONG"
-    }, {
-      "name" : "homeId",
-      "type" : "LONG"
-    }, {
-      "name" : "userName",
+      "name" : "teslas",
       "type" : "STRING"
     }, {
       "type" : "INT"
     }, {
-      "type" : "INT"
+      "name" : "traps",
+      "type" : "STRING"
     }, {
-      "type" : "INT"
-    }, {
-      "type" : "INT"
+      "name" : "garrison",
+      "type" : "UnitComponent[]"
     } ]
   }, {
     "id" : 24113,
@@ -847,8 +878,12 @@
       "name" : "warVillage",
       "type" : "ZIP_STRING"
     }, {
+      "type" : "INT"
+    }, {
+      "type" : "BOOLEAN"
+    }, {
       "name" : "user",
-      "type" : "?UserComponent"
+      "type" : "UserComponent"
     }, {
       "name" : "resources",
       "type" : "ResourceListComponent"
