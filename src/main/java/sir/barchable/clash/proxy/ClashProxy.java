@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import sir.barchable.clash.VillageAnalyzer;
 import sir.barchable.clash.model.Logic;
 import sir.barchable.clash.model.LogicParser;
+import sir.barchable.clash.protocol.Connection;
 import sir.barchable.clash.protocol.MessageReader;
 import sir.barchable.clash.protocol.ProtocolTool;
 import sir.barchable.clash.protocol.TypeFactory;
@@ -23,9 +24,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static sir.barchable.clash.protocol.Pdu.ID.EndClientTurn;
-import static sir.barchable.clash.protocol.Pdu.ID.OwnHomeData;
-import static sir.barchable.clash.protocol.Pdu.ID.WarHomeData;
+import static sir.barchable.clash.protocol.Pdu.Type.EndClientTurn;
+import static sir.barchable.clash.protocol.Pdu.Type.WarHomeData;
 
 /**
  * Clash proxy.

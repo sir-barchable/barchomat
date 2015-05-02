@@ -1,16 +1,17 @@
-package sir.barchable.clash.proxy;
+package sir.barchable.clash.server;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sir.barchable.clash.protocol.*;
+import sir.barchable.clash.protocol.Connection;
+import sir.barchable.clash.model.SessionData;
 
 import java.io.IOException;
-import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static sir.barchable.clash.protocol.Pdu.ID.Encryption;
+import static sir.barchable.clash.protocol.Pdu.Type.Encryption;
 
 /**
  * @author Sir Barchable
@@ -88,12 +89,41 @@ public class ServerSession {
             ThreadLocalRandom.current().nextBytes(nonce); // generate a new key
             encryptionMessage.set("serverRandom", nonce);
             encryptionMessage.set("version", 1);
-            clientConnection.getOut().writePdu(messageFactory.toPud(encryptionMessage));
+            clientConnection.getOut().writePdu(messageFactory.toPdu(encryptionMessage));
 
             clientConnection.setKey(prng.scramble(nonce));
+
+            run(clientConnection);
         } catch (PduException | IOException e) {
             log.error("Key exchange did not complete: " + e);
         }
+    }
+
+    private void run(Connection connection) {
+        try {
+            while (running.get()) {
+                Pdu pdu = connection.getIn().readPdu();
+                Message message = messageFactory.fromPdu(pdu);
+                Message response = null;
+                switch (pdu.getType()) {
+                    case EndClientTurn:
+                        response = endTurn(message);
+                        break;
+
+                    default:
+                        log.debug("{} from {}", pdu.getType(), connection.getName());
+                }
+                if (response != null) {
+                    connection.getOut().writePdu(messageFactory.toPdu(response));
+                }
+            }
+        } catch (IOException e) {
+            log.info("{} done", connection);
+        }
+    }
+
+    private Message endTurn(Message message) {
+        return null;
     }
 
     /**

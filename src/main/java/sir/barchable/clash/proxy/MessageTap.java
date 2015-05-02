@@ -9,5 +9,5 @@ import java.util.Map;
  *         Date: 18/04/15
  */
 public interface MessageTap {
-    void onMessage(Pdu.ID id, Map<String, Object> message);
+    void onMessage(Pdu.Type type, Map<String, Object> message);
 }

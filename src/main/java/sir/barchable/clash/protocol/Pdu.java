@@ -7,7 +7,7 @@ package sir.barchable.clash.protocol;
  *         Date: 5/04/15
  */
 public class Pdu {
-    public enum ID {
+    public enum Type {
         Unknown(0),
         Login(10101),
         LoginUsingSession(10102),
@@ -163,7 +163,7 @@ public class Pdu {
 
         private int id;
 
-        ID(int id) {
+        Type(int id) {
             this.id = id;
         }
 
@@ -171,8 +171,8 @@ public class Pdu {
             return id;
         }
 
-        public static ID valueOf(int id) {
-            for (ID e : ID.values()) {
+        public static Type valueOf(int id) {
+            for (Type e : Type.values()) {
                 if (e.id() == id) {
                     return e;
                 }
@@ -181,7 +181,7 @@ public class Pdu {
         }
     }
 
-    public enum Type {
+    public enum Origin {
         Client,
         Server
     }
@@ -201,6 +201,10 @@ public class Pdu {
 
     public int getId() {
         return id;
+    }
+
+    public Type getType() {
+        return Type.valueOf(id);
     }
 
     public void setId(int id) {
@@ -227,11 +231,11 @@ public class Pdu {
         return 7 + payload.length;
     }
 
-    public Type getType() {
+    public Origin getOrigin() {
         if (id < 20000) {
-            return Type.Client;
+            return Origin.Client;
         } else {
-            return Type.Server;
+            return Origin.Server;
         }
     }
 

@@ -3,7 +3,7 @@ package sir.barchable.clash.proxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sir.barchable.clash.protocol.MessageReader;
-import sir.barchable.clash.protocol.Pdu.ID;
+import sir.barchable.clash.protocol.Pdu.Type;
 import sir.barchable.clash.protocol.PduException;
 import sir.barchable.clash.protocol.Pdu;
 
@@ -33,7 +33,7 @@ public class MessageTapFilter implements PduFilter {
             Map<String, Object> message = messageReader.readMessage(pdu);
             if (message != null) {
                 for (MessageTap tap : taps) {
-                    tap.onMessage(ID.valueOf(pdu.getId()), message);
+                    tap.onMessage(Type.valueOf(pdu.getId()), message);
                 }
             }
         } catch (PduException e) {

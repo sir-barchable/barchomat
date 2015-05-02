@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
+ * Message construction and serialization.
+ *
  * @author Sir Barchable
  *         Date: 2/05/15
  */
@@ -19,6 +21,20 @@ public class MessageFactory {
         this.typeFactory = typeFactory;
         this.reader = new MessageReader(typeFactory);
         this.writer = new MessageWriter(typeFactory);
+    }
+
+    /**
+     * New empty message.
+     *
+     * @param type the message type
+     * @return a new message with an empty field set
+     */
+    public Message newMessage(Pdu.Type type) {
+        Protocol.StructDefinition definition = typeFactory.getStructDefinitionForId(type.id());
+        if (definition == null) {
+            throw new IllegalArgumentException("No definition for " + type);
+        }
+        return new Message(definition);
     }
 
     /**
@@ -43,7 +59,7 @@ public class MessageFactory {
         }
     }
 
-    public Pdu toPud(Message message) {
+    public Pdu toPdu(Message message) {
         ByteArrayOutputStream sink = new ByteArrayOutputStream();
         MessageOutputStream out = new MessageOutputStream(sink);
         try {
@@ -53,13 +69,5 @@ public class MessageFactory {
         } catch (IOException e) {
             throw new PduException(e);
         }
-    }
-
-    public Message newMessage(Pdu.ID id) {
-        Protocol.StructDefinition definition = typeFactory.getStructDefinitionForId(id.id());
-        if (definition == null) {
-            throw new IllegalArgumentException("No definition for " + id);
-        }
-        return new Message(definition);
     }
 }

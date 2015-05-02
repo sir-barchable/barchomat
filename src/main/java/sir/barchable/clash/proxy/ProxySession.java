@@ -2,6 +2,8 @@ package sir.barchable.clash.proxy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sir.barchable.clash.model.SessionData;
+import sir.barchable.clash.protocol.Connection;
 import sir.barchable.clash.protocol.PduException;
 
 import java.io.EOFException;

@@ -5,14 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import sir.barchable.clash.protocol.PduException;
-import sir.barchable.clash.protocol.Pdu.ID;
+import sir.barchable.clash.protocol.Pdu.Type;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 
-import static sir.barchable.clash.protocol.Pdu.ID.EndClientTurn;
+import static sir.barchable.clash.protocol.Pdu.Type.EndClientTurn;
 
 /**
  * @author Sir Barchable
@@ -32,16 +32,16 @@ public class MessageLogger {
         this.out = out;
     }
 
-    public MessageTap tapFor(ID messageId) {
-        return tapFor(messageId, null);
+    public MessageTap tapFor(Type messageType) {
+        return tapFor(messageType, null);
     }
 
-    public MessageTap tapFor(ID messageId, String field) {
+    public MessageTap tapFor(Type messageType, String field) {
         return (id, message) -> {
-            if (id == messageId) {
+            if (id == messageType) {
 
                 // Hack to ignore empty EndClientTurns...
-                if (messageId == EndClientTurn) {
+                if (messageType == EndClientTurn) {
                     Object[] commands = (Object[]) message.get("commands");
                     if (commands == null || commands.length == 0) {
                         return;
@@ -54,7 +54,7 @@ public class MessageLogger {
                 }
                 if (value != null) {
                     try {
-                        out.write(String.valueOf(messageId));
+                        out.write(String.valueOf(messageType));
                         out.write(":");
                         if (field != null) {
                             out.write(field);

@@ -1,4 +1,4 @@
-package sir.barchable.clash.proxy;
+package sir.barchable.clash.protocol;
 
 import sir.barchable.clash.protocol.PduInputStream;
 import sir.barchable.clash.protocol.PduOutputStream;

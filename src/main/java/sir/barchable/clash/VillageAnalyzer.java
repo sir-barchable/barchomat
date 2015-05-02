@@ -1,7 +1,6 @@
 package sir.barchable.clash;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Stopwatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sir.barchable.clash.VillageStats.Defense;
@@ -16,18 +15,14 @@ import sir.barchable.clash.model.json.WarVillage;
 import sir.barchable.clash.protocol.Pdu;
 import sir.barchable.clash.proxy.MessageTap;
 import sir.barchable.clash.proxy.ProxySession;
-import sir.barchable.clash.proxy.SessionData;
+import sir.barchable.clash.model.SessionData;
 import sir.barchable.util.Dates;
 
 import java.io.IOException;
-import java.time.Duration;
-import java.time.Period;
-import java.time.temporal.TemporalAmount;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 import static java.lang.Math.min;
-import static sir.barchable.clash.protocol.Pdu.ID.OwnHomeData;
+import static sir.barchable.clash.protocol.Pdu.Type.OwnHomeData;
 
 /**
  * @author Sir Barchable
@@ -47,32 +42,32 @@ public class VillageAnalyzer implements MessageTap {
     }
 
     @Override
-    public void onMessage(Pdu.ID id, Map<String, Object> message) {
+    public void onMessage(Pdu.Type type, Map<String, Object> message) {
         String homeVillage = (String) message.get("homeVillage");
         String warVillage = (String) message.get("warVillage");
 
         if (homeVillage != null) {
             try {
                 Village village = mapper.readValue(homeVillage, Village.class);
-                analyzeHomeVillage(id, message, village);
+                analyzeHomeVillage(type, message, village);
             } catch (RuntimeException | IOException e) {
                 log.warn("Could not read village", e);
             }
         } else if (warVillage != null) {
             try {
                 WarVillage village = mapper.readValue(warVillage, WarVillage.class);
-                analyzeWarVillage(id, message, village);
+                analyzeWarVillage(type, message, village);
             } catch (IOException e) {
                 log.warn("Could not read village", e);
             }
         }
     }
 
-    private void analyzeHomeVillage(Pdu.ID id, Map<String, Object> message, Village village) {
+    private void analyzeHomeVillage(Pdu.Type type, Map<String, Object> message, Village village) {
         SessionData sessionData = ProxySession.getSession().getSessionData();
 
         int age = (Integer) message.get("age");
-        int timeStamp = (Integer) message.get("timeStamp");
+        Integer timeStamp = (Integer) message.get("timeStamp");
 
         Map<String, Object> user = (Map<String, Object>) message.get("user");
         String userName = (String) user.get("userName");
@@ -201,17 +196,15 @@ public class VillageAnalyzer implements MessageTap {
             new Loot(thGold, thElixir, 0)
         );
 
-        if (id == OwnHomeData) {
+        int timeToGemboxDrop = village.respawnVars.time_to_gembox_drop < 0 ? 0 : village.respawnVars.time_to_gembox_drop;
+        if (type == OwnHomeData) {
             if (sessionData.getUserId() == 0) {
                 log.info("Welcome {}", userName);
                 // OwnHomeData. Remember town hall level for loot calculations
                 sessionData.setUserId(userId);
                 // Log startup info
-                log.info("Clock skew is {}ms", System.currentTimeMillis() - timeStamp * 1000);
-                if (village.respawnVars != null && village.respawnVars.time_to_gembox_drop != 0) {
-                    log.info("Gem box time to drop {}", Dates.formatInterval(village.respawnVars.time_to_gembox_drop));
-                    log.info("Gem box time in period {}", Dates.formatInterval(village.respawnVars.time_in_gembox_period));
-                }
+                log.info("Clock skew is {}ms", System.currentTimeMillis() - timeStamp * 1000l);
+                log.info("Gem box time in period {}", Dates.formatInterval(village.respawnVars.time_in_gembox_period));
             }
             sessionData.setUserName(userName);
             sessionData.setTownHallLevel(townHallLevel);
@@ -241,6 +234,7 @@ public class VillageAnalyzer implements MessageTap {
         //
 
         log.info("{}", userName);
+        log.info("Gem box drop {}", Dates.formatInterval(timeToGemboxDrop));
         log.info("DPS: {}, HP: {} (walls {})", dpsTotal, hpTotal, wallHpTotal);
         log.info("Garrison: " + unitDescriptions);
         log.info("Loot:");
@@ -250,7 +244,7 @@ public class VillageAnalyzer implements MessageTap {
         log.info("Collectors: {}", loot.getCollectorLoot());
         log.info("Total: {}", loot.total());
 
-        if (id != OwnHomeData) {
+        if (type != OwnHomeData) {
             // Apply raid penalty
             if (sessionData.getTownHallLevel() == 0) {
                 log.warn("User town hall level not set, can't calculate loot penalty.");
@@ -275,7 +269,7 @@ public class VillageAnalyzer implements MessageTap {
         }
     }
 
-    private void analyzeWarVillage(Pdu.ID id, Map<String, Object> message, WarVillage village) {
+    private void analyzeWarVillage(Pdu.Type type, Map<String, Object> message, WarVillage village) {
         SessionData sessionData = ProxySession.getSession().getSessionData();
 
         long userId = (long) village.avatar_id_high << 32 | village.avatar_id_low & 0xffffffffl;

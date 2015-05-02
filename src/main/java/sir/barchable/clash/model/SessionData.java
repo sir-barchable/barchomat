@@ -1,8 +1,10 @@
-package sir.barchable.clash.proxy;
+package sir.barchable.clash.model;
 
 import java.util.*;
 
 /**
+ * Session state. Used by the proxy/server as a place to store stuff during a session.
+ *
  * @author Sir Barchable
  *         Date: 1/05/15
  */
@@ -47,12 +49,18 @@ public class SessionData {
         return attributes.get(key);
     }
 
+    /**
+     * Get the names of the attributes in the session. This returns a copy of the names at the time of the call.
+     */
     public Set<String> getAttributeNames() {
         synchronized (attributes) {
             return new HashSet<>(attributes.keySet());
         }
     }
 
+    /**
+     * Get a copy of the attribute map. This returns a copy of the attributes at the time of the call.
+     */
     public Map<String, Object> getAttributes() {
         synchronized (attributes) {
             return new HashMap<>(attributes);

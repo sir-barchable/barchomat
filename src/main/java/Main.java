@@ -13,7 +13,7 @@ import sir.barchable.clash.protocol.MessageReader;
 import sir.barchable.clash.protocol.Pdu;
 import sir.barchable.clash.protocol.ProtocolTool;
 import sir.barchable.clash.protocol.TypeFactory;
-import sir.barchable.clash.proxy.Connection;
+import sir.barchable.clash.protocol.Connection;
 import sir.barchable.clash.proxy.MessageLogger;
 import sir.barchable.clash.proxy.MessageTapFilter;
 import sir.barchable.clash.proxy.ProxySession;
@@ -115,14 +115,14 @@ public class Main {
      * @param serverOut where to write the decoded server stream
      */
     public void dumpSession(Writer clientOut, Writer serverOut) throws IOException, InterruptedException {
-        Dumper clientDumper = new Dumper(Pdu.Type.Client, clientOut);
-        Dumper serverDumper = new Dumper(Pdu.Type.Server, serverOut);
+        Dumper clientDumper = new Dumper(Pdu.Origin.Client, clientOut);
+        Dumper serverDumper = new Dumper(Pdu.Origin.Server, serverOut);
         File clientFile = new File(workingDir, "client.stream");
         File serverFile = new File(workingDir, "server.stream");
         MessageTapFilter tapFilter = new MessageTapFilter(
             messageReader,
             new VillageAnalyzer(LogicParser.loadLogic(logicFile)),
-            new MessageLogger(new OutputStreamWriter(System.out)).tapFor(Pdu.ID.WarHomeData, "warVillage")
+            new MessageLogger(new OutputStreamWriter(System.out)).tapFor(Pdu.Type.WarHomeData, "warVillage")
         );
         try (
             // Client connection
@@ -139,22 +139,22 @@ public class Main {
      * Formats and writes PDUs to an output stream.
      */
     class Dumper {
-        private final Pdu.Type type;
+        private final Pdu.Origin origin;
         private Writer out;
 
         /**
          * Construct a dumper.
          *
-         * @param type the type of Pdu to dump
+         * @param origin the type of Pdu to dump
          * @param out the stream to write to.
          */
-        public Dumper(Pdu.Type type, Writer out) {
-            this.type = type;
+        public Dumper(Pdu.Origin origin, Writer out) {
+            this.origin = origin;
             this.out = out;
         }
 
         synchronized public Pdu dump(Pdu pdu) throws IOException {
-            if (pdu.getType() == type) {
+            if (pdu.getOrigin() == origin) {
                 if (dumpHex) {
                     dumpHex(pdu);
                 }
