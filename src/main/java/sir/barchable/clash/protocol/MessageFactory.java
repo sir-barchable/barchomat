@@ -48,7 +48,7 @@ public class MessageFactory {
         if (structName.isPresent()) {
             try {
                 MessageInputStream in = new MessageInputStream(new ByteArrayInputStream(pdu.getPayload()));
-                TypeFactory.Type type = typeFactory.parse(structName.get());
+                TypeFactory.Type type = typeFactory.newType(structName.get());
                 Map<String, Object> fields = (Map<String, Object>) reader.readValue(type, in);
                 return new Message(type.getStructDefinition(), fields);
             } catch (IOException e) {
@@ -63,7 +63,7 @@ public class MessageFactory {
         ByteArrayOutputStream sink = new ByteArrayOutputStream();
         MessageOutputStream out = new MessageOutputStream(sink);
         try {
-            TypeFactory.Type type = typeFactory.parse(message.getDefinition().getName());
+            TypeFactory.Type type = typeFactory.newType(message.getDefinition().getName());
             writer.write(type, message.getFields(), out);
             return new Pdu(type.getStructDefinition().getId(), sink.toByteArray());
         } catch (IOException e) {

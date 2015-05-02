@@ -21,6 +21,11 @@ public class MessageReader {
 
     private TypeFactory typeFactory;
 
+    /**
+     * Set this to store all fields after reading. Fields without names will be stored with the name "fieldN".
+     */
+    private boolean allFields = true;
+
     public MessageReader() {
         this(new TypeFactory());
     }
@@ -63,7 +68,7 @@ public class MessageReader {
             throw new NullPointerException("null definition");
         }
 
-        return readValue(typeFactory.parse(typeName), in);
+        return readValue(typeFactory.newType(typeName), in);
     }
 
     /**
@@ -169,8 +174,8 @@ public class MessageReader {
             for (FieldDefinition field : struct.getFields()) {
                 fieldIndex++;
                 Object value = readValue(field.getType(), in);
-                if (field.getName() != null) {
-                    fields.put(field.getName(), value);
+                if (field.getName() != null || allFields) {
+                    fields.put(field.getName() != null ? field.getName() : "field" + fieldIndex, value);
                 }
             }
 
@@ -186,8 +191,8 @@ public class MessageReader {
                     for (FieldDefinition field : extension.getFields()) {
                         fieldIndex++;
                         Object value = readValue(field.getType(), in);
-                        if (field.getName() != null) {
-                            fields.put(field.getName(), value);
+                        if (field.getName() != null || allFields) {
+                            fields.put(field.getName() != null ? field.getName() : "field" + fieldIndex, value);
                         }
                     }
                 } else {

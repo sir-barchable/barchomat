@@ -637,6 +637,17 @@
       "type" : "AvatarStreamEntry[]"
     } ]
   }, {
+    "name" : "AvatarStreamEntry",
+    "fields" : [ {
+      "name" : "id",
+      "type" : "INT"
+    } ],
+    "extensions" : [ {
+      "id" : 0,
+      "comment" : "todo: extensions for the various inbox types",
+      "fields" : [ ]
+    } ]
+  }, {
     "id" : 20000,
     "name" : "Encryption",
     "fields" : [ {

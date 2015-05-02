@@ -3,7 +3,10 @@ package sir.barchable.clash.protocol;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sir.barchable.clash.ResourceException;
 import sir.barchable.clash.protocol.Protocol.StructDefinition;
+import sir.barchable.clash.protocol.Protocol.StructDefinition.Extension;
+import sir.barchable.clash.protocol.Protocol.StructDefinition.FieldDefinition;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,14 +23,28 @@ import java.util.regex.Pattern;
 public class TypeFactory {
     private static final Logger log = LoggerFactory.getLogger(TypeFactory.class);
 
-    private static Pattern TYPE_PATTERN = Pattern.compile("(\\?)?(\\w+)(\\[(\\d+)?\\])?");
+    private static Pattern NAME_PATTERN = Pattern.compile("[a-z_A-Z]\\w*");
+    private static Pattern TYPE_PATTERN = Pattern.compile("(\\?)?(" + NAME_PATTERN + ")(\\[(\\d+)?\\])?");
 
+    /**
+     * Name of the field that contains the id of the {@link Extension} to use.
+     */
     public static final String ID_FIELD = "id";
+
+    /**
+     * Prefix for unnamed fields.
+     */
+    public static final String ANONYMOUS_FIELD_PREFIX = "field";
 
     /**
      * A map from message struct name -> definition
      */
-    private Map<String, StructDefinition> types = new LinkedHashMap<>();
+    private Map<String, StructDefinition> structDefinitions = new LinkedHashMap<>();
+
+    /**
+     * A map from type name -> definition
+     */
+    private Map<String, Type> typeDefinitions = new LinkedHashMap<>();
 
     public enum Primitive {
         BOOLEAN, BYTE, INT, LONG, STRING, ZIP_STRING;
@@ -45,7 +62,7 @@ public class TypeFactory {
                 init(protocol);
             }
         } catch (IOException e) {
-            throw new ExceptionInInitializerError(e);
+            throw new ResourceException(e);
         }
     }
 
@@ -56,8 +73,34 @@ public class TypeFactory {
     private void init(Protocol protocol) {
         // Populate the type map
         for (StructDefinition structDefinition : protocol.getMessages()) {
-            String name = structDefinition.getName();
-            types.put(name, structDefinition);
+            String structName = structDefinition.getName();
+            // Sanity checks
+            if (structName == null) {
+                throw new TypeException("Missing struct name in protocol definition");
+            }
+            for (FieldDefinition fieldDefinition : structDefinition.getFields()) {
+                String fieldName = fieldDefinition.getName();
+                if (fieldName != null) {
+                    if (fieldName.startsWith(ANONYMOUS_FIELD_PREFIX)) {
+                        throw new TypeException("Illegal field name " + fieldName + " (reserved prefix)");
+                    }
+                    if (!NAME_PATTERN.matcher(fieldName).matches()) {
+                        throw new TypeException("Illegal field name " + fieldName);
+                    }
+                }
+            }
+            // Passed check, store
+            structDefinitions.put(structName, structDefinition);
+        }
+
+        // Now resolve and cache types
+        for (StructDefinition structDefinition : protocol.getMessages()) {
+            for (FieldDefinition fieldDefinition : structDefinition.getFields()) {
+                String typeName = fieldDefinition.getType();
+                if (!typeDefinitions.containsKey(typeName)) {
+                    typeDefinitions.put(typeName, newType(typeName));
+                }
+            }
         }
     }
 
@@ -71,7 +114,7 @@ public class TypeFactory {
         if (messageId <= 0) {
             throw new IllegalArgumentException();
         }
-        for (StructDefinition definition: types.values()) {
+        for (StructDefinition definition: structDefinitions.values()) {
             if (definition.getId() != null && definition.getId() == messageId) {
                 return Optional.ofNullable(definition.getName());
             }
@@ -82,13 +125,20 @@ public class TypeFactory {
     public StructDefinition getStructDefinitionForId(int id) {
         Optional<String> messageName = getStructNameForId(id);
         if (messageName.isPresent()) {
-            return types.get(messageName.get());
+            return structDefinitions.get(messageName.get());
         } else {
             return null;
         }
     }
 
-    public Type parse(String typeDefinition) {
+    public Type newType(String typeDefinition) {
+        if (typeDefinition == null) {
+            throw new TypeException("Missing type definition");
+        }
+        if (typeDefinitions.containsKey(typeDefinition)) {
+            return typeDefinitions.get(typeDefinition);
+        }
+
         Matcher matcher = TYPE_PATTERN.matcher(typeDefinition);
         if (!matcher.matches()) {
             throw new IllegalArgumentException("Badly formed type name " + typeDefinition);
@@ -99,19 +149,22 @@ public class TypeFactory {
         String arraySize = matcher.group(4);
 
         boolean isOptional = optional != null;
-        StructDefinition struct = types.get(name);
+        StructDefinition struct = structDefinitions.get(name);
         boolean isArray = array != null;
         int length = (arraySize == null) ? 0 : Integer.parseInt(arraySize);
 
+        Type type;
         if (struct != null) {
-            return new Type(isOptional, name, isArray, length, struct);
+            type = new Type(isOptional, name, isArray, length, struct);
         } else {
             try {
-                return new Type(isOptional, name, isArray, length, Primitive.valueOf(name));
+                type = new Type(isOptional, name, isArray, length, Primitive.valueOf(name));
             } catch (IllegalArgumentException e) {
-                throw new TypeException("Unknown type " + typeDefinition);
+                throw new TypeException("Unknown type " + name);
             }
         }
+
+        return type;
     }
 
     /**

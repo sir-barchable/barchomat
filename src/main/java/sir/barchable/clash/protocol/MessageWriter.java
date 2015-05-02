@@ -75,7 +75,7 @@ public class MessageWriter {
                         throw new IllegalArgumentException("Don't know how to write arrays of type " + type.getPrimitiveType());
                 }
             } else {
-                TypeFactory.Type structName = typeFactory.parse(type.getStructDefinition().getName());
+                TypeFactory.Type structName = typeFactory.newType(type.getStructDefinition().getName());
                 for (Object struct : (Object[]) o) {
                     write(structName, struct, out);
                 }
@@ -116,10 +116,15 @@ public class MessageWriter {
 
     private void writeStruct(TypeFactory.Type type, Object o, MessageOutputStream out) throws IOException {
         Map<String, Object> struct = (Map<String, Object>) o;
+        int fieldIndex = 0;
         for (FieldDefinition fieldDefinition : type.getStructDefinition().getFields()) {
+            fieldIndex++;
             String key = fieldDefinition.getName();
+            if (key == null) {
+                key = "field" + fieldIndex;
+            }
             Object value = struct.get(key);
-            write(typeFactory.parse(fieldDefinition.getType()), value, out);
+            write(typeFactory.newType(fieldDefinition.getType()), value, out);
         }
         Object id = struct.get(TypeFactory.ID_FIELD);
         if (id != null && id instanceof Integer) {
@@ -128,7 +133,7 @@ public class MessageWriter {
                 for (FieldDefinition fieldDefinition : extension.getFields()) {
                     String key = fieldDefinition.getName();
                     Object value = struct.get(key);
-                    write(typeFactory.parse(fieldDefinition.getType()), value, out);
+                    write(typeFactory.newType(fieldDefinition.getType()), value, out);
                 }
             }
         }
