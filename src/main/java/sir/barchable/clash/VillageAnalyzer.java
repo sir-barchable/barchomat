@@ -1,6 +1,7 @@
 package sir.barchable.clash;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Stopwatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sir.barchable.clash.VillageStats.Defense;
@@ -16,9 +17,14 @@ import sir.barchable.clash.protocol.Pdu;
 import sir.barchable.clash.proxy.MessageTap;
 import sir.barchable.clash.proxy.ProxySession;
 import sir.barchable.clash.proxy.SessionData;
+import sir.barchable.util.Dates;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Period;
+import java.time.temporal.TemporalAmount;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static java.lang.Math.min;
 import static sir.barchable.clash.protocol.Pdu.ID.OwnHomeData;
@@ -66,6 +72,7 @@ public class VillageAnalyzer implements MessageTap {
         SessionData sessionData = ProxySession.getSession().getSessionData();
 
         int age = (Integer) message.get("age");
+        int timeStamp = (Integer) message.get("timeStamp");
 
         Map<String, Object> user = (Map<String, Object>) message.get("user");
         String userName = (String) user.get("userName");
@@ -195,9 +202,18 @@ public class VillageAnalyzer implements MessageTap {
         );
 
         if (id == OwnHomeData) {
-            // OwnHomeData. Remember town hall level for loot calculations
+            if (sessionData.getUserId() == 0) {
+                log.info("Welcome {}", userName);
+                // OwnHomeData. Remember town hall level for loot calculations
+                sessionData.setUserId(userId);
+                // Log startup info
+                log.info("Clock skew is {}ms", System.currentTimeMillis() - timeStamp * 1000);
+                if (village.respawnVars != null && village.respawnVars.time_to_gembox_drop != 0) {
+                    log.info("Gem box time to drop {}", Dates.formatInterval(village.respawnVars.time_to_gembox_drop));
+                    log.info("Gem box time in period {}", Dates.formatInterval(village.respawnVars.time_in_gembox_period));
+                }
+            }
             sessionData.setUserName(userName);
-            sessionData.setUserId(userId);
             sessionData.setTownHallLevel(townHallLevel);
         } else {
             loot = lootCalculator.calculateAvailableLoot(loot, townHallLevel);
@@ -227,6 +243,7 @@ public class VillageAnalyzer implements MessageTap {
         log.info("{}", userName);
         log.info("DPS: {}, HP: {} (walls {})", dpsTotal, hpTotal, wallHpTotal);
         log.info("Garrison: " + unitDescriptions);
+        log.info("Loot:");
         log.info("Town Hall: {}", loot.getTownHallLoot());
         log.info("Storage: {}", loot.getStorageLoot());
         log.info("Castle: {}", loot.getCastleLoot());

@@ -48,11 +48,15 @@ public class MessageOutputStream extends OutputStream {
     }
 
     public void writeString(String s) throws IOException {
-        byte[] bytes = s.getBytes(StandardCharsets.UTF_8);
-        // write length
-        writeInt(bytes.length);
-        // write utf-8 encoded string
-        out.write(bytes);
+        if (s == null) {
+            writeInt(0xffffffff);
+        } else {
+            byte[] bytes = s.getBytes(StandardCharsets.UTF_8);
+            // write length
+            writeInt(bytes.length);
+            // write utf-8 encoded string
+            out.write(bytes);
+        }
     }
 
     public void writeZipString(String s) throws IOException {

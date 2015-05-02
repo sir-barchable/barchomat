@@ -22,11 +22,11 @@ public class ServerSession {
     private AtomicBoolean running = new AtomicBoolean(true);
     private Connection clientConnection;
     private CountDownLatch latch = new CountDownLatch(1);
-    private MessageReader messageReader;
+    private MessageFactory messageFactory;
     private SessionData sessionData = new SessionData();
 
-    private ServerSession(MessageReader messageReader, Connection clientConnection) {
-        this.messageReader = messageReader;
+    private ServerSession(MessageFactory messageFactory, Connection clientConnection) {
+        this.messageFactory = messageFactory;
         this.clientConnection = clientConnection;
     }
 
@@ -49,8 +49,8 @@ public class ServerSession {
      * <p>
      * Normal completion is usually the result of an EOF on the input stream.
      */
-    public static ServerSession newSession(MessageReader messageReader, Connection clientConnection) {
-        ServerSession session = new ServerSession(messageReader, clientConnection);
+    public static ServerSession newSession(MessageFactory messageFactory, Connection clientConnection) {
+        ServerSession session = new ServerSession(messageFactory, clientConnection);
         try {
             ServerSession.session.set(session);
             session.start();
@@ -70,7 +70,7 @@ public class ServerSession {
             //
 
             Pdu loginPdu = clientConnection.getIn().readPdu();
-            Map<String, Object> loginMessage = messageReader.readMessage(loginPdu);
+            Message loginMessage = messageFactory.fromPdu(loginPdu);
             sessionData.setUserId((Long) loginMessage.get("userId"));
             Object clientSeed = loginMessage.get("clientSeed");
             if (clientSeed == null || !(clientSeed instanceof Integer)) {
@@ -82,13 +82,13 @@ public class ServerSession {
             // And send the encryption key back
             //
 
-            Message encryptionMessage = messageReader.newMessage(Encryption);
+            Message encryptionMessage = messageFactory.newMessage(Encryption);
 
             byte[] nonce = new byte[24];
             ThreadLocalRandom.current().nextBytes(nonce); // generate a new key
             encryptionMessage.set("serverRandom", nonce);
             encryptionMessage.set("version", 1);
-//            clientConnection.getOut().writePdu(encryptionMessage.serialize());
+            clientConnection.getOut().writePdu(messageFactory.toPud(encryptionMessage));
 
             clientConnection.setKey(prng.scramble(nonce));
         } catch (PduException | IOException e) {

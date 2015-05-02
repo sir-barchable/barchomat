@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sir.barchable.clash.model.Logic;
 import sir.barchable.clash.model.LogicParser;
+import sir.barchable.clash.protocol.MessageFactory;
 import sir.barchable.clash.protocol.MessageReader;
 import sir.barchable.clash.protocol.ProtocolTool;
 import sir.barchable.clash.protocol.TypeFactory;
@@ -56,9 +57,9 @@ public class ClashServer {
     private ExecutorService executor = Executors.newCachedThreadPool();
 
     /**
-     * Pdu parser.
+     * Pdu serialization.
      */
-    private MessageReader messageReader;
+    private MessageFactory messageFactory;
 
     /**
      * Game config.
@@ -104,7 +105,7 @@ public class ClashServer {
         } else {
             typeFactory = new TypeFactory();
         }
-        this.messageReader = new MessageReader(typeFactory);
+        this.messageFactory = new MessageFactory(typeFactory);
 
         //
         // Load the logic files
@@ -154,7 +155,7 @@ public class ClashServer {
             try (
                 Connection clientConnection = new Connection(socket);
             ) {
-                ServerSession session = ServerSession.newSession(messageReader, clientConnection);
+                ServerSession session = ServerSession.newSession(messageFactory, clientConnection);
                 log.info("Client {} disconnected", socket);
             }
         } catch (IOException e) {

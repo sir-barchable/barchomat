@@ -169,7 +169,7 @@ public class Main {
         void dumpJson(Pdu pdu) throws IOException {
             Map<String, Object> message = messageReader.readMessage(pdu);
             if (message != null) {
-                String name = typeFactory.getMessageNameForId(pdu.getId()).get();
+                String name = typeFactory.getStructNameForId(pdu.getId()).get();
                 out.write('"' + name + "\": ");
                 jsonWriter.writeValue(out, message);
                 out.write('\n');

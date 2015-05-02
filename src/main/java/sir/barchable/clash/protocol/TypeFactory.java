@@ -3,7 +3,7 @@ package sir.barchable.clash.protocol;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sir.barchable.clash.protocol.Protocol.MessageDefinition;
+import sir.barchable.clash.protocol.Protocol.StructDefinition;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,9 +25,9 @@ public class TypeFactory {
     public static final String ID_FIELD = "id";
 
     /**
-     * A map from message type name -> definition
+     * A map from message struct name -> definition
      */
-    private Map<String, MessageDefinition> types = new LinkedHashMap<>();
+    private Map<String, StructDefinition> types = new LinkedHashMap<>();
 
     public enum Primitive {
         BOOLEAN, BYTE, INT, LONG, STRING, ZIP_STRING;
@@ -55,9 +55,9 @@ public class TypeFactory {
 
     private void init(Protocol protocol) {
         // Populate the type map
-        for (MessageDefinition messageDefinition : protocol.getMessages()) {
-            String name = messageDefinition.getName();
-            types.put(name, messageDefinition);
+        for (StructDefinition structDefinition : protocol.getMessages()) {
+            String name = structDefinition.getName();
+            types.put(name, structDefinition);
         }
     }
 
@@ -67,11 +67,11 @@ public class TypeFactory {
      * @param messageId the message ID to search for
      * @return the message name if defined
      */
-    public Optional<String> getMessageNameForId(int messageId) {
+    public Optional<String> getStructNameForId(int messageId) {
         if (messageId <= 0) {
             throw new IllegalArgumentException();
         }
-        for (MessageDefinition definition: types.values()) {
+        for (StructDefinition definition: types.values()) {
             if (definition.getId() != null && definition.getId() == messageId) {
                 return Optional.ofNullable(definition.getName());
             }
@@ -79,8 +79,8 @@ public class TypeFactory {
         return Optional.empty();
     }
 
-    public MessageDefinition getMessageDefinitionForId(int id) {
-        Optional<String> messageName = getMessageNameForId(id);
+    public StructDefinition getStructDefinitionForId(int id) {
+        Optional<String> messageName = getStructNameForId(id);
         if (messageName.isPresent()) {
             return types.get(messageName.get());
         } else {
@@ -88,10 +88,10 @@ public class TypeFactory {
         }
     }
 
-    public Type parse(String definition) {
-        Matcher matcher = TYPE_PATTERN.matcher(definition);
+    public Type parse(String typeDefinition) {
+        Matcher matcher = TYPE_PATTERN.matcher(typeDefinition);
         if (!matcher.matches()) {
-            throw new IllegalArgumentException("Badly formed type name " + definition);
+            throw new IllegalArgumentException("Badly formed type name " + typeDefinition);
         }
         String optional = matcher.group(1);
         String name = matcher.group(2);
@@ -99,7 +99,7 @@ public class TypeFactory {
         String arraySize = matcher.group(4);
 
         boolean isOptional = optional != null;
-        MessageDefinition struct = types.get(name);
+        StructDefinition struct = types.get(name);
         boolean isArray = array != null;
         int length = (arraySize == null) ? 0 : Integer.parseInt(arraySize);
 
@@ -109,7 +109,7 @@ public class TypeFactory {
             try {
                 return new Type(isOptional, name, isArray, length, Primitive.valueOf(name));
             } catch (IllegalArgumentException e) {
-                throw new TypeException("Unknown type " + definition);
+                throw new TypeException("Unknown type " + typeDefinition);
             }
         }
     }
@@ -122,15 +122,15 @@ public class TypeFactory {
         private String name;
         private boolean array;
         private int length;
-        private MessageDefinition struct;
+        private StructDefinition structDefinition;
         private Primitive primitiveType;
 
-        public Type(boolean optional, String name, boolean array, int length, MessageDefinition struct) {
+        public Type(boolean optional, String name, boolean array, int length, StructDefinition structDefinition) {
             this.optional = optional;
             this.name = name;
             this.array = array;
             this.length = length;
-            this.struct = struct;
+            this.structDefinition = structDefinition;
         }
 
         public Type(boolean optional, String name, boolean array, int length, Primitive primitiveType) {
@@ -161,8 +161,8 @@ public class TypeFactory {
             return length;
         }
 
-        public MessageDefinition getStruct() {
-            return struct;
+        public StructDefinition getStructDefinition() {
+            return structDefinition;
         }
 
         public Primitive getPrimitiveType() {

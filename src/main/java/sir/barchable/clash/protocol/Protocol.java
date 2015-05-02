@@ -2,11 +2,8 @@ package sir.barchable.clash.protocol;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.lang.reflect.Field;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executor;
 
 /**
  * Date: 6/04/15
@@ -14,24 +11,24 @@ import java.util.concurrent.Executor;
  * @author Sir Barchable
  */
 public class Protocol {
-    private List<MessageDefinition> messages = new ArrayList<>();
+    private List<StructDefinition> messages = new ArrayList<>();
 
-    public Protocol(@JsonProperty("messages") List<MessageDefinition> messages) {
+    public Protocol(@JsonProperty("messages") List<StructDefinition> messages) {
         this.messages = messages;
     }
 
-    public List<MessageDefinition> getMessages() {
+    public List<StructDefinition> getMessages() {
         return messages;
     }
 
-    public static class MessageDefinition {
+    public static class StructDefinition {
         private Integer id;
         private String name;
         private String comment;
         private List<FieldDefinition> fields;
         private final List<Extension> extensions;
 
-        public MessageDefinition(
+        public StructDefinition(
             @JsonProperty("id") Integer id,
             @JsonProperty("name") String name,
             @JsonProperty("comment") String comment,

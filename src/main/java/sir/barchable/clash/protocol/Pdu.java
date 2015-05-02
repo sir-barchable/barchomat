@@ -194,9 +194,8 @@ public class Pdu {
         payload = new byte[0];
     }
 
-    public Pdu(int id, int padding, byte[] payload) {
+    public Pdu(int id, byte[] payload) {
         this.id = id;
-        this.padding = padding;
         this.payload = payload;
     }
 

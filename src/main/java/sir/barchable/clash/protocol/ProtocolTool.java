@@ -57,14 +57,14 @@ public class ProtocolTool {
         }
 
         ObjectMapper mapper = new ObjectMapper();
-        List<Protocol.MessageDefinition> definitions = new ArrayList<>();
+        List<Protocol.StructDefinition> definitions = new ArrayList<>();
 
         log.info("Reading protocol definition from {}", dir.getAbsolutePath());
         Files.walk(dir.toPath())
             .filter(path -> path.toString().endsWith(".json"))
             .forEach(path -> {
                 try {
-                    definitions.add(mapper.readValue(path.toFile(), Protocol.MessageDefinition.class));
+                    definitions.add(mapper.readValue(path.toFile(), Protocol.StructDefinition.class));
                 } catch (IOException e) {
                     throw new ResourceException("Could not read definition file " + path.getFileName(), e);
                 }

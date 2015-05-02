@@ -2,9 +2,9 @@ package sir.barchable.clash.protocol;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sir.barchable.clash.protocol.Protocol.MessageDefinition;
-import sir.barchable.clash.protocol.Protocol.MessageDefinition.Extension;
-import sir.barchable.clash.protocol.Protocol.MessageDefinition.FieldDefinition;
+import sir.barchable.clash.protocol.Protocol.StructDefinition;
+import sir.barchable.clash.protocol.Protocol.StructDefinition.Extension;
+import sir.barchable.clash.protocol.Protocol.StructDefinition.FieldDefinition;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -30,7 +30,7 @@ public class MessageReader {
     }
 
     public Message newMessage(Pdu.ID id) {
-        MessageDefinition definition = typeFactory.getMessageDefinitionForId(id.id());
+        StructDefinition definition = typeFactory.getStructDefinitionForId(id.id());
         return new Message(definition);
     }
 
@@ -41,7 +41,7 @@ public class MessageReader {
      * @return a map of field names -> field values, or null if the message ID isn't recognized
      */
     public Map<String, Object> readMessage(Pdu pdu) {
-        Optional<String> messageName = typeFactory.getMessageNameForId(pdu.getId());
+        Optional<String> messageName = typeFactory.getStructNameForId(pdu.getId());
         if (messageName.isPresent()) {
             try {
                 MessageInputStream in = new MessageInputStream(new ByteArrayInputStream(pdu.getPayload()));
@@ -165,7 +165,7 @@ public class MessageReader {
         try {
 
             // Read fields
-            MessageDefinition struct = definition.getStruct();
+            StructDefinition struct = definition.getStructDefinition();
             for (FieldDefinition field : struct.getFields()) {
                 fieldIndex++;
                 Object value = readValue(field.getType(), in);

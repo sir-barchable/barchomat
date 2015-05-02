@@ -17,6 +17,9 @@ public class SessionData {
     }
 
     synchronized public void setUserId(long userId) {
+        if (this.userId != 0) {
+            throw new IllegalStateException("User ID already set");
+        }
         this.userId = userId;
     }
 
