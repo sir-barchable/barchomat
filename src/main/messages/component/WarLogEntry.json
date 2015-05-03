@@ -12,7 +12,7 @@
     {"name": "stars", "type": "INT"},
     {"name": "enemyStars", "type": "INT"},
     {"name": "attacksUsed", "type": "INT"},
-    {"name": "enemyAttacksUsed", "type": "INT"},
+    {"name": "xpEarned", "type": "INT"},
     {"type": "INT"},
     {"type": "INT"},
     {"type": "INT"},

@@ -3,6 +3,7 @@ package sir.barchable.clash.protocol;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 import java.util.Optional;
 
@@ -32,7 +33,7 @@ public class MessageFactory {
     public Message newMessage(Pdu.Type type) {
         Protocol.StructDefinition definition = typeFactory.getStructDefinitionForId(type.id());
         if (definition == null) {
-            throw new IllegalArgumentException("No definition for " + type);
+            throw new TypeException("No type definition for " + type);
         }
         return new Message(definition);
     }
@@ -44,18 +45,25 @@ public class MessageFactory {
      * @return a map of field names -> field values, or null if the message ID isn't recognized
      */
     public Message fromPdu(Pdu pdu) {
-        Optional<String> structName = typeFactory.getStructNameForId(pdu.getId());
+        try (ByteArrayInputStream in = new ByteArrayInputStream(pdu.getPayload())) {
+            return fromStream(pdu.getType(), in);
+        } catch (IOException e) {
+            throw new PduException(e);
+        }
+    }
+
+    public Message fromStream(Pdu.Type pduType, InputStream in) {
+        Optional<String> structName = typeFactory.getStructNameForId(pduType.id());
         if (structName.isPresent()) {
             try {
-                MessageInputStream in = new MessageInputStream(new ByteArrayInputStream(pdu.getPayload()));
                 TypeFactory.Type type = typeFactory.newType(structName.get());
-                Map<String, Object> fields = (Map<String, Object>) reader.readValue(type, in);
+                Map<String, Object> fields = (Map<String, Object>) reader.readValue(type, new MessageInputStream(in));
                 return new Message(type.getStructDefinition(), fields);
             } catch (IOException e) {
                 throw new PduException(e);
             }
         } else {
-            return null;
+            throw new TypeException("No type definition for " + pduType);
         }
     }
 

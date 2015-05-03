@@ -124,7 +124,11 @@ public class MessageWriter {
                 key = "field" + fieldIndex;
             }
             Object value = struct.get(key);
-            write(typeFactory.newType(fieldDefinition.getType()), value, out);
+            try {
+                write(typeFactory.newType(fieldDefinition.getType()), value, out);
+            } catch (RuntimeException e) {
+                throw new IOException("Failed to write field " + key + " of " + type.getName(), e);
+            }
         }
         Object id = struct.get(TypeFactory.ID_FIELD);
         if (id != null && id instanceof Integer) {
@@ -132,8 +136,15 @@ public class MessageWriter {
             if (extension != null) {
                 for (FieldDefinition fieldDefinition : extension.getFields()) {
                     String key = fieldDefinition.getName();
+                    if (key == null) {
+                        key = "field" + fieldIndex;
+                    }
                     Object value = struct.get(key);
-                    write(typeFactory.newType(fieldDefinition.getType()), value, out);
+                    try {
+                        write(typeFactory.newType(fieldDefinition.getType()), value, out);
+                    } catch (IOException e) {
+                        throw new IOException("Failed to write field " + key + " of " + type.getName(), e);
+                    }
                 }
             }
         }

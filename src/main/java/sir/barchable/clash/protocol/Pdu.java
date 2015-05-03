@@ -86,7 +86,7 @@ public class Pdu {
         FriendList(20105),
         FriendListUpdate(20106),
         AddableFriends(20107),
-        AddFriendFailed(20108),
+        ServerKeepAlive(20108),
         FriendOnlineStatus(20109),
         FriendLoggedIn(20110),
         FriendLoggedOut(20111),

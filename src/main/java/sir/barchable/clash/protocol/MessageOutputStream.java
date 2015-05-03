@@ -7,7 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.zip.InflaterOutputStream;
+import java.util.zip.DeflaterOutputStream;
 
 /**
  * Output stream with support for writing Clash primitives.
@@ -62,7 +62,7 @@ public class MessageOutputStream extends OutputStream {
     public void writeZipString(String s) throws IOException {
         byte[] bytes = s.getBytes(StandardCharsets.UTF_8);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        InflaterOutputStream zipStream = new InflaterOutputStream(out);
+        DeflaterOutputStream zipStream = new DeflaterOutputStream(out);
         zipStream.write(bytes);
         zipStream.close();
         byte[] zipped = out.toByteArray();

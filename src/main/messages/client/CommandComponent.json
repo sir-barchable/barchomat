@@ -71,6 +71,12 @@
         {"name": "tick", "type": "INT"}
       ]
     }, {
+      "id": 603,
+      "comment": "End combat",
+      "fields": [
+        {"name": "tick", "type": "INT"}
+      ]
+    }, {
       "id": 604,
       "comment": "Cast spell",
       "fields": [
