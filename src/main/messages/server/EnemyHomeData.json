@@ -11,7 +11,13 @@
     {"type": "INT"},
     {"type": "INT"},
     {"name": "homeVillage", "type": "?ZIP_STRING"},
+    {"name": "enemy", "type": "UserComponent"},
+    {"name": "enemyResources", "type": "ResourceListComponent"},
+    {"type": "INT"},
     {"name": "user", "type": "UserComponent"},
-    {"name": "resources", "type": "ResourceListComponent"}
+    {"name": "resources", "type": "ResourceListComponent"},
+    {"type": "INT"},
+    {"type": "INT"},
+    {"type": "?LONG"}
   ]
 }

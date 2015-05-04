@@ -4,11 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sir.barchable.clash.protocol.*;
 import sir.barchable.clash.protocol.Connection;
-import sir.barchable.clash.model.SessionData;
+import sir.barchable.clash.model.SessionState;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.CountDownLatch;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -17,6 +17,8 @@ import static sir.barchable.clash.protocol.Pdu.Type.LoginOk;
 import static sir.barchable.clash.protocol.Pdu.Type.ServerKeepAlive;
 
 /**
+ * Clash server.
+ *
  * @author Sir Barchable
  *         Date: 01/05/15
  */
@@ -25,15 +27,13 @@ public class ServerSession {
 
     private AtomicBoolean running = new AtomicBoolean(true);
     private Connection clientConnection;
-    private CountDownLatch latch = new CountDownLatch(1);
     private MessageFactory messageFactory;
-    private SessionData sessionData = new SessionData();
+    private SessionState sessionState = new SessionState();
 
     /**
      * File system access.
      */
     private VillageLoader villageLoader;
-
 
     private ServerSession(MessageFactory messageFactory, Connection clientConnection) throws IOException {
         this.messageFactory = messageFactory;
@@ -41,19 +41,14 @@ public class ServerSession {
         this.villageLoader = new VillageLoader(messageFactory, new File("villages"));
     }
 
-    /**
-     * Get the session that your thread is participating in.
-     *
-     * @return your session, or null
-     */
-    public static ServerSession getSession() {
-        return session.get();
+    public SessionState getSessionState() {
+        return sessionState;
     }
 
     /**
      * Thread local session.
      */
-    private static final InheritableThreadLocal<ServerSession> session = new InheritableThreadLocal<>();
+    private static final InheritableThreadLocal<ServerSession> localSession = new InheritableThreadLocal<>();
 
     /**
      * Serve a clash session. This will block until processing completes, or until the calling thread is interrupted.
@@ -62,19 +57,30 @@ public class ServerSession {
      */
     public static ServerSession newSession(MessageFactory messageFactory, Connection clientConnection) throws IOException {
         ServerSession session = new ServerSession(messageFactory, clientConnection);
+        ServerSession.localSession.set(session);
         try {
-            ServerSession.session.set(session);
-            session.start();
-            session.await();
+
+            //
+            // We run the uninterruptable IO in a separate thread to maintain an interruptable controlling thread from
+            // which can stop processing by closing the input stream.
+            //
+
+            Thread t = new Thread(session::run, clientConnection.getName() + " server");
+            t.start();
+            t.join();
+
         } catch (InterruptedException e) {
             session.shutdown();
         } finally {
-            ServerSession.session.set(null);
+            ServerSession.localSession.set(null);
         }
         return session;
     }
 
-    private void start() {
+    /**
+     * Process the key exchange then loop to process PDUs from the client.
+     */
+    private void run() {
         try {
 
             //
@@ -84,7 +90,7 @@ public class ServerSession {
 
             Pdu loginPdu = clientConnection.getIn().readPdu();
             Message loginMessage = messageFactory.fromPdu(loginPdu);
-            sessionData.setUserId((Long) loginMessage.get("userId"));
+            sessionState.setUserId((Long) loginMessage.get("userId"));
             Object clientSeed = loginMessage.get("clientSeed");
             if (clientSeed == null || !(clientSeed instanceof Integer)) {
                 throw new PduException("Expected client seed in login message");
@@ -132,39 +138,52 @@ public class ServerSession {
             // Send the home village
             //
 
-            Message homeVillage = villageLoader.loadHomeVillage();
-            clientConnection.getOut().writePdu(messageFactory.toPdu(homeVillage));
+            clientConnection.getOut().writePdu(messageFactory.toPdu(loadHome()));
 
             //
-            // Hand off to the main loop to start exchanging PDUs.
+            // The request loop handles further PDUs
             //
 
-            run(clientConnection);
+            processRequests(clientConnection);
 
         } catch (PduException | IOException e) {
             log.error("Key exchange did not complete: " + e, e);
         }
     }
 
-    private void run(Connection connection) {
+    private void processRequests(Connection connection) {
         try {
             while (running.get()) {
+
+                //
+                // Read a request PDU
+                //
+
                 Pdu pdu = connection.getIn().readPdu();
                 log.debug("Pdu from client: {}", pdu.getType());
 
-                Message message = null;
+                Message request;
                 try {
-                    message = messageFactory.fromPdu(pdu);
+                    request = messageFactory.fromPdu(pdu);
                 } catch (RuntimeException e) {
                     // Probably no type definition for the PDU
                     log.debug("Can't respond to {}: {}", pdu.getType(), e.getMessage());
                     continue;
                 }
 
+                //
+                // Create a response
+                //
+
                 Message response = null;
+
                 switch (pdu.getType()) {
                     case EndClientTurn:
-                        response = endTurn(message);
+                        response = endTurn(request);
+                        break;
+
+                    case AttackResult:
+                        response = loadHome();
                         break;
 
                     case KeepAlive:
@@ -172,35 +191,63 @@ public class ServerSession {
                         break;
 
                     default:
-                        log.debug("{} from {}", pdu.getType(), connection.getName());
+                        log.debug("Not handling {} from {}", pdu.getType(), connection.getName());
                 }
+
+                //
+                // Return the response to the client
+                //
+
                 if (response != null) {
                     connection.getOut().writePdu(messageFactory.toPdu(response));
                 }
             }
-        } catch (IOException e) {
-            log.info("{} done", connection);
+
+            log.info("{} done", connection.getName());
+        } catch (RuntimeException | IOException e) {
+            log.info(
+                "{} terminating due to exception {}",
+                connection.getName(),
+                e.getMessage() == null ? e.toString() : e.getMessage()
+            );
         }
     }
 
-    private Message endTurn(Message message) {
+    private Message endTurn(Message message) throws IOException {
+        Object[] commands = (Object[]) message.get("commands");
+        if (commands != null) {
+            for (int i = 0; i < commands.length; i++) {
+                Map<String, Object> command = (Map<String, Object>) commands[i];
+                Integer id = (Integer) command.get("id");
+                if (id != null) {
+                    switch (id) {
+                        case 700:
+                            return loadEnemy();
+
+                        case 603:
+                            return loadHome();
+
+                        default:
+                            log.debug("Not processing command {} from client", id);
+                    }
+                }
+            }
+        }
         return null;
     }
 
-    /**
-     * This is used by {@link #newSession} to wait for the session to complete.
-     */
-    void await() throws InterruptedException {
-        latch.await();
+    private Message loadHome() throws IOException {
+        Message message = villageLoader.loadHomeVillage();
+        message.set("timeStamp", (int) (System.currentTimeMillis() / 1000));
+        return message;
     }
 
-    /**
-     * Thread local session data.
-     *
-     * @see ServerSession#getSessionData()
-     */
-    public SessionData getSessionData() {
-        return sessionData;
+    private int nextVillage;
+
+    private Message loadEnemy() throws IOException {
+        Message message = villageLoader.loadEnemyVillage(nextVillage++);
+        message.set("timeStamp", (int) (System.currentTimeMillis() / 1000));
+        return message;
     }
 
     /**

@@ -75,11 +75,11 @@ public class ClashServer {
      * @param args see usage
      */
     public static void main(String[] args) {
-        ClashServer proxy = new ClashServer();
-        JCommander commander = new JCommander(proxy);
+        ClashServer server = new ClashServer();
+        JCommander commander = new JCommander(server);
         try {
             commander.parse(args);
-            proxy.run();
+            server.run();
         } catch (ParameterException e) {
             commander.usage();
         } catch (Exception e) {
@@ -147,8 +147,8 @@ public class ClashServer {
     }
 
     /**
-     * Accept a connection from a client and proxy it to the server. Will block until processing completes (typically
-     * because the client closes its connection to us).
+     * Accept a connection from a client. Will block until processing completes (typically because the client closes
+     * its connection to us).
      * <p>
      * The socket and any associated streams will be closed before this call completes.
      */
@@ -162,7 +162,7 @@ public class ClashServer {
                 log.info("Client {} disconnected", socket);
             }
         } catch (IOException e) {
-            log.info("Could not proxy connection from {}: {}", socket.getInetAddress(), e.toString());
+            log.info("Could not accept connection from {}: {}", socket.getInetAddress(), e.toString());
         } finally {
             try {
                 socket.close();

@@ -67,11 +67,13 @@ public class MessageOutputStream extends OutputStream {
         zipStream.close();
         byte[] zipped = out.toByteArray();
         // write total length
-        writeInt(zipped.length + 4);
+        writeInt(zipped.length + 5);
         // write unzipped length in little endian order
         writeInt(Bits.swapEndian(bytes.length));
         // write zipped utf-8 encoded string
         write(zipped);
+        // null terminator
+        write(0);
     }
 
     public void writeArray(int[] ints) throws IOException {

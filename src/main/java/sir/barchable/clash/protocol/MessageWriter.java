@@ -24,6 +24,9 @@ public class MessageWriter {
 
         if (type.isOptional()) {
             out.writeBit(o != null);
+            if (o == null) {
+                return;
+            }
         }
 
         if (type.isArray()) {

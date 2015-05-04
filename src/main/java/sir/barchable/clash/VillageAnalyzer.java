@@ -15,7 +15,7 @@ import sir.barchable.clash.model.json.WarVillage;
 import sir.barchable.clash.protocol.Pdu;
 import sir.barchable.clash.proxy.MessageTap;
 import sir.barchable.clash.proxy.ProxySession;
-import sir.barchable.clash.model.SessionData;
+import sir.barchable.clash.model.SessionState;
 import sir.barchable.util.Dates;
 
 import java.io.IOException;
@@ -64,7 +64,7 @@ public class VillageAnalyzer implements MessageTap {
     }
 
     private void analyzeHomeVillage(Pdu.Type type, Map<String, Object> message, Village village) {
-        SessionData sessionData = ProxySession.getSession().getSessionData();
+        SessionState sessionState = ProxySession.getSession().getSessionState();
 
         int age = (Integer) message.get("age");
         Integer timeStamp = (Integer) message.get("timeStamp");
@@ -198,16 +198,16 @@ public class VillageAnalyzer implements MessageTap {
 
         int timeToGemboxDrop = village.respawnVars.time_to_gembox_drop < 0 ? 0 : village.respawnVars.time_to_gembox_drop;
         if (type == OwnHomeData) {
-            if (sessionData.getUserId() == 0) {
+            if (sessionState.getUserId() == 0) {
                 log.info("Welcome {}", userName);
                 // OwnHomeData. Remember town hall level for loot calculations
-                sessionData.setUserId(userId);
+                sessionState.setUserId(userId);
                 // Log startup info
                 log.info("Clock skew is {}ms", System.currentTimeMillis() - timeStamp * 1000l);
                 log.info("Gem box time in period {}", Dates.formatInterval(village.respawnVars.time_in_gembox_period));
             }
-            sessionData.setUserName(userName);
-            sessionData.setTownHallLevel(townHallLevel);
+            sessionState.setUserName(userName);
+            sessionState.setTownHallLevel(townHallLevel);
         } else {
             loot = lootCalculator.calculateAvailableLoot(loot, townHallLevel);
         }
@@ -246,10 +246,10 @@ public class VillageAnalyzer implements MessageTap {
 
         if (type != OwnHomeData) {
             // Apply raid penalty
-            if (sessionData.getTownHallLevel() == 0) {
+            if (sessionState.getTownHallLevel() == 0) {
                 log.warn("User town hall level not set, can't calculate loot penalty.");
             } else {
-                int penalty = lootCalculator.getLevelPenalty(sessionData.getTownHallLevel(), townHallLevel);
+                int penalty = lootCalculator.getLevelPenalty(sessionState.getTownHallLevel(), townHallLevel);
                 if (penalty != 100) {
                     log.info("After penalty of {}%: {}", 100 - penalty, loot.total().percent(penalty));
                 }
@@ -260,17 +260,17 @@ public class VillageAnalyzer implements MessageTap {
         if (clanName != null) {
             // We keep the collection of stats for each clan in a a map from village ID -> stats
             String statKey = CLAN_STATS_PREFIX + clanName;
-            Map<Long, VillageStats> clanStats = (Map<Long, VillageStats>) sessionData.getAttribute(statKey);
+            Map<Long, VillageStats> clanStats = (Map<Long, VillageStats>) sessionState.getAttribute(statKey);
             if (clanStats == null) {
                 clanStats = new HashMap<>();
-                sessionData.setAttribute(statKey, clanStats);
+                sessionState.setAttribute(statKey, clanStats);
             }
             clanStats.put(userId, villageStats);
         }
     }
 
     private void analyzeWarVillage(Pdu.Type type, Map<String, Object> message, WarVillage village) {
-        SessionData sessionData = ProxySession.getSession().getSessionData();
+        SessionState sessionState = ProxySession.getSession().getSessionState();
 
         long userId = (long) village.avatar_id_high << 32 | village.avatar_id_low & 0xffffffffl;
         String userName = village.name;
@@ -340,10 +340,10 @@ public class VillageAnalyzer implements MessageTap {
         if (clanName != null) {
             // We keep the collection of stats for each clan in a a map from village ID -> stats
             String statKey = CLAN_STATS_PREFIX + clanName;
-            Map<Long, VillageStats> clanStats = (Map<Long, VillageStats>) sessionData.getAttribute(statKey);
+            Map<Long, VillageStats> clanStats = (Map<Long, VillageStats>) sessionState.getAttribute(statKey);
             if (clanStats == null) {
                 clanStats = new HashMap<>();
-                sessionData.setAttribute(statKey, clanStats);
+                sessionState.setAttribute(statKey, clanStats);
             }
             clanStats.put(userId, villageStats);
         }
@@ -355,7 +355,7 @@ public class VillageAnalyzer implements MessageTap {
     public static void logSession(ProxySession session) {
         // For each session attribute with a key that starts "clan.stats."
         session
-            .getSessionData()
+            .getSessionState()
             .getAttributes()
             .entrySet()
             .stream()

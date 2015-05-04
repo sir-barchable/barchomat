@@ -8,7 +8,7 @@ import java.util.*;
  * @author Sir Barchable
  *         Date: 1/05/15
  */
-public class SessionData {
+public class SessionState {
     private long userId;
     private String userName;
     private int townHallLevel;

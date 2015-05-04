@@ -145,7 +145,7 @@ public class MessageReader {
                 return in.readBit();
 
             case BYTE:
-                return in.readUnsignedByte();
+                return (byte) in.read();
 
             case INT:
                 return in.readInt();

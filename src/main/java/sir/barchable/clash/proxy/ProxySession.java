@@ -2,7 +2,7 @@ package sir.barchable.clash.proxy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sir.barchable.clash.model.SessionData;
+import sir.barchable.clash.model.SessionState;
 import sir.barchable.clash.protocol.Connection;
 import sir.barchable.clash.protocol.PduException;
 
@@ -31,7 +31,7 @@ public class ProxySession {
     private Connection clientConnection;
     private Connection serverConnection;
 
-    private SessionData sessionData = new SessionData();
+    private SessionState sessionState = new SessionState();
 
     /**
      * When the pipe threads finish they wait here.
@@ -50,13 +50,17 @@ public class ProxySession {
      * @return your session, or null
      */
     public static ProxySession getSession() {
-        return session.get();
+        return localSession.get();
+    }
+
+    public SessionState getSessionState() {
+        return sessionState;
     }
 
     /**
      * Thread local session.
      */
-    private static final InheritableThreadLocal<ProxySession> session = new InheritableThreadLocal<>();
+    private static final InheritableThreadLocal<ProxySession> localSession = new InheritableThreadLocal<>();
 
     /**
      * Proxy a connection from a client to a clash server. This will block until processing completes, or until the
@@ -66,14 +70,14 @@ public class ProxySession {
      */
     public static ProxySession newSession(Connection clientConnection, Connection serverConnection, PduFilter... filters) {
         ProxySession session = new ProxySession(clientConnection, serverConnection, filters);
+        ProxySession.localSession.set(session);
         try {
-            ProxySession.session.set(session);
             session.start();
             session.await();
         } catch (InterruptedException e) {
             session.shutdown();
         } finally {
-            ProxySession.session.set(null);
+            ProxySession.localSession.set(null);
         }
         return session;
     }
@@ -137,16 +141,6 @@ public class ProxySession {
         }, "Pipe thread for " + pipe.getName());
         t.setDaemon(true);
         t.start();
-    }
-
-    /**
-     * Thread local session data for filters. This is shared by both the client and server threads, so watch your
-     * synchronization.
-     *
-     * @see ProxySession#getSessionData()
-     */
-    public SessionData getSessionData() {
-        return sessionData;
     }
 
     /**
