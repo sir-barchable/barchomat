@@ -1,9 +1,25 @@
 {
   "id": 24324,
-  "name": "AllianceData2",
+  "name": "AllianceData",
   "fields": [
     {"name": "clanDescription", "type": "STRING"},
-    {"type": "BYTE[25]"},
-    {"name": "clanName", "type": "STRING"}
+    {"type": "INT"},
+    {"type": "INT"},
+    {"type": "?LONG"},
+    {"name": "clanId", "type": "LONG"},
+    {"name": "clanName", "type": "STRING"},
+    {"name": "badge", "type": "INT"},
+    {"type": "INT"},
+    {"type": "INT"},
+    {"type": "INT"},
+    {"type": "INT"},
+    {"type": "INT"},
+    {"type": "INT"},
+    {"type": "INT"},
+    {"type": "INT"},
+    {"type": "INT"},
+    {"type": "INT"},
+    {"type": "INT"},
+    {"type": "INT"}
   ]
 }

@@ -70,14 +70,14 @@ public class ProxySession {
      */
     public static ProxySession newSession(Connection clientConnection, Connection serverConnection, PduFilter... filters) {
         ProxySession session = new ProxySession(clientConnection, serverConnection, filters);
-        ProxySession.localSession.set(session);
+        localSession.set(session);
         try {
             session.start();
             session.await();
         } catch (InterruptedException e) {
             session.shutdown();
         } finally {
-            ProxySession.localSession.set(null);
+            localSession.set(null);
         }
         return session;
     }

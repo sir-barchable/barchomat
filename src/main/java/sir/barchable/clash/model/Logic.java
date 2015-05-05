@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * Access interface for the game logic contained in csv assets. The files hold object properties organized by object
@@ -101,7 +102,7 @@ public class Logic {
 
     private Data getData(int typeId) {
         String type = getTypeName(typeId);
-        int subtype = typeId % 1000;
+        int subtype = typeId % 100;
         List<Data> data = dataMap.get(type);
         if (subtype > data.size() - 1) {
             throw new IllegalArgumentException("No data for " + type + ":" + subtype);
@@ -136,10 +137,11 @@ public class Logic {
 
     /**
      * Turn an object type id into a type name.
-     * @param id type id
+     *
+     * @param typeId type id
      */
-    public String getTypeName(int id) {
-        int index = id / 1000000;
+    public String getTypeName(int typeId) {
+        int index = typeId / 1000000;
         String type;
         try {
             type = objectTypes.get(index);
@@ -166,6 +168,27 @@ public class Logic {
      */
     public String getFullTypeName(int id) {
         return getTypeName(id) + ":" + getSubTypeName(id);
+    }
+
+    /**
+     * Get the max level of a type. <EM>Zero Based</EM>.
+     *
+     * @return the max level of the type, counting 0 as the first level
+     */
+    public int getMaxLevel(int typeId) {
+        return getData(typeId).size() - 1;
+    }
+
+    public String[] getSubTypeNames(String typeName, Predicate<Data> filter) {
+        List<Data> dataList = dataMap.get(typeName);
+
+        if (dataList == null) {
+            return new String[0];
+        } else {
+            return dataList.stream()
+                .filter(filter != null ? filter : x -> true)
+                .map(Data::getName).toArray(String[]::new);
+        }
     }
 
     public static class Data {

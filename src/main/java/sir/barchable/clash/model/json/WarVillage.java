@@ -2,6 +2,7 @@ package sir.barchable.clash.model.json;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import sir.barchable.clash.model.Unit;
 
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
@@ -45,14 +46,6 @@ public class WarVillage {
     public static class Resource {
         public int id;
         public int cnt;
-    }
-
-    @JsonAutoDetect(fieldVisibility = ANY)
-    @JsonInclude(NON_NULL)
-    public static class Unit {
-        public int id;
-        public int cnt;
-        public int lvl;
     }
 
     @JsonAutoDetect(fieldVisibility = ANY)

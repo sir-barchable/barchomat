@@ -2,6 +2,9 @@ package sir.barchable.clash.server;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sir.barchable.clash.ResourceException;
+import sir.barchable.clash.model.LoadOut;
+import sir.barchable.clash.model.Logic;
 import sir.barchable.clash.protocol.*;
 import sir.barchable.clash.protocol.Connection;
 import sir.barchable.clash.model.SessionState;
@@ -35,10 +38,10 @@ public class ServerSession {
      */
     private VillageLoader villageLoader;
 
-    private ServerSession(MessageFactory messageFactory, Connection clientConnection) throws IOException {
+    private ServerSession(Logic logic, MessageFactory messageFactory, Connection clientConnection) throws IOException {
         this.messageFactory = messageFactory;
         this.clientConnection = clientConnection;
-        this.villageLoader = new VillageLoader(messageFactory, new File("villages"));
+        this.villageLoader = new VillageLoader(logic, messageFactory, new File("villages"));
     }
 
     public SessionState getSessionState() {
@@ -55,9 +58,9 @@ public class ServerSession {
      * <p>
      * Normal completion is usually the result of an EOF on the input stream.
      */
-    public static ServerSession newSession(MessageFactory messageFactory, Connection clientConnection) throws IOException {
-        ServerSession session = new ServerSession(messageFactory, clientConnection);
-        ServerSession.localSession.set(session);
+    public static ServerSession newSession(Logic logic, MessageFactory messageFactory, Connection clientConnection) throws IOException {
+        ServerSession session = new ServerSession(logic, messageFactory, clientConnection);
+        localSession.set(session);
         try {
 
             //
@@ -72,7 +75,7 @@ public class ServerSession {
         } catch (InterruptedException e) {
             session.shutdown();
         } finally {
-            ServerSession.localSession.set(null);
+            localSession.set(null);
         }
         return session;
     }
@@ -237,17 +240,35 @@ public class ServerSession {
     }
 
     private Message loadHome() throws IOException {
-        Message message = villageLoader.loadHomeVillage();
-        message.set("timeStamp", (int) (System.currentTimeMillis() / 1000));
-        return message;
+        Message village = villageLoader.loadHomeVillage();
+        if (village == null) {
+            throw new ResourceException("No home village. Have you captured some data with the proxy?");
+        }
+        village.set("timeStamp", (int) (System.currentTimeMillis() / 1000));
+        applyLoadout(village);
+
+        return village;
+    }
+
+    private void applyLoadout(Message village) throws IOException {
+        File loadOutFile = new File("loadout.json");
+        if (loadOutFile.exists()) {
+            LoadOut loadOut = villageLoader.loadLoadOut(loadOutFile);
+            villageLoader.applyLoadOut(village, loadOut);
+        }
     }
 
     private int nextVillage;
 
     private Message loadEnemy() throws IOException {
-        Message message = villageLoader.loadEnemyVillage(nextVillage++);
-        message.set("timeStamp", (int) (System.currentTimeMillis() / 1000));
-        return message;
+        Message village = villageLoader.loadEnemyVillage(nextVillage++);
+        if (village == null) {
+            throw new ResourceException("No home village. Have you captured some data with the proxy?");
+        }
+        village.set("timeStamp", (int) (System.currentTimeMillis() / 1000));
+        applyLoadout(village);
+
+        return village;
     }
 
     /**

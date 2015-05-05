@@ -1,7 +1,11 @@
 package sir.barchable.clash.server;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sir.barchable.clash.model.LoadOut;
+import sir.barchable.clash.model.Logic;
+import sir.barchable.clash.model.Unit;
 import sir.barchable.clash.protocol.Message;
 import sir.barchable.clash.protocol.MessageFactory;
 
@@ -11,11 +15,16 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 import static sir.barchable.clash.protocol.Pdu.Type.EnemyHomeData;
 import static sir.barchable.clash.protocol.Pdu.Type.OwnHomeData;
+import static sir.barchable.clash.protocol.Pdu.Type.VisitedHomeData;
 
 /**
  * Load saved villages from the specified directory. Villages are typically saved by a
@@ -26,15 +35,18 @@ import static sir.barchable.clash.protocol.Pdu.Type.OwnHomeData;
  */
 public class VillageLoader {
     private static final Logger log = LoggerFactory.getLogger(VillageLoader.class);
-
     private static final Pattern HOME_PATTERN = Pattern.compile("OwnHomeData.*\\.pdu");
     private static final Pattern ENEMY_HOME_PATTERN = Pattern.compile("EnemyHomeData.*\\.pdu");
+    private static final Pattern VISITED_HOME_PATTERN = Pattern.compile("VisitedHomeData.*\\.pdu");
 
+    private Logic logic;
     private MessageFactory messageFactory;
     private File home;
+    private File enemyPrototype;
     private File[] enemyHomes;
 
-    public VillageLoader(MessageFactory messageFactory, File dir) throws IOException {
+    public VillageLoader(Logic logic, MessageFactory messageFactory, File dir) throws IOException {
+        this.logic = logic;
         this.messageFactory = messageFactory;
 
         Optional<File> homeFile = Files.walk(dir.toPath())
@@ -48,9 +60,11 @@ public class VillageLoader {
             throw new FileNotFoundException("No home village file found in " + dir);
         }
 
+        enemyPrototype = new File("EnemyHomeDataPrototype.pdu");
+
         enemyHomes = Files.walk(dir.toPath())
             .map(Path::toFile)
-            .filter(file -> ENEMY_HOME_PATTERN.matcher(file.getName()).matches())
+            .filter(file -> ENEMY_HOME_PATTERN.matcher(file.getName()).matches() || VISITED_HOME_PATTERN.matcher(file.getName()).matches())
             .toArray(File[]::new);
     }
 
@@ -67,23 +81,78 @@ public class VillageLoader {
         }
     }
 
+    private Message loadEnemyPrototype() throws IOException {
+//        return messageFactory.newMessage(EnemyHomeData);
+        try (FileInputStream in = new FileInputStream(enemyPrototype)) {
+            return messageFactory.fromStream(EnemyHomeData, in);
+        }
+    }
+
     /**
      * Load the nth saved enemy home. The index will be wrapped if it is longer than the array length.
      *
-     * @param village the index of the home to load
+     * @param villageIndex the index of the home to load
      * @return the village, or null if there are no saved enemy villages
      */
-    public Message loadEnemyVillage(int village) throws IOException {
-        if (village < 0) {
+    public Message loadEnemyVillage(int villageIndex) throws IOException {
+        if (villageIndex < 0) {
             throw new IllegalArgumentException();
         }
         if (enemyHomes.length == 0) {
             return null;
         }
-        File enemyHome = enemyHomes[village % enemyHomes.length];
-        try (FileInputStream in = new FileInputStream(enemyHome)) {
-            log.debug("loading enemy village {}", enemyHome);
-            return messageFactory.fromStream(EnemyHomeData, in);
+        File villageFile = enemyHomes[villageIndex % enemyHomes.length];
+        try (FileInputStream in = new FileInputStream(villageFile)) {
+            log.debug("loading village {}", villageFile);
+            Message village = null;
+            if (ENEMY_HOME_PATTERN.matcher(villageFile.getName()).matches()) {
+                village = messageFactory.fromStream(EnemyHomeData, in);
+            } else if (VISITED_HOME_PATTERN.matcher(villageFile.getName()).matches()) {
+                village = messageFactory.fromStream(VisitedHomeData, in);
+                Message homeVillage = loadHomeVillage();
+                Message enemyVillage = loadEnemyPrototype();
+                enemyVillage.set("userId", village.get("userId"));
+                enemyVillage.set("homeVillage", village.get("homeVillage"));
+                enemyVillage.set("enemy", village.get("user"));
+                enemyVillage.set("enemyResources", village.get("resources"));
+                enemyVillage.set("user", homeVillage.get("user"));
+                enemyVillage.set("resources", homeVillage.get("resources"));
+                village = enemyVillage;
+            }
+            return village;
         }
+    }
+
+    public LoadOut loadLoadOut(File loadOutFile) throws IOException {
+        return new ObjectMapper().readValue(loadOutFile, LoadOut.class);
+    }
+
+    public void applyLoadOut(Message village, LoadOut loadOut) {
+        Map<String, Object> resources = village.getStruct("resources");
+        if (resources == null) {
+            throw new IllegalArgumentException("Incomplete village definition (no resources)");
+        }
+
+        Unit[] units = loadOut.getUnits();
+        Arrays.sort(units, (o1, o2) -> o1.getId() - o2.getId());
+
+        resources.put(
+            "unitCounts",
+            Arrays.stream(units).map(unit -> newResource(unit, Unit::getCnt)).toArray())
+        ;
+
+        resources.put(
+            "unitLevels",
+            Arrays.stream(units).map(unit -> newResource(unit, Unit::getLvl)).toArray()
+        );
+
+//        String villageJson = village.getString("village")
+    }
+
+    private Map<String, Object> newResource(Unit unit, Function<Unit, Integer> property) {
+        Map<String, Object> resourceCount = new LinkedHashMap<>();
+        resourceCount.put("type", unit.getId());
+        resourceCount.put("value", property.apply(unit));
+        return resourceCount;
     }
 }

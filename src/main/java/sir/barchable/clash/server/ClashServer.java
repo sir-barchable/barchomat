@@ -158,7 +158,7 @@ public class ClashServer {
             try (
                 Connection clientConnection = new Connection(socket);
             ) {
-                ServerSession session = ServerSession.newSession(messageFactory, clientConnection);
+                ServerSession session = ServerSession.newSession(logic, messageFactory, clientConnection);
                 log.info("Client {} disconnected", socket);
             }
         } catch (IOException e) {

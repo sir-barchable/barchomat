@@ -4,18 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sir.barchable.clash.VillageStats.Defense;
-import sir.barchable.clash.model.Logic;
-import sir.barchable.clash.model.LootCalculator;
+import sir.barchable.clash.model.*;
 import sir.barchable.clash.model.LootCalculator.Loot;
 import sir.barchable.clash.model.LootCalculator.LootCollection;
-import sir.barchable.clash.model.ObjectType;
-import sir.barchable.clash.model.Point;
 import sir.barchable.clash.model.json.Village;
 import sir.barchable.clash.model.json.WarVillage;
 import sir.barchable.clash.protocol.Pdu;
 import sir.barchable.clash.proxy.MessageTap;
 import sir.barchable.clash.proxy.ProxySession;
-import sir.barchable.clash.model.SessionState;
 import sir.barchable.util.Dates;
 
 import java.io.IOException;
@@ -317,12 +313,12 @@ public class VillageAnalyzer implements MessageTap {
         //
 
         List<String> unitDescriptions = new ArrayList<>();
-        WarVillage.Unit[] castleUnits = village.alliance_units;
-        for (WarVillage.Unit unit : castleUnits) {
-            int count = unit.cnt;
+        Unit[] castleUnits = village.alliance_units;
+        for (Unit unit : castleUnits) {
+            int count = unit.getCnt();
             if (count > 0) {
-                int level = unit.lvl + 1;
-                int typeId = unit.id;
+                int level = unit.getLvl() + 1;
+                int typeId = unit.getId();
                 String unitName = logic.getSubTypeName(typeId);
                 unitDescriptions.add("lvl " + level + " " + unitName + " x " + count);
             }

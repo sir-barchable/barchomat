@@ -34,6 +34,30 @@ public class Message {
         return fields.get(key);
     }
 
+    public Map<String, Object> getStruct(String key) {
+        return (Map<String, Object>) fields.get(key);
+    }
+
+    public Boolean getBoolean(String key) {
+        return (Boolean) fields.get(key);
+    }
+
+    public Byte getByte(String key) {
+        return (Byte) fields.get(key);
+    }
+
+    public Integer getInt(String key) {
+        return (Integer) fields.get(key);
+    }
+
+    public Long getLong(String key) {
+        return (Long) fields.get(key);
+    }
+
+    public String getString(String key) {
+        return (String) fields.get(key);
+    }
+
     public Map<String, Object> getFields() {
         return fields;
     }
