@@ -3,7 +3,6 @@ package sir.barchable.clash.server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sir.barchable.clash.ResourceException;
-import sir.barchable.clash.model.LoadOut;
 import sir.barchable.clash.model.Logic;
 import sir.barchable.clash.protocol.*;
 import sir.barchable.clash.protocol.Connection;
@@ -37,6 +36,11 @@ public class ServerSession {
      * File system access.
      */
     private VillageLoader villageLoader;
+
+    /**
+     * Loadout management
+     */
+    private LoadoutManager loadoutManager = new LoadoutManager(new File("loadouts"));
 
     private ServerSession(Logic logic, MessageFactory messageFactory, Connection clientConnection) throws IOException {
         this.messageFactory = messageFactory;
@@ -208,6 +212,7 @@ public class ServerSession {
 
             log.info("{} done", connection.getName());
         } catch (RuntimeException | IOException e) {
+            e.printStackTrace();
             log.info(
                 "{} terminating due to exception {}",
                 connection.getName(),
@@ -245,6 +250,7 @@ public class ServerSession {
             throw new ResourceException("No home village. Have you captured some data with the proxy?");
         }
         village.set("timeStamp", (int) (System.currentTimeMillis() / 1000));
+        village.set("remainingShield", 0);
         applyLoadout(village);
 
         return village;
@@ -253,8 +259,7 @@ public class ServerSession {
     private void applyLoadout(Message village) throws IOException {
         File loadOutFile = new File("loadout.json");
         if (loadOutFile.exists()) {
-            LoadOut loadOut = villageLoader.loadLoadOut(loadOutFile);
-            villageLoader.applyLoadOut(village, loadOut);
+            loadoutManager.applyLoadOut(village, "dragons");
         }
     }
 

@@ -64,6 +64,7 @@ public class Village {
         public Boolean reg;
         public Boolean needs_repair;
         public Boolean locked;
+        public Boolean ammo;
         public Integer share_replay_time;
 
         public Integer x, y;
@@ -105,7 +106,6 @@ public class Village {
         public Boolean attack_mode_d4;
         public Boolean attack_mode5;
         public Boolean attack_mode_d5;
-        public Boolean ammo;
 
         public Boolean air_mode;
         public Boolean air_mode_draft;

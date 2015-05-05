@@ -7,10 +7,20 @@ package sir.barchable.clash.model;
  *         Date: 5/05/15
  */
 public class LoadOut {
+    private String name;
+
     private Unit[] units;
     private Unit[] spells;
     private Unit[] heroes;
     private Unit[] garrison;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public Unit[] getUnits() {
         return units;

@@ -372,30 +372,4 @@ public class VillageAnalyzer implements MessageTap {
                 }
             });
     }
-
-    // This is just a guess...
-    private Point getLocation(int layout, Village.Building building) {
-        switch (layout) {
-            case 0:
-                return building.lmx != null && building.lmy != null ? new Point(building.lmx, building.lmy) : null;
-
-            case 1:
-                return building.l1x != null && building.l1y != null ? new Point(building.l1x, building.l1y) : null;
-
-            case 2:
-                return building.l2x != null && building.l2y != null ? new Point(building.l2x, building.l2y) : null;
-
-            case 3:
-                return building.l3x != null && building.l3y != null ? new Point(building.l3x, building.l3y) : null;
-
-            case 4:
-                return building.l4x != null && building.l4y != null ? new Point(building.l4x, building.l4y) : null;
-
-            case 5:
-                return building.l5x != null && building.l5y != null ? new Point(building.l5x, building.l5y) : null;
-
-            default:
-                throw new IllegalArgumentException("" + layout);
-        }
-    }
 }

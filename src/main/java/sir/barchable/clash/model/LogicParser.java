@@ -28,7 +28,7 @@ public final class LogicParser {
     private static Pattern CSV_ENTRY_PATTERN = Pattern.compile("^.*logic.(\\w+)\\.csv$");
 
     public static void main(String[] args) throws IOException {
-        Logic logic = loadLogic(new File("src/main/assets/logic"));
+        Logic logic = loadLogic(new File("apk/assets/logic"));
         System.out.println("Buildings: ");
         for (int i = 0; i < 28; i++) {
             int id = 1000000 + i;

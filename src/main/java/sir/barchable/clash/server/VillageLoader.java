@@ -1,11 +1,8 @@
 package sir.barchable.clash.server;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sir.barchable.clash.model.LoadOut;
-import sir.barchable.clash.model.Logic;
-import sir.barchable.clash.model.Unit;
+import sir.barchable.clash.model.*;
 import sir.barchable.clash.protocol.Message;
 import sir.barchable.clash.protocol.MessageFactory;
 
@@ -15,11 +12,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.regex.Pattern;
 
 import static sir.barchable.clash.protocol.Pdu.Type.EnemyHomeData;
@@ -38,6 +31,8 @@ public class VillageLoader {
     private static final Pattern HOME_PATTERN = Pattern.compile("OwnHomeData.*\\.pdu");
     private static final Pattern ENEMY_HOME_PATTERN = Pattern.compile("EnemyHomeData.*\\.pdu");
     private static final Pattern VISITED_HOME_PATTERN = Pattern.compile("VisitedHomeData.*\\.pdu");
+
+    private LayoutManager layoutManager = new LayoutManager();
 
     private Logic logic;
     private MessageFactory messageFactory;
@@ -112,7 +107,7 @@ public class VillageLoader {
                 Message homeVillage = loadHomeVillage();
                 Message enemyVillage = loadEnemyPrototype();
                 enemyVillage.set("userId", village.get("userId"));
-                enemyVillage.set("homeVillage", village.get("homeVillage"));
+                enemyVillage.set("homeVillage", layoutManager.setWarLayout(village.getString("homeVillage")));
                 enemyVillage.set("enemy", village.get("user"));
                 enemyVillage.set("enemyResources", village.get("resources"));
                 enemyVillage.set("user", homeVillage.get("user"));
@@ -121,38 +116,5 @@ public class VillageLoader {
             }
             return village;
         }
-    }
-
-    public LoadOut loadLoadOut(File loadOutFile) throws IOException {
-        return new ObjectMapper().readValue(loadOutFile, LoadOut.class);
-    }
-
-    public void applyLoadOut(Message village, LoadOut loadOut) {
-        Map<String, Object> resources = village.getStruct("resources");
-        if (resources == null) {
-            throw new IllegalArgumentException("Incomplete village definition (no resources)");
-        }
-
-        Unit[] units = loadOut.getUnits();
-        Arrays.sort(units, (o1, o2) -> o1.getId() - o2.getId());
-
-        resources.put(
-            "unitCounts",
-            Arrays.stream(units).map(unit -> newResource(unit, Unit::getCnt)).toArray())
-        ;
-
-        resources.put(
-            "unitLevels",
-            Arrays.stream(units).map(unit -> newResource(unit, Unit::getLvl)).toArray()
-        );
-
-//        String villageJson = village.getString("village")
-    }
-
-    private Map<String, Object> newResource(Unit unit, Function<Unit, Integer> property) {
-        Map<String, Object> resourceCount = new LinkedHashMap<>();
-        resourceCount.put("type", unit.getId());
-        resourceCount.put("value", property.apply(unit));
-        return resourceCount;
     }
 }
