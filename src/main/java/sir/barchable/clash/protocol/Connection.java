@@ -1,8 +1,5 @@
 package sir.barchable.clash.protocol;
 
-import sir.barchable.clash.protocol.PduInputStream;
-import sir.barchable.clash.protocol.PduOutputStream;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,6 +8,8 @@ import java.net.Socket;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
+ * PDU I/O.
+ *
  * @author Sir Barchable
  *         Date: 19/04/15
  */
@@ -29,8 +28,8 @@ public class Connection implements Closeable {
 
     public Connection(String name, InputStream in, OutputStream out) {
         this.name = name;
-        this.in = in instanceof PduInputStream ? (PduInputStream) in : new PduInputStream(in);
-        this.out = out instanceof PduOutputStream ? (PduOutputStream) out : new PduOutputStream(out);
+        this.in = new PduInputStream(in);
+        this.out = new PduOutputStream(out);
     }
 
     public String getName() {

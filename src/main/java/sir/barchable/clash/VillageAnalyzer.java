@@ -320,13 +320,15 @@ public class VillageAnalyzer implements MessageTap {
 
         List<String> unitDescriptions = new ArrayList<>();
         Unit[] castleUnits = village.alliance_units;
-        for (Unit unit : castleUnits) {
-            int count = unit.getCnt();
-            if (count > 0) {
-                int level = unit.getLvl() + 1;
-                int typeId = unit.getId();
-                String unitName = logic.getSubTypeName(typeId);
-                unitDescriptions.add("lvl " + level + " " + unitName + " x " + count);
+        if (castleUnits != null) {
+            for (Unit unit : castleUnits) {
+                int count = unit.getCnt();
+                if (count > 0) {
+                    int level = unit.getLvl() + 1;
+                    int typeId = unit.getId();
+                    String unitName = logic.getSubTypeName(typeId);
+                    unitDescriptions.add("lvl " + level + " " + unitName + " x " + count);
+                }
             }
         }
 

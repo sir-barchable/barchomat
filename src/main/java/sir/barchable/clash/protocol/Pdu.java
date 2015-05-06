@@ -187,7 +187,7 @@ public class Pdu {
     }
 
     int id;
-    int padding;
+    int version;
     byte[] payload;
 
     public Pdu() {
@@ -211,12 +211,12 @@ public class Pdu {
         this.id = id;
     }
 
-    public int getPadding() {
-        return padding;
+    public int getVersion() {
+        return version;
     }
 
-    public void setPadding(int padding) {
-        this.padding = padding;
+    public void setVersion(int version) {
+        this.version = version;
     }
 
     public byte[] getPayload() {

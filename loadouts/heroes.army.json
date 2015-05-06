@@ -1,0 +1,13 @@
+{
+  "name": "heroes",
+  "units": [
+    {"id": 4000000, "lvl": 6, "cnt": 100},
+    {"id": 4000001, "lvl": 6, "cnt": 100}
+  ],
+  "spells": [],
+  "heroes": [
+    {"id": 28000000, "lvl": 19, "cnt": 1},
+    {"id": 28000001, "lvl": 19, "cnt": 1}
+  ],
+  "garrison": []
+}

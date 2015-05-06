@@ -1,18 +1,20 @@
 package sir.barchable.clash.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
- * Army spec.
+ * A human readable army model.
  *
  * @author Sir Barchable
- *         Date: 5/05/15
+ *         Date: 6/05/15
  */
-public class LoadOut {
+public class Loadout {
     private String name;
-
-    private Unit[] units;
-    private Unit[] spells;
-    private Unit[] heroes;
-    private Unit[] garrison;
+    private Integer queen;
+    private Integer king;
+    private LoadoutUnit[] army;
+    private LoadoutUnit[] spells;
+    private LoadoutUnit[] garrison;
 
     public String getName() {
         return name;
@@ -22,35 +24,78 @@ public class LoadOut {
         this.name = name;
     }
 
-    public Unit[] getUnits() {
-        return units;
+    public Integer getQueen() {
+        return queen;
     }
 
-    public void setUnits(Unit[] units) {
-        this.units = units;
+    public void setQueen(Integer queen) {
+        this.queen = queen;
     }
 
-    public Unit[] getSpells() {
+    public Integer getKing() {
+        return king;
+    }
+
+    public void setKing(Integer king) {
+        this.king = king;
+    }
+
+    public LoadoutUnit[] getArmy() {
+        return army;
+    }
+
+    public void setArmy(LoadoutUnit[] army) {
+        this.army = army;
+    }
+
+    public LoadoutUnit[] getSpells() {
         return spells;
     }
 
-    public void setSpells(Unit[] spells) {
+    public void setSpells(LoadoutUnit[] spells) {
         this.spells = spells;
     }
 
-    public Unit[] getHeroes() {
-        return heroes;
-    }
-
-    public void setHeroes(Unit[] heroes) {
-        this.heroes = heroes;
-    }
-
-    public Unit[] getGarrison() {
+    public LoadoutUnit[] getGarrison() {
         return garrison;
     }
 
-    public void setGarrison(Unit[] garrison) {
+    public void setGarrison(LoadoutUnit[] garrison) {
         this.garrison = garrison;
+    }
+
+    /**
+     * A more human readable unit model for army specs.
+     *
+     * @author Sir Barchable
+     *         Date: 6/05/15
+     */
+    public static class LoadoutUnit {
+        private String name;
+        private int level;
+        private int count;
+
+        public LoadoutUnit(@JsonProperty("name") String name, @JsonProperty("level") int level, @JsonProperty("count") int count) {
+            this.name = name;
+            this.level = level;
+            this.count = count;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public int getLevel() {
+            return level;
+        }
+
+        public int getCount() {
+            return count;
+        }
+
+        @Override
+        public String toString() {
+            return "LoadoutUnit[" + "name='" + name + '\'' + ", level=" + level + ", count=" + count + ']';
+        }
     }
 }

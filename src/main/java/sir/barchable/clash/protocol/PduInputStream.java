@@ -1,53 +1,76 @@
 package sir.barchable.clash.protocol;
 
-import java.io.DataInputStream;
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 /**
+ * Read Clash PDUs.
+ *
  * @author Sir Barchable
  */
-public class PduInputStream extends DataInputStream {
-
+public class PduInputStream implements Closeable {
+    private InputStream in;
     private Clash7Crypt cipher = new Clash7Crypt();
 
     /**
-     * Creates a DataInputStream that uses the specified
-     * underlying InputStream.
+     * Creates a PDU input stream with a newly initialized stream cipher.
+     * Call {@link #setKey(byte[])} after key exchange to reinitialize the stream cipher.
      *
-     * @param in the specified input stream
+     * @param in the stream to read from
      */
     public PduInputStream(InputStream in) {
-        super(in);
+        this.in = in;
     }
 
-    public final int readUnsignedInt3() throws IOException {
+    private int readUInt3() throws IOException {
         int ch1 = in.read();
         int ch2 = in.read();
         int ch3 = in.read();
         if ((ch1 | ch2 | ch3) < 0) {
             throw new EOFException();
         }
-        return (ch1 << 24) + (ch2 << 8) + ch3;
+        return (ch1 << 24) | (ch2 << 8) | ch3;
     }
 
-    public final byte[] readBytes(int len) throws IOException {
+    public final int readUInt2() throws IOException {
+        int ch1 = in.read();
+        int ch2 = in.read();
+        if ((ch1 | ch2) < 0) {
+            throw new EOFException();
+        }
+        return (ch1 << 8) | ch2;
+    }
+
+    private byte[] readBytes(int len) throws IOException {
+        if (len < 0) {
+            throw new IndexOutOfBoundsException();
+        }
         byte[] b = new byte[len];
-        readFully(b);
+        int n = 0;
+        while (n < len) {
+            int count = in.read(b, n, len - n);
+            if (count < 0) {
+                throw new EOFException();
+            }
+            n += count;
+        }
         return b;
     }
 
     public final Pdu readPdu() throws IOException {
         Pdu pdu = new Pdu();
-        pdu.id = readUnsignedShort();
-        int length = readUnsignedInt3();
-        pdu.padding = readUnsignedShort();
+        pdu.id = readUInt2();
+        int length = readUInt3();
+        pdu.version = readUInt2();
         pdu.payload = cipher.encrypt(readBytes(length));
         return pdu;
     }
 
     public void setKey(byte[] nonce) {
         cipher.setKey(nonce);
+    }
+
+    @Override
+    public void close() throws IOException {
+        in.close();
     }
 }

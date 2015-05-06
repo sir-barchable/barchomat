@@ -34,6 +34,7 @@ public class WarVillage {
     public int castle_used;
     public int town_hall_lvl;
     public int score;
+    public int alliance_unit_visit_capacity;
 
     public Resource[] resources;
     public Unit[] alliance_units;

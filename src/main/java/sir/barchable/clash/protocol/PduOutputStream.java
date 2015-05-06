@@ -1,42 +1,54 @@
 package sir.barchable.clash.protocol;
 
-import java.io.DataOutputStream;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
 
 /**
+ * Write Clash PDUs.
+ *
  * @author Sir Barchable
  *         Date: 6/04/15
  */
-public class PduOutputStream extends DataOutputStream {
+public class PduOutputStream implements Closeable {
+    private OutputStream out;
     private Clash7Crypt cipher = new Clash7Crypt();
 
     /**
-     * Creates a new data output stream to write data to the specified
-     * underlying output stream. The counter <code>written</code> is
-     * set to zero.
+     * Creates a PDU output stream with a newly initialized stream cipher.
+     * Call {@link #setKey(byte[])} after key exchange to reinitialize the stream cipher.
      *
-     * @param out the underlying output stream, to be saved for later use.
-     * @see java.io.FilterOutputStream#out
+     * @param out the stream to write to
      */
     public PduOutputStream(OutputStream out) {
-        super(out);
-    }
-
-    public void writeUnsignedInt3(int v) throws IOException {
-        writeByte((v >>> 16) & 0xFF);
-        writeByte((v >>> 8) & 0xFF);
-        writeByte(v & 0xFF);
+        this.out = out;
     }
 
     public void writePdu(Pdu pdu) throws IOException {
         writeShort(pdu.getId());
-        writeUnsignedInt3(pdu.getPayload().length);
-        writeShort(pdu.getPadding());
-        write(cipher.encrypt(pdu.getPayload()));
+        writeUInt3(pdu.getPayload().length);
+        writeShort(pdu.getVersion());
+        out.write(cipher.encrypt(pdu.getPayload()));
+        out.flush();
+    }
+
+    private void writeUInt3(int v) throws IOException {
+        out.write(v >>> 16);
+        out.write(v >>> 8);
+        out.write(v);
+    }
+
+    private void writeShort(int v) throws IOException {
+        out.write(v >>> 8);
+        out.write(v);
     }
 
     public void setKey(byte[] nonce) {
         cipher.setKey(nonce);
+    }
+
+    @Override
+    public void close() throws IOException {
+        out.close();
     }
 }

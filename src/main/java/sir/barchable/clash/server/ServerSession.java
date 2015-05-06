@@ -40,12 +40,13 @@ public class ServerSession {
     /**
      * Loadout management
      */
-    private LoadoutManager loadoutManager = new LoadoutManager(new File("loadouts"));
+    private LoadoutManager loadoutManager;
 
     private ServerSession(Logic logic, MessageFactory messageFactory, Connection clientConnection) throws IOException {
         this.messageFactory = messageFactory;
         this.clientConnection = clientConnection;
         this.villageLoader = new VillageLoader(logic, messageFactory, new File("villages"));
+        this.loadoutManager = new LoadoutManager(logic, new File("loadouts"));
     }
 
     public SessionState getSessionState() {
@@ -259,7 +260,7 @@ public class ServerSession {
     private void applyLoadout(Message village) throws IOException {
         File loadOutFile = new File("loadout.json");
         if (loadOutFile.exists()) {
-            loadoutManager.applyLoadOut(village, "dragons");
+            loadoutManager.applyLoadOut(village, "test");
         }
     }
 

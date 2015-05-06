@@ -7,12 +7,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sir.barchable.clash.model.Logic;
 import sir.barchable.clash.model.LogicParser;
+import sir.barchable.clash.protocol.Connection;
 import sir.barchable.clash.protocol.MessageFactory;
 import sir.barchable.clash.protocol.ProtocolTool;
 import sir.barchable.clash.protocol.TypeFactory;
 import sir.barchable.clash.proxy.ClashProxy;
-import sir.barchable.clash.protocol.Connection;
-import sir.barchable.clash.proxy.PduFilterChain;
 import sir.barchable.clash.proxy.ProxySession;
 
 import java.io.File;
@@ -48,11 +47,6 @@ public class ClashServer {
      * Listen on {@link #CLASH_PORT}.
      */
     private ServerSocket listener;
-
-    /**
-     * Filter to run PDUs through.
-     */
-    private PduFilterChain filterChain = new PduFilterChain();
 
     /**
      * Source of threads to accept connections.

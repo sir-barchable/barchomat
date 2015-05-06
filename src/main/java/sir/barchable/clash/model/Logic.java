@@ -1,9 +1,8 @@
 package sir.barchable.clash.model;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import sir.barchable.clash.server.LogicException;
+
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -105,7 +104,7 @@ public class Logic {
         int subtype = typeId % 100;
         List<Data> data = dataMap.get(type);
         if (subtype > data.size() - 1) {
-            throw new IllegalArgumentException("No data for " + type + ":" + subtype);
+            throw new LogicException("No data for " + type + ":" + subtype);
         }
         return data.get(subtype);
     }
@@ -116,14 +115,14 @@ public class Logic {
         if (i == -1) {
             List<Data> data = dataMap.get(fullTypeName);
             if (data == null) {
-                throw new IllegalArgumentException("No type " + fullTypeName);
+                throw new LogicException("No type " + fullTypeName);
             }
             return data.get(0);
         } else {
             String type = fullTypeName.substring(0, i);
             List<Data> data = dataMap.get(type);
             if (data == null) {
-                throw new IllegalArgumentException("No type " + type);
+                throw new LogicException("No type " + type);
             }
             String subType = fullTypeName.substring(i + 1);
             for (Data objectData : data) {
@@ -131,7 +130,7 @@ public class Logic {
                     return objectData;
                 }
             }
-            throw new IllegalArgumentException("No type " + type);
+            throw new LogicException("No type " + type);
         }
     }
 
@@ -146,11 +145,11 @@ public class Logic {
         try {
             type = objectTypes.get(index);
             if (type == null) {
-                throw new IllegalArgumentException("Unknown object type " + index);
+                throw new LogicException("Unknown object type " + index);
             }
             return type;
         } catch (IndexOutOfBoundsException e) {
-            throw new IllegalArgumentException("Unknown object type " + index);
+            throw new LogicException("Unknown object type " + index);
         }
     }
 
@@ -188,6 +187,82 @@ public class Logic {
             return dataList.stream()
                 .filter(filter != null ? filter : x -> true)
                 .map(Data::getName).toArray(String[]::new);
+        }
+    }
+
+    /**
+     * Attempt to resolve a type id given a subtype name.
+     *
+     * @param name the unqualified subtype name
+     */
+    public int getSubTypeId(String name) {
+        for (Map.Entry<String, List<Data>> entry : dataMap.entrySet()) {
+            List<Data> dataList = entry.getValue();
+            for (int i = 0; i < dataList.size(); i++) {
+                Data data = dataList.get(i);
+                if (data.getName().equalsIgnoreCase(resolveAlias(name))) {
+                    return getTypeId(entry.getKey()) + i;
+                }
+            }
+        }
+        throw new LogicException("Unknown subtype " + name);
+    }
+
+    private int getTypeId(String key) {
+        for (int i = 0; i < objectTypes.size(); i++) {
+            if (key.equals(objectTypes.get(i))) {
+                return i * 1000000;
+            }
+        }
+        throw new LogicException("Unknown object type " + key);
+    }
+
+    /**
+     * Alias map.
+     * @see #resolveAlias(String)
+     */
+    private static final Map<String, String> aliases = new HashMap<String, String>() {{
+        put("MINION", "Gargoyle");
+        put("VALKYRIE", "Warrior Girl");
+        put("HOG RIDER", "Boar Rider");
+        put("WITCH", "Warlock");
+
+        put("LIGHTNING", "LighningStorm");
+        put("HEALING", "HealingWave");
+        put("HEAL", "HealingWave");
+        put("RAGE", "Haste");
+    }};
+
+    /**
+     * Turn a common name (e.g. Valkyrie) into a canonical subtype name (e.g. Warrior Girl).
+     *
+     * @param name the name
+     * @return the canonical name, or the name if no match for the alias was found
+     */
+    public String resolveAlias(String name) {
+        String alias = aliases.get(name.toUpperCase());
+        return alias == null ? name : alias;
+    }
+
+    /**
+     * Check that a type id matches a type name.
+     *
+     * @param typeName the type name
+     * @param typeId the type id
+     */
+    public boolean checkType(String typeName, int typeId) {
+        int type = getTypeId(typeName);
+        return type / 1000000 == typeId / 1000000;
+    }
+
+    /**
+     * Assert that <i>typeId</i> is a <i>typeName</i>.
+     *
+     * @throws LogicException if <i>typeId</i> is not a <i>typeName</i> according to {@link #checkType}
+     */
+    public void assertType(String typeName, int typeId) {
+        if (!checkType(typeName, typeId)) {
+            throw new LogicException(typeId + " is not a " + typeName);
         }
     }
 
@@ -233,7 +308,7 @@ public class Logic {
                 }
             }
 
-            throw new IllegalArgumentException("No column " + name);
+            throw new LogicException("No column " + name);
         }
 
         public Object get(String column, int level) {
