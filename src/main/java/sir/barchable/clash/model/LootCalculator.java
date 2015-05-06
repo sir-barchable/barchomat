@@ -42,39 +42,36 @@ public class LootCalculator {
     }
 
     public Loot calculateAvailableCollectorLoot(Loot collectorLoot, int level) {
-        double rPercent = logic.getInt("globals:RESOURCE_PRODUCTION_LOOT_PERCENTAGE", "NumberValue");
-        double dePercent = logic.getInt("globals:RESOURCE_PRODUCTION_LOOT_PERCENTAGE_DARK_ELIXIR", "NumberValue");
+        int rPercent = logic.getInt("globals:RESOURCE_PRODUCTION_LOOT_PERCENTAGE", "NumberValue");
+        int dePercent = logic.getInt("globals:RESOURCE_PRODUCTION_LOOT_PERCENTAGE_DARK_ELIXIR", "NumberValue");
 
         return new Loot(
-            (int) (collectorLoot.getGold() * rPercent / 100),
-            (int) (collectorLoot.getElixir() * rPercent / 100),
-            (int) (collectorLoot.getDarkElixir() * dePercent / 100)
+            collectorLoot.getGold() * rPercent / 100,
+            collectorLoot.getElixir() * rPercent / 100,
+            collectorLoot.getDarkElixir() * dePercent / 100
         );
     }
 
-    public Loot calculateAvailableStorageLoot(Loot collectorLoot, int level) {
-        double rPercent = logic.getInt("townhall_levels:" + level, "ResourceStorageLootPercentage");
+    public Loot calculateAvailableStorageLoot(Loot storageLoot, int level) {
+        int rPercent = logic.getInt("townhall_levels:" + level, "ResourceStorageLootPercentage");
         int rCap = logic.getInt("townhall_levels:" + level, "ResourceStorageLootCap");
-        double dePercent = logic.getInt("townhall_levels:" + level, "DarkElixirStorageLootPercentage");
+        int dePercent = logic.getInt("townhall_levels:" + level, "DarkElixirStorageLootPercentage");
         int deCap = logic.getInt("townhall_levels:" + level, "DarkElixirStorageLootCap");
 
         return new Loot(
-            min((int) (collectorLoot.getGold() * rPercent / 100), rCap),
-            min((int) (collectorLoot.getElixir() * rPercent / 100), rCap),
-            min((int) (collectorLoot.getDarkElixir() * dePercent / 100), deCap)
+            min(storageLoot.getGold() * rPercent / 100, rCap),
+            min(storageLoot.getElixir() * rPercent / 100, rCap),
+            min(storageLoot.getDarkElixir() * dePercent / 100, deCap)
         );
     }
 
-
     public Loot calculateAvailableCastleLoot(Loot castleLoot, int level) {
-        // Castle loot percentages are half of storage percentages
-        double rPercent = logic.getInt("townhall_levels:" + level, "ResourceStorageLootPercentage") / 2;
-        double dePercent = logic.getInt("townhall_levels:" + level, "DarkElixirStorageLootPercentage") / 2;
+        int rPercent = logic.getInt("globals:WAR_LOOT_PERCENTAGE", "NumberValue");
 
         return new Loot(
-             (int) (castleLoot.getGold() * rPercent / 100),
-             (int) (castleLoot.getElixir() * rPercent / 100),
-             (int) (castleLoot.getDarkElixir() * dePercent / 100)
+            castleLoot.getGold() * rPercent / 100,
+            castleLoot.getElixir() * rPercent / 100,
+            castleLoot.getDarkElixir() * rPercent / 100
         );
     }
 
@@ -164,12 +161,31 @@ public class LootCalculator {
 
         @Override
         public String toString() {
-            final StringBuilder sb = new StringBuilder("Loot[");
-            sb.append("g=").append(gold);
-            sb.append(", e=").append(elixir);
-            sb.append(", de=").append(darkElixir);
-            sb.append(']');
-            return sb.toString();
+            return "Loot[" + "g=" + gold + ", e=" + elixir + ", de=" + darkElixir + ']';
+        }
+    }
+
+    public static class LootStorage {
+        private String type;
+        private int capacity;
+        private int count;
+
+        public LootStorage(String type, int capacity) {
+            this.type = type;
+            this.capacity = capacity;
+        }
+
+        public int getCount() {
+            return count;
+        }
+
+        public void setCount(int count) {
+            this.count = count;
+        }
+
+        @Override
+        public String toString() {
+            return "LootStorage[" + "type='" + type + '\'' + ", capacity=" + capacity + ", count=" + count + ']';
         }
     }
 }

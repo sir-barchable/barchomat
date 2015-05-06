@@ -65,7 +65,7 @@ public class VillageAnalyzer implements MessageTap {
         int age = (Integer) message.get("age");
         Integer timeStamp = (Integer) message.get("timeStamp");
 
-        Map<String, Object> user = (Map<String, Object>) message.get("user");
+        Map<String, Object> user = (Map<String, Object>) message.get(type == OwnHomeData ? "user" : "enemy");
         String userName = (String) user.get("userName");
         Long userId = (Long) user.get("userId");
 
@@ -151,7 +151,13 @@ public class VillageAnalyzer implements MessageTap {
                     // Time passed since reset
                     int timePassed = maxTime - resTime;
                     // Resources produced during that time
-                    resourceValue = timePassed * resourcePerHour / 3600;
+
+//                    resourceValue = timePassed * resourcePerHour / 3600;
+
+                    int h = timePassed / 3600;
+                    int m = timePassed % 3600 / 60;
+                    int s = timePassed % 60;
+                    resourceValue = h * resourcePerHour + m * resourcePerHour / 60 + s * resourcePerHour / 3600;
                 }
 
                 if (building.boost_t != null) {
@@ -169,7 +175,7 @@ public class VillageAnalyzer implements MessageTap {
         // Storage
         //
 
-        Map<String, Object> resources = (Map<String, Object>) message.get("resources");
+        Map<String, Object> resources = (Map<String, Object>) message.get(type == OwnHomeData ? "resources" : "enemyResources");
         if (resources != null) {
             Object[] resourceCounts = (Object[]) resources.get("resourceCounts");
             for (int i = 0; i < resourceCounts.length; i++) {
