@@ -76,6 +76,13 @@ public class WarVillage {
         public Boolean air_mode4;
         public Boolean air_mode5;
 
+        public Boolean aim_angle;
+        public Boolean aim_angle_war;
+        public Boolean aim_angle2;
+        public Boolean aim_angle3;
+        public Boolean aim_angle4;
+        public Boolean aim_angle5;
+
         public Upg hero_upg;
 
         @JsonAutoDetect(fieldVisibility = ANY)

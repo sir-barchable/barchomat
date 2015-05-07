@@ -8,10 +8,7 @@ import org.slf4j.LoggerFactory;
 import sir.barchable.clash.VillageAnalyzer;
 import sir.barchable.clash.model.Logic;
 import sir.barchable.clash.model.LogicParser;
-import sir.barchable.clash.protocol.Connection;
-import sir.barchable.clash.protocol.MessageReader;
-import sir.barchable.clash.protocol.ProtocolTool;
-import sir.barchable.clash.protocol.TypeFactory;
+import sir.barchable.clash.protocol.*;
 import sir.barchable.util.Dns;
 
 import java.io.File;
@@ -120,7 +117,7 @@ public class ClashProxy {
         } else {
             typeFactory = new TypeFactory();
         }
-        MessageReader messageReader = new MessageReader(typeFactory);
+        MessageFactory messageFactory = new MessageFactory(typeFactory);
 
         //
         // Load the logic files
@@ -142,7 +139,7 @@ public class ClashProxy {
 
         MessageLogger logger = new MessageLogger();
         filterChain = filterChain.addAfter(new MessageTapFilter(
-            messageReader,
+            messageFactory.getMessageReader(),
             new VillageAnalyzer(logic),
             logger.tapFor(EndClientTurn),
             logger.tapFor(WarHomeData, "warVillage")
@@ -157,7 +154,7 @@ public class ClashProxy {
             if (villageDir.mkdir()) {
                 log.info("Created save directory for villages: {}", villageDir);
             }
-            filterChain = filterChain.addAfter(new MessageSaver(villageDir));
+            filterChain = filterChain.addAfter(new MessageSaver(messageFactory, villageDir));
         }
 
         // Clean-up thread

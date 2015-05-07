@@ -1,3 +1,5 @@
+package sir.barchable;
+
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
@@ -30,8 +32,8 @@ import static sir.barchable.util.BitBucket.NOWHERE;
  *
  * @author Sir Barchable
  */
-public class Main {
-    private static final Logger log = LoggerFactory.getLogger(Main.class);
+public class Dump {
+    private static final Logger log = LoggerFactory.getLogger(Dump.class);
 
     @Parameter(names = {"-d", "--definition-dir"}, description = "Directory to load the protocol definition from")
     private File resourceDir;
@@ -49,7 +51,7 @@ public class Main {
     private boolean dumpJson;
 
     public static void main(String[] args) throws IOException {
-        Main main = new Main();
+        Dump main = new Dump();
         JCommander commander = new JCommander(main);
         try {
             commander.parse(args);

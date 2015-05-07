@@ -1,5 +1,6 @@
 package sir.barchable.clash.protocol;
 
+import sir.barchable.util.Cipher;
 import sir.barchable.util.RC4;
 
 import java.util.Arrays;
@@ -11,7 +12,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  *
  * @author Sir Barchable
  */
-public class Clash7Crypt {
+public class Clash7Crypt implements Cipher {
     // RC4 key prefix. Clearly a keyboard mash.
     private static final byte[] BASE_KEY = "fhsd6f86f67rt8fw78fw789we78r9789wer6re".getBytes(UTF_8);
     // The initial nonce is literally "nonce"
@@ -23,10 +24,12 @@ public class Clash7Crypt {
         setKey(INITIAL_NONCE);
     }
 
+    @Override
     public byte[] encrypt(byte[] b) {
         return rc4.encrypt(b);
     }
 
+    @Override
     public void setKey(byte[] nonce) {
         byte[] key = concat(BASE_KEY, nonce);
         rc4 = new RC4(key);

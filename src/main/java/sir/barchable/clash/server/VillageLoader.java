@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import sir.barchable.clash.model.*;
 import sir.barchable.clash.protocol.Message;
 import sir.barchable.clash.protocol.MessageFactory;
+import sir.barchable.clash.proxy.MessageSaver;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,13 +17,10 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 
 import static sir.barchable.clash.protocol.Pdu.Type.EnemyHomeData;
-import static sir.barchable.clash.protocol.Pdu.Type.OwnHomeData;
-import static sir.barchable.clash.protocol.Pdu.Type.VisitedHomeData;
 
 /**
  * Load saved villages from the specified directory. Villages are typically saved by a
- * {@link sir.barchable.clash.proxy.MessageSaver} hooked into the proxy when the {@code -s} save flag is passed on
- * startup.
+ * {@link MessageSaver} hooked into the proxy when the {@code -s} save flag is passed on startup.
  *
  * @author Sir Barchable
  */
@@ -72,12 +70,11 @@ public class VillageLoader {
      */
     public Message loadHomeVillage() throws IOException {
         try (FileInputStream in = new FileInputStream(home)) {
-            return messageFactory.fromStream(OwnHomeData, in);
+            return messageFactory.fromStream(in);
         }
     }
 
     private Message loadEnemyPrototype() throws IOException {
-//        return messageFactory.newMessage(EnemyHomeData);
         try (FileInputStream in = new FileInputStream(enemyPrototype)) {
             return messageFactory.fromStream(EnemyHomeData, in);
         }
@@ -101,17 +98,17 @@ public class VillageLoader {
             log.debug("loading village {}", villageFile);
             Message village = null;
             if (ENEMY_HOME_PATTERN.matcher(villageFile.getName()).matches()) {
-                village = messageFactory.fromStream(EnemyHomeData, in);
+                village = messageFactory.fromStream(in);
             } else if (VISITED_HOME_PATTERN.matcher(villageFile.getName()).matches()) {
-                village = messageFactory.fromStream(VisitedHomeData, in);
+                village = messageFactory.fromStream(in);
                 Message homeVillage = loadHomeVillage();
                 Message enemyVillage = loadEnemyPrototype();
                 enemyVillage.set("userId", village.get("userId"));
                 enemyVillage.set("homeVillage", layoutManager.setWarLayout(village.getString("homeVillage")));
-                enemyVillage.set("enemy", village.get("user"));
-                enemyVillage.set("enemyResources", village.get("resources"));
-                enemyVillage.set("user", homeVillage.get("user"));
-                enemyVillage.set("resources", homeVillage.get("resources"));
+                enemyVillage.set("user", village.get("user"));
+                enemyVillage.set("resources", village.get("resources"));
+                enemyVillage.set("attacker", homeVillage.get("user"));
+                enemyVillage.set("attackerResources", homeVillage.get("resources"));
                 village = enemyVillage;
             }
             return village;

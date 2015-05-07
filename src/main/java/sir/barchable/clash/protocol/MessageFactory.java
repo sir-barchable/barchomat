@@ -1,5 +1,7 @@
 package sir.barchable.clash.protocol;
 
+import sir.barchable.util.NoopCipher;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -22,6 +24,18 @@ public class MessageFactory {
         this.typeFactory = typeFactory;
         this.reader = new MessageReader(typeFactory);
         this.writer = new MessageWriter(typeFactory);
+    }
+
+    public MessageReader getMessageReader() {
+        return reader;
+    }
+
+    public MessageWriter getMessageWriter() {
+        return writer;
+    }
+
+    public TypeFactory getTypeFactory() {
+        return typeFactory;
     }
 
     /**
@@ -52,12 +66,15 @@ public class MessageFactory {
         }
     }
 
+    /**
+     * Deserialize a message.
+     */
     public Message fromStream(Pdu.Type pduType, InputStream in) {
         Optional<String> structName = typeFactory.getStructNameForId(pduType.id());
         if (structName.isPresent()) {
             try {
                 TypeFactory.Type type = typeFactory.newType(structName.get());
-                Map<String, Object> fields = (Map<String, Object>) reader.readValue(type, new MessageInputStream(in));
+                Map<String, Object> fields = (Map<String, Object>) reader.readValue(type, MessageInputStream.toMessageInputStream(in));
                 return new Message(type.getStructDefinition(), fields);
             } catch (IOException e) {
                 throw new PduException(e);
@@ -65,6 +82,13 @@ public class MessageFactory {
         } else {
             throw new TypeException("No type definition for " + pduType);
         }
+    }
+
+    /**
+     * Read an unencrypted PDU from a stream and deserialize the contents.
+     */
+    public Message fromStream(InputStream in) throws IOException {
+        return fromPdu(new PduInputStream(in, NoopCipher.NOOP_CIPHER).read());
     }
 
     public Pdu toPdu(Message message) {

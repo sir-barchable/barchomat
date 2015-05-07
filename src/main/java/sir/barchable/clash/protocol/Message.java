@@ -26,6 +26,10 @@ public class Message {
         return definition;
     }
 
+    public Pdu.Type getType() {
+        return Pdu.Type.valueOf(definition.getId());
+    }
+
     public void set(String key, Object value) {
         fields.put(key, value);
     }

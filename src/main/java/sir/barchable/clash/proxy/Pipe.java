@@ -41,7 +41,7 @@ class Pipe {
         Pdu pdu;
 
         try {
-            pdu = source.readPdu();
+            pdu = source.read();
         } catch (EOFException eof) {
             if (propagateEof) {
                 try {
@@ -58,7 +58,7 @@ class Pipe {
 
         if (filteredPdu != null) {
             // Write
-            sink.writePdu(filteredPdu);
+            sink.write(filteredPdu);
         };
     }
 

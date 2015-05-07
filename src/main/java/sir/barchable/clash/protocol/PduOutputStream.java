@@ -1,5 +1,7 @@
 package sir.barchable.clash.protocol;
 
+import sir.barchable.util.Cipher;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -12,7 +14,7 @@ import java.io.OutputStream;
  */
 public class PduOutputStream implements Closeable {
     private OutputStream out;
-    private Clash7Crypt cipher = new Clash7Crypt();
+    private Cipher cipher;
 
     /**
      * Creates a PDU output stream with a newly initialized stream cipher.
@@ -21,10 +23,15 @@ public class PduOutputStream implements Closeable {
      * @param out the stream to write to
      */
     public PduOutputStream(OutputStream out) {
-        this.out = out;
+        this(out, new Clash7Crypt());
     }
 
-    public void writePdu(Pdu pdu) throws IOException {
+    public PduOutputStream(OutputStream out, Cipher cipher) {
+        this.out = out;
+        this.cipher = cipher;
+    }
+
+    public void write(Pdu pdu) throws IOException {
         writeShort(pdu.getId());
         writeUInt3(pdu.getPayload().length);
         writeShort(pdu.getVersion());

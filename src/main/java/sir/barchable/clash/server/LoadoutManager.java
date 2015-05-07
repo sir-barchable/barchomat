@@ -141,7 +141,7 @@ public class LoadoutManager {
     }
 
     public void applyLoadOut(Message village, String loadoutName) {
-        Map<String, Object> resources = village.getStruct("resources");
+        Map<String, Object> resources = village.getStruct("attackerResources");
         if (resources == null) {
             throw new IllegalArgumentException("Incomplete village definition (no resources)");
         }
@@ -204,5 +204,9 @@ public class LoadoutManager {
         component.put("type", unitId);
         component.put("value", count);
         return component;
+    }
+
+    public boolean contains(String loadout) {
+        return armies.containsKey(loadout);
     }
 }

@@ -41,6 +41,9 @@ public class ClashServer {
     @Parameter(names = {"-w", "--working-dir"}, description = "Directory write output to")
     private File workingDir = new File(".");
 
+    @Parameter(names = {"--loadout"}, description = "Name of loadout to apply")
+    private String loadout;
+
     private AtomicBoolean running = new AtomicBoolean(true);
 
     /**
@@ -152,7 +155,7 @@ public class ClashServer {
             try (
                 Connection clientConnection = new Connection(socket);
             ) {
-                ServerSession session = ServerSession.newSession(logic, messageFactory, clientConnection);
+                ServerSession session = ServerSession.newSession(logic, messageFactory, clientConnection, loadout);
                 log.info("Client {} disconnected", socket);
             }
         } catch (IOException e) {

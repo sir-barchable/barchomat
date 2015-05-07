@@ -20,6 +20,13 @@ public class BitInputStream extends InputStream {
         this.in = in;
     }
 
+    /**
+     * Wrap or cast an InputStream to a BitInputStream.
+     */
+    public static BitInputStream toBitInputStream(InputStream in) {
+        return in instanceof BitInputStream ? (BitInputStream) in : new BitInputStream(in);
+    }
+
     @Override
     public int read() throws IOException {
         bitField = -1;

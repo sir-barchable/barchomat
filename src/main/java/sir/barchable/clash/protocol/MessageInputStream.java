@@ -1,6 +1,8 @@
 package sir.barchable.clash.protocol;
 
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sir.barchable.util.BitInputStream;
 import sir.barchable.util.Bits;
 
@@ -24,7 +26,14 @@ public class MessageInputStream extends InputStream {
     private BitInputStream in;
 
     public MessageInputStream(InputStream in) {
-        this.in = in instanceof BitInputStream ? (BitInputStream) in : new BitInputStream(in);
+        this.in = BitInputStream.toBitInputStream(in);
+    }
+
+    /**
+     * Wrap or cast an InputStream to a MessageInputStream.
+     */
+    public static MessageInputStream toMessageInputStream(InputStream in) {
+        return in instanceof MessageInputStream ? (MessageInputStream) in : new MessageInputStream(in);
     }
 
     @Override

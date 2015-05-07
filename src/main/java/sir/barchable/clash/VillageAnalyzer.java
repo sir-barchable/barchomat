@@ -65,7 +65,7 @@ public class VillageAnalyzer implements MessageTap {
         int age = (Integer) message.get("age");
         Integer timeStamp = (Integer) message.get("timeStamp");
 
-        Map<String, Object> user = (Map<String, Object>) message.get(type == OwnHomeData ? "user" : "enemy");
+        Map<String, Object> user = (Map<String, Object>) message.get("user");
         String userName = (String) user.get("userName");
         Long userId = (Long) user.get("userId");
 
@@ -175,7 +175,7 @@ public class VillageAnalyzer implements MessageTap {
         // Storage
         //
 
-        Map<String, Object> resources = (Map<String, Object>) message.get(type == OwnHomeData ? "resources" : "enemyResources");
+        Map<String, Object> resources = (Map<String, Object>) message.get("resources");
         if (resources != null) {
             Object[] resourceCounts = (Object[]) resources.get("resourceCounts");
             for (int i = 0; i < resourceCounts.length; i++) {

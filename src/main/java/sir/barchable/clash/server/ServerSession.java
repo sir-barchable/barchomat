@@ -14,9 +14,7 @@ import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static sir.barchable.clash.protocol.Pdu.Type.Encryption;
-import static sir.barchable.clash.protocol.Pdu.Type.LoginOk;
-import static sir.barchable.clash.protocol.Pdu.Type.ServerKeepAlive;
+import static sir.barchable.clash.protocol.Pdu.Type.*;
 
 /**
  * Clash server.
@@ -30,6 +28,7 @@ public class ServerSession {
     private AtomicBoolean running = new AtomicBoolean(true);
     private Connection clientConnection;
     private MessageFactory messageFactory;
+    private String loadout;
     private SessionState sessionState = new SessionState();
 
     /**
@@ -42,11 +41,18 @@ public class ServerSession {
      */
     private LoadoutManager loadoutManager;
 
-    private ServerSession(Logic logic, MessageFactory messageFactory, Connection clientConnection) throws IOException {
+    private ServerSession(Logic logic, MessageFactory messageFactory, Connection clientConnection, String loadout) throws IOException {
         this.messageFactory = messageFactory;
         this.clientConnection = clientConnection;
         this.villageLoader = new VillageLoader(logic, messageFactory, new File("villages"));
         this.loadoutManager = new LoadoutManager(logic, new File("loadouts"));
+        if (loadout != null) {
+            if (!loadoutManager.contains(loadout)) {
+                log.warn("Loadout {} not found", loadout);
+            } else {
+                this.loadout = loadout;
+            }
+        }
     }
 
     public SessionState getSessionState() {
@@ -63,8 +69,8 @@ public class ServerSession {
      * <p>
      * Normal completion is usually the result of an EOF on the input stream.
      */
-    public static ServerSession newSession(Logic logic, MessageFactory messageFactory, Connection clientConnection) throws IOException {
-        ServerSession session = new ServerSession(logic, messageFactory, clientConnection);
+    public static ServerSession newSession(Logic logic, MessageFactory messageFactory, Connection clientConnection, String loadout) throws IOException {
+        ServerSession session = new ServerSession(logic, messageFactory, clientConnection, loadout);
         localSession.set(session);
         try {
 
@@ -96,9 +102,17 @@ public class ServerSession {
             // It contains the seed for the key generator.
             //
 
-            Pdu loginPdu = clientConnection.getIn().readPdu();
+            Pdu loginPdu = clientConnection.getIn().read();
             Message loginMessage = messageFactory.fromPdu(loginPdu);
-            sessionState.setUserId((Long) loginMessage.get("userId"));
+            if (loginMessage.getType() != Login) {
+                throw new IllegalStateException("Expected Login");
+            }
+            Long userId = loginMessage.getLong("userId");
+            if (userId == null) {
+                throw new PduException("No user id in login");
+            }
+            sessionState.setUserId(userId);
+
             Object clientSeed = loginMessage.get("clientSeed");
             if (clientSeed == null || !(clientSeed instanceof Integer)) {
                 throw new PduException("Expected client seed in login message");
@@ -115,7 +129,7 @@ public class ServerSession {
             ThreadLocalRandom.current().nextBytes(nonce); // generate a new key
             encryptionMessage.set("serverRandom", nonce);
             encryptionMessage.set("version", 1);
-            clientConnection.getOut().writePdu(messageFactory.toPdu(encryptionMessage));
+            clientConnection.getOut().write(messageFactory.toPdu(encryptionMessage));
 
             //
             // Re-key the streams
@@ -129,8 +143,8 @@ public class ServerSession {
 
             Message loginOkMessage = messageFactory.newMessage(LoginOk);
 
-            loginOkMessage.set("userId", loginMessage.get("userId"));
-            loginOkMessage.set("homeId", loginMessage.get("userId"));
+            loginOkMessage.set("userId", userId);
+            loginOkMessage.set("homeId", userId);
             loginOkMessage.set("userToken", loginMessage.get("userToken"));
             loginOkMessage.set("majorVersion", loginMessage.get("majorVersion"));
             loginOkMessage.set("minorVersion", loginMessage.get("minorVersion"));
@@ -140,13 +154,13 @@ public class ServerSession {
             loginOkMessage.set("lastLoginDate", "" + System.currentTimeMillis() / 1000);
             loginOkMessage.set("country", "US");
 
-            clientConnection.getOut().writePdu(messageFactory.toPdu(loginOkMessage));
+            clientConnection.getOut().write(messageFactory.toPdu(loginOkMessage));
 
             //
             // Send the home village
             //
 
-            clientConnection.getOut().writePdu(messageFactory.toPdu(loadHome()));
+            clientConnection.getOut().write(messageFactory.toPdu(loadHome()));
 
             //
             // The request loop handles further PDUs
@@ -167,7 +181,7 @@ public class ServerSession {
                 // Read a request PDU
                 //
 
-                Pdu pdu = connection.getIn().readPdu();
+                Pdu pdu = connection.getIn().read();
                 log.debug("Pdu from client: {}", pdu.getType());
 
                 Message request;
@@ -207,7 +221,7 @@ public class ServerSession {
                 //
 
                 if (response != null) {
-                    connection.getOut().writePdu(messageFactory.toPdu(response));
+                    connection.getOut().write(messageFactory.toPdu(response));
                 }
             }
 
@@ -251,6 +265,7 @@ public class ServerSession {
             throw new ResourceException("No home village. Have you captured some data with the proxy?");
         }
         village.set("timeStamp", (int) (System.currentTimeMillis() / 1000));
+        // Set remaining shield to to avoid annoying attack confirmation dialog
         village.set("remainingShield", 0);
         applyLoadout(village);
 
@@ -258,9 +273,8 @@ public class ServerSession {
     }
 
     private void applyLoadout(Message village) throws IOException {
-        File loadOutFile = new File("loadout.json");
-        if (loadOutFile.exists()) {
-            loadoutManager.applyLoadOut(village, "test");
+        if (loadout != null) {
+            loadoutManager.applyLoadOut(village, loadout);
         }
     }
 
