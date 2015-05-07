@@ -127,8 +127,12 @@ public class MessageWriter {
                 key = "field" + fieldIndex;
             }
             Object value = struct.get(key);
+            TypeFactory.Type fieldType = typeFactory.newType(fieldDefinition.getType());
+            if (value == null && fieldDefinition.getDefault() != null) {
+                value = fieldType.valueOf(fieldDefinition.getDefault());
+            }
             try {
-                write(typeFactory.newType(fieldDefinition.getType()), value, out);
+                write(fieldType, value, out);
             } catch (RuntimeException e) {
                 throw new IOException("Failed to write field " + key + " of " + type.getName(), e);
             }
@@ -138,13 +142,18 @@ public class MessageWriter {
             Protocol.StructDefinition.Extension extension = type.getStructDefinition().getExtension((Integer) id);
             if (extension != null) {
                 for (FieldDefinition fieldDefinition : extension.getFields()) {
+                    fieldIndex++;
                     String key = fieldDefinition.getName();
                     if (key == null) {
                         key = "field" + fieldIndex;
                     }
+                    TypeFactory.Type fieldType = typeFactory.newType(fieldDefinition.getType());
                     Object value = struct.get(key);
+                    if (value == null && fieldDefinition.getDefault() != null) {
+                        value = fieldType.valueOf(fieldDefinition.getDefault());
+                    }
                     try {
-                        write(typeFactory.newType(fieldDefinition.getType()), value, out);
+                        write(fieldType, value, out);
                     } catch (IOException e) {
                         throw new IOException("Failed to write field " + key + " of " + type.getName(), e);
                     }

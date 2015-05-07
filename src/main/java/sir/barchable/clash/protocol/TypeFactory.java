@@ -11,8 +11,10 @@ import sir.barchable.clash.protocol.Protocol.StructDefinition.FieldDefinition;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,7 +49,22 @@ public class TypeFactory {
     private Map<String, Type> typeDefinitions = new LinkedHashMap<>();
 
     public enum Primitive {
-        BOOLEAN, BYTE, INT, LONG, STRING, ZIP_STRING;
+        BOOLEAN(Boolean::valueOf),
+        BYTE(Byte::valueOf),
+        INT(Integer::valueOf),
+        LONG(Long::valueOf),
+        STRING(String::valueOf),
+        ZIP_STRING(String::valueOf);
+
+        private Function<String, ?> fromString;
+
+        Primitive(Function<String, ?> fromString) {
+            this.fromString = fromString;
+        }
+
+        public Object fromString(String dflt) {
+            return dflt == null ? null : fromString.apply(dflt);
+        }
     }
 
     /**
@@ -78,15 +95,11 @@ public class TypeFactory {
             if (structName == null) {
                 throw new TypeException("Missing struct name in protocol definition");
             }
-            for (FieldDefinition fieldDefinition : structDefinition.getFields()) {
-                String fieldName = fieldDefinition.getName();
-                if (fieldName != null) {
-                    if (fieldName.startsWith(ANONYMOUS_FIELD_PREFIX)) {
-                        throw new TypeException("Illegal field name " + fieldName + " (reserved prefix)");
-                    }
-                    if (!NAME_PATTERN.matcher(fieldName).matches()) {
-                        throw new TypeException("Illegal field name " + fieldName);
-                    }
+            checkFields(structDefinition.getFields());
+            List<Extension> extensions = structDefinition.getExtensions();
+            if (extensions != null) {
+                for (Extension extension : extensions) {
+                    checkFields(extension.getFields());
                 }
             }
             // Passed check, store
@@ -99,6 +112,20 @@ public class TypeFactory {
                 String typeName = fieldDefinition.getType();
                 if (!typeDefinitions.containsKey(typeName)) {
                     typeDefinitions.put(typeName, newType(typeName));
+                }
+            }
+        }
+    }
+
+    private void checkFields(List<FieldDefinition> fields) {
+        for (FieldDefinition fieldDefinition : fields) {
+            String fieldName = fieldDefinition.getName();
+            if (fieldName != null) {
+                if (fieldName.startsWith(ANONYMOUS_FIELD_PREFIX)) {
+                    throw new TypeException("Illegal field name " + fieldName + " (reserved prefix)");
+                }
+                if (!NAME_PATTERN.matcher(fieldName).matches()) {
+                    throw new TypeException("Illegal field name " + fieldName);
                 }
             }
         }
@@ -220,6 +247,14 @@ public class TypeFactory {
 
         public Primitive getPrimitiveType() {
             return primitiveType;
+        }
+
+        public Object valueOf(String dflt) {
+            if (isPrimitive()) {
+                return primitiveType.fromString(dflt);
+            } else {
+                throw new TypeException("Can't deserialize " + name + " from string");
+            }
         }
     }
 }

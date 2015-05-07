@@ -102,14 +102,21 @@ public class Protocol {
              */
             private String comment;
 
+            /**
+             * Default value if not set.
+             */
+            private String dflt;
+
             public FieldDefinition(
                 @JsonProperty("name") String name,
                 @JsonProperty("type") String type,
-                @JsonProperty("comment") String comment
+                @JsonProperty("comment") String comment,
+                @JsonProperty("default") String dflt
             ) {
                 this.name = name;
                 this.type = type;
                 this.comment = comment;
+                this.dflt = dflt;
             }
 
             public String getName() {
@@ -122,6 +129,10 @@ public class Protocol {
 
             public String getComment() {
                 return comment;
+            }
+
+            public String getDefault() {
+                return dflt;
             }
 
             @Override

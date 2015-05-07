@@ -36,7 +36,6 @@ public class VillageLoader {
     private Logic logic;
     private MessageFactory messageFactory;
     private File home;
-    private File enemyPrototype;
     private File[] enemyHomes;
 
     public VillageLoader(Logic logic, MessageFactory messageFactory, File dir) throws IOException {
@@ -53,8 +52,6 @@ public class VillageLoader {
         } else {
             throw new FileNotFoundException("No home village file found in " + dir);
         }
-
-        enemyPrototype = new File("EnemyHomeDataPrototype.pdu");
 
         enemyHomes = Files.walk(dir.toPath())
             .map(Path::toFile)
@@ -76,9 +73,10 @@ public class VillageLoader {
     }
 
     private Message loadEnemyPrototype() throws IOException {
-        try (FileInputStream in = new FileInputStream(enemyPrototype)) {
-            return messageFactory.fromStream(EnemyHomeData, in);
-        }
+        Message village = messageFactory.newMessage(EnemyHomeData);
+        village.set("timeStamp", (int) (System.currentTimeMillis() / 1000));
+        village.set("age", 0);
+        return village;
     }
 
     /**
