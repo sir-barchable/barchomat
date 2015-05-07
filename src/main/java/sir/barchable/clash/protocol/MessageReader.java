@@ -68,7 +68,7 @@ public class MessageReader {
             throw new NullPointerException("null definition");
         }
 
-        return readValue(typeFactory.newType(typeName), in);
+        return readValue(typeFactory.resolveType(typeName), in);
     }
 
     /**

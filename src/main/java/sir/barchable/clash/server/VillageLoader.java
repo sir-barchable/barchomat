@@ -118,7 +118,7 @@ public class VillageLoader {
         Message enemyVillage = loadEnemyPrototype();
 
         // Copy data from visited -> enemy
-        enemyVillage.set("userId", visitedVillage.get("userId"));
+        enemyVillage.set("homeId", visitedVillage.get("homeId"));
         if (war) {
             // swap from home layout to war layout
             enemyVillage.set("homeVillage", layoutManager.toJson(
@@ -139,7 +139,7 @@ public class VillageLoader {
     private Message warHomeToEnemyHome(Message village) throws IOException {
         Message homeVillage = loadHomeVillage();
         Message enemyVillage = loadEnemyPrototype();
-        enemyVillage.set("userId", village.get("userId"));
+        enemyVillage.set("homeId", village.get("homeId"));
 
         WarVillage warVillage = layoutManager.loadWarVillage(village.getString("homeVillage"));
         enemyVillage.set("homeVillage", layoutManager.toJson(layoutManager.warVillageToVillage(warVillage)));

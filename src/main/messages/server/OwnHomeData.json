@@ -6,7 +6,7 @@
     {"type": "INT", "default": -1},
     {"name": "timeStamp", "type": "INT"},
     {"type": "INT"},
-    {"name": "userId", "type": "LONG"},
+    {"name": "homeId", "type": "LONG"},
     {"name": "remainingShield", "type": "INT"},
     {"type": "INT", "default": 1200},
     {"type": "INT", "default": 60},

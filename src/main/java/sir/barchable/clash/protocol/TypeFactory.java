@@ -111,7 +111,7 @@ public class TypeFactory {
             for (FieldDefinition fieldDefinition : structDefinition.getFields()) {
                 String typeName = fieldDefinition.getType();
                 if (!typeDefinitions.containsKey(typeName)) {
-                    typeDefinitions.put(typeName, newType(typeName));
+                    typeDefinitions.put(typeName, resolveType(typeName));
                 }
             }
         }
@@ -149,8 +149,8 @@ public class TypeFactory {
         return Optional.empty();
     }
 
-    public StructDefinition getStructDefinitionForId(int id) {
-        Optional<String> messageName = getStructNameForId(id);
+    public StructDefinition getStructDefinitionForId(int messageId) {
+        Optional<String> messageName = getStructNameForId(messageId);
         if (messageName.isPresent()) {
             return structDefinitions.get(messageName.get());
         } else {
@@ -158,7 +158,61 @@ public class TypeFactory {
         }
     }
 
-    public Type newType(String typeDefinition) {
+    /**
+     * Parse a type definition.
+     *
+     * <ul>
+     * <li>
+     *     <b>boolean (Primitive):</b>
+     *     BOOLEAN
+     *     <i>A single bit.</i>
+     * </li>
+     * <li>
+     *     <b>byte (Primitive):</b>
+     *     BYTE
+     *     <i>A single byte.</i>
+     * </li>
+     * <li>
+     *     <b>int (Primitive):</b>
+     *     INT
+     *     <i>A 4 byte integer.</i>
+     * </li>
+     * <li>
+     *     <b>long (Primitive):</b>
+     *     LONG
+     *     <i>An 8 byte integer.</i>
+     * </li>
+     * <li>
+     *     <b>String (Primitive):</b>
+     *     STRING
+     *     <i>A UTF-8 string.</i>
+     * </li>
+     * <li>
+     *     <b>String (Primitive):</b>
+     *     ZIP_STRING
+     *     <i>A compressed UTF-8 string.</i>
+     * </li>
+     * <li>
+     *     <b>Array:</b>
+     *     TypeName|primitive[&lt;n>]
+     *     <i>An array of objects. Dynamically sized arrays have no size specifier.</i>
+     * </li>
+     * <li>
+     *     <b>Optional:</b>
+     *     ?TypeName|Primitive|Array
+     *     <i>An optional object.</i>
+     * </li>
+     * <li>
+     *     <b>Struct:</b>
+     *     TypeName
+     *     <i>A structure composed of other objects, defined in a Message.json file.</i>
+     * </li>
+     * </ul>
+     *
+     * @param typeDefinition the definition to parse
+     * @return the type info
+     */
+    public Type resolveType(String typeDefinition) {
         if (typeDefinition == null) {
             throw new TypeException("Missing type definition");
         }

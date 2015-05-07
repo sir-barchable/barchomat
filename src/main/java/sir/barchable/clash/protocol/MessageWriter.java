@@ -78,7 +78,7 @@ public class MessageWriter {
                         throw new IllegalArgumentException("Don't know how to write arrays of type " + type.getPrimitiveType());
                 }
             } else {
-                TypeFactory.Type structName = typeFactory.newType(type.getStructDefinition().getName());
+                TypeFactory.Type structName = typeFactory.resolveType(type.getStructDefinition().getName());
                 for (Object struct : (Object[]) o) {
                     write(structName, struct, out);
                 }
@@ -127,7 +127,7 @@ public class MessageWriter {
                 key = "field" + fieldIndex;
             }
             Object value = struct.get(key);
-            TypeFactory.Type fieldType = typeFactory.newType(fieldDefinition.getType());
+            TypeFactory.Type fieldType = typeFactory.resolveType(fieldDefinition.getType());
             if (value == null && fieldDefinition.getDefault() != null) {
                 value = fieldType.valueOf(fieldDefinition.getDefault());
             }
@@ -147,7 +147,7 @@ public class MessageWriter {
                     if (key == null) {
                         key = "field" + fieldIndex;
                     }
-                    TypeFactory.Type fieldType = typeFactory.newType(fieldDefinition.getType());
+                    TypeFactory.Type fieldType = typeFactory.resolveType(fieldDefinition.getType());
                     Object value = struct.get(key);
                     if (value == null && fieldDefinition.getDefault() != null) {
                         value = fieldType.valueOf(fieldDefinition.getDefault());

@@ -12,7 +12,7 @@ public class TypeParserTest {
 
     @Test
     public void testParseOptionalLong() {
-        TypeFactory.Type type = typeParser.newType("?LONG");
+        TypeFactory.Type type = typeParser.resolveType("?LONG");
         Assert.assertEquals("LONG", type.getName());
         Assert.assertTrue(type.isOptional());
         Assert.assertFalse(type.isArray());
