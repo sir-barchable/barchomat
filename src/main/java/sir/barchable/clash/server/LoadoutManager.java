@@ -5,8 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sir.barchable.clash.ResourceException;
 import sir.barchable.clash.model.Army;
-import sir.barchable.clash.model.Loadout2;
-import sir.barchable.clash.model.Loadout2.LoadoutUnit;
+import sir.barchable.clash.model.Loadout;
+import sir.barchable.clash.model.Loadout.LoadoutUnit;
 import sir.barchable.clash.model.Logic;
 import sir.barchable.clash.model.Unit;
 import sir.barchable.clash.protocol.Message;
@@ -58,7 +58,7 @@ public class LoadoutManager {
 
     public void addLoadout(File file) {
         try {
-            Loadout2 loadout = objectMapper.readValue(file, Loadout2.class);
+            Loadout loadout = objectMapper.readValue(file, Loadout.class);
             if (armies.put(loadout.getName(), toArmy(loadout)) != null) {
                 throw new ResourceException("Duplicate loadout " + loadout.getName());
             }
@@ -72,7 +72,7 @@ public class LoadoutManager {
     /**
      * Turn the human readable loadout model into out internal army model.
      */
-    private Army toArmy(Loadout2 loadout) {
+    private Army toArmy(Loadout loadout) {
         Army army = new Army();
         List<Unit> units = new ArrayList<>();
         List<Unit> spells = new ArrayList<>();

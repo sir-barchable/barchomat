@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author Sir Barchable
  *         Date: 6/05/15
  */
-public class Loadout2 {
+public class Loadout {
     private String name;
     private Integer queen;
     private Integer king;
