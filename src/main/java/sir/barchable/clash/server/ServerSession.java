@@ -28,7 +28,17 @@ public class ServerSession {
     private AtomicBoolean running = new AtomicBoolean(true);
     private Connection clientConnection;
     private MessageFactory messageFactory;
+
+    /**
+     * Name of the loadout to use when attacking, or null to use the one from the home data.
+     */
     private String loadout;
+
+    /**
+     * Attack the war layout?
+     */
+    private boolean war = true;
+
     private SessionState sessionState = new SessionState();
 
     /**
@@ -267,8 +277,6 @@ public class ServerSession {
         village.set("timeStamp", (int) (System.currentTimeMillis() / 1000));
         // Set remaining shield to to avoid annoying attack confirmation dialog
         village.set("remainingShield", 0);
-        applyLoadout(village);
-
         return village;
     }
 
@@ -281,7 +289,7 @@ public class ServerSession {
     private int nextVillage;
 
     private Message loadEnemy() throws IOException {
-        Message village = villageLoader.loadEnemyVillage(nextVillage++);
+        Message village = villageLoader.loadEnemyVillage(nextVillage++, war);
         if (village == null) {
             throw new ResourceException("No home village. Have you captured some data with the proxy?");
         }

@@ -76,12 +76,12 @@ public class WarVillage {
         public Boolean air_mode4;
         public Boolean air_mode5;
 
-        public Boolean aim_angle;
-        public Boolean aim_angle_war;
-        public Boolean aim_angle2;
-        public Boolean aim_angle3;
-        public Boolean aim_angle4;
-        public Boolean aim_angle5;
+        public Integer aim_angle;
+        public Integer aim_angle_war;
+        public Integer aim_angle2;
+        public Integer aim_angle3;
+        public Integer aim_angle4;
+        public Integer aim_angle5;
 
         public Upg hero_upg;
 

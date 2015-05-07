@@ -1,12 +1,16 @@
 package sir.barchable.clash.model;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sir.barchable.clash.model.json.Village;
+import sir.barchable.clash.model.json.WarVillage;
 import sir.barchable.clash.server.LogicException;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Layout manipulation for village descriptors.
@@ -18,15 +22,25 @@ public class LayoutManager {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
+    public WarVillage loadWarVillage(String villageJson) throws IOException {
+        return objectMapper.readValue(villageJson, WarVillage.class);
+    }
+
+    public Village loadVillage(String villageJson) throws IOException {
+        return objectMapper.readValue(villageJson, Village.class);
+    }
+
+    public String toJson(Object o) throws JsonProcessingException {
+        return objectMapper.writeValueAsString(o);
+    }
+
     /**
      * Update coordinates in the village JSON description to the war layout.
      *
-     * @param villageJson the village description
+     * @param village the village description
      * @return the village, with the layout set to the war layout
      */
-    public String setWarLayout(String villageJson) throws IOException {
-        System.out.println(villageJson);
-        Village village = objectMapper.readValue(villageJson, Village.class);
+    public Village setWarLayout(Village village) throws IOException {
         Integer layout = village.war_layout;
         if (layout != null) {
             try {
@@ -35,7 +49,48 @@ public class LayoutManager {
                 log.warn("Could not set layout to " + layout);
             }
         }
-        return objectMapper.writeValueAsString(village);
+        return village;
+    }
+
+    public Village warVillageToVillage(WarVillage warVillage) throws IOException {
+        Village village = new Village();
+        village.active_layout = 1;
+
+        village.cooldowns = new Village.CoolDown[0];
+
+        village.traps = new Village.Building[0];
+        village.obstacles = new Village.Building[0];
+        village.decos = new Village.Building[0];
+
+        village.newShopBuildings = new Integer[0];
+        village.newShopBuildings = new Integer[0];
+        village.newShopTraps = new Integer[0];
+
+        village.respawnVars = new Village.RespawnVars();
+
+        List<Village.Building> buildings = new ArrayList<>();
+        for (WarVillage.Building warBuilding : warVillage.buildings) {
+            Village.Building building = new Village.Building();
+            building.data = warBuilding.data;
+            building.lvl = warBuilding.lvl;
+            building.hp = warBuilding.hp;
+            building.x = warBuilding.x;
+            building.y = warBuilding.y;
+            building.aim_angle = warBuilding.aim_angle;
+            building.air_mode = warBuilding.air_mode;
+            building.ammo = warBuilding.ammo;
+            building.attack_mode = warBuilding.attack_mode;
+            if (warBuilding.hero_upg != null) {
+                building.hero_upg = new Village.Building.Unit();
+                building.hero_upg.level = warBuilding.hero_upg.level;
+                building.hero_upg.t = warBuilding.hero_upg.t;
+            }
+            buildings.add(building);
+        }
+
+        village.buildings = buildings.toArray(new Village.Building[buildings.size()]);
+
+        return village;
     }
 
     /**

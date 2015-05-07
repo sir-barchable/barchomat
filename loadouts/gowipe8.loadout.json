@@ -1,0 +1,17 @@
+{
+  "name": "gowipe8",
+  "king": 10,
+  "army": [
+    {"name": "PEKKA", "level": 1, "count": 3},
+    {"name": "Wizard", "level": 4, "count": 12},
+    {"name": "Wall Breaker", "level": 4, "count": 8},
+    {"name": "Golem", "level": 1, "count": 2}
+  ],
+  "spells": [
+    {"name": "Rage", "level": 5, "count": 2},
+    {"name": "Lightning", "level": 4, "count": 1}
+  ],
+  "garrison": [
+    {"name": "Barbarian", "level": 5, "count": 25}
+  ]
+}

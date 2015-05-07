@@ -1,7 +1,9 @@
 package sir.barchable.clash.proxy;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sir.barchable.clash.model.json.WarVillage;
 import sir.barchable.clash.protocol.*;
 import sir.barchable.clash.protocol.Pdu.Type;
 
@@ -23,6 +25,7 @@ import static sir.barchable.util.NoopCipher.NOOP_CIPHER;
 public class MessageSaver implements PduFilter {
     private static final Logger log = LoggerFactory.getLogger(MessageSaver.class);
 
+    private ObjectMapper objectMapper = new ObjectMapper();
     private MessageFactory messageFactory;
     private File saveDir;
     private Set<Type> types;
@@ -56,14 +59,7 @@ public class MessageSaver implements PduFilter {
         Type type = Type.valueOf(pdu.getId());
         try {
             if (types.contains(type)) {
-                Message message = messageFactory.fromPdu(pdu);
-                String villageName;
-                Map<String, Object> user = message.getStruct("user");
-                if (user != null) {
-                    villageName = sanitize((String) user.get("userName"));
-                } else {
-                    villageName = "anon";
-                }
+                String villageName = guessName(pdu);
                 String name = String.format("%s[%3$s]%2$tF-%2$tH-%2$tM-%2$tS.pdu", type, new Date(), villageName);
                 File file = new File(saveDir, name);
                 try (PduOutputStream out = new PduOutputStream(new FileOutputStream(file), NOOP_CIPHER)) {
@@ -74,6 +70,40 @@ public class MessageSaver implements PduFilter {
             log.error("Couldn't save village", e);
         }
         return pdu;
+    }
+
+    /**
+     * Try to extract the village name from a PDU.
+     *
+     * @return the {@link #sanitize(String) sanitized} village name, or "anon" if it can't be determined
+     */
+    private String guessName(Pdu pdu) {
+        Message message = messageFactory.fromPdu(pdu);
+        String villageName = "anon";
+
+        switch (message.getType()) {
+            case OwnHomeData:
+            case VisitedHomeData:
+            case EnemyHomeData:
+                Map<String, Object> user = message.getStruct("user");
+                if (user != null) {
+                    villageName = (String) user.get("userName");
+                }
+                break;
+
+            case WarHomeData:
+                try {
+                    WarVillage warVillage = objectMapper.readValue(message.getString("homeVillage"), WarVillage.class);
+                    if (warVillage.name != null) {
+                        villageName = warVillage.name;
+                    }
+                } catch (IOException e) {
+                    // fall through
+                }
+                break;
+        }
+
+        return sanitize(villageName);
     }
 
     /**

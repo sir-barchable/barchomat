@@ -40,22 +40,27 @@ public class VillageAnalyzer implements MessageTap {
     @Override
     public void onMessage(Pdu.Type type, Map<String, Object> message) {
         String homeVillage = (String) message.get("homeVillage");
-        String warVillage = (String) message.get("warVillage");
 
-        if (homeVillage != null) {
-            try {
-                Village village = mapper.readValue(homeVillage, Village.class);
-                analyzeHomeVillage(type, message, village);
-            } catch (RuntimeException | IOException e) {
-                log.warn("Could not read village", e);
-            }
-        } else if (warVillage != null) {
-            try {
-                WarVillage village = mapper.readValue(warVillage, WarVillage.class);
-                analyzeWarVillage(type, message, village);
-            } catch (IOException e) {
-                log.warn("Could not read village", e);
-            }
+        switch (type) {
+            case OwnHomeData:
+            case VisitedHomeData:
+            case EnemyHomeData:
+                try {
+                    Village village = mapper.readValue(homeVillage, Village.class);
+                    analyzeHomeVillage(type, message, village);
+                } catch (RuntimeException | IOException e) {
+                    log.warn("Could not read village", e);
+                }
+                break;
+
+            case WarHomeData:
+                try {
+                    WarVillage village = mapper.readValue(homeVillage, WarVillage.class);
+                    analyzeWarVillage(type, message, village);
+                } catch (IOException e) {
+                    log.warn("Could not read village", e);
+                }
+                break;
         }
     }
 
