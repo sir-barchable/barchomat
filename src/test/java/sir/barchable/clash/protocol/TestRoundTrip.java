@@ -18,7 +18,7 @@ import static sir.barchable.clash.protocol.Pdu.Type.EnemyHomeData;
 public class TestRoundTrip {
     @Test
     public void rw() throws IOException {
-        MessageFactory factory = new MessageFactory(new TypeFactory(ProtocolTool.read(new File("src/main/messages"))));
+        MessageFactory factory = new MessageFactory(new TypeFactory(new ProtocolTool(new File("src/main/messages")).read()));
 
         byte[] pduBytesIn;
         try (FileInputStream in = new FileInputStream("EnemyHomeData.pdu")) {

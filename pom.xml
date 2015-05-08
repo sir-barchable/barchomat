@@ -6,7 +6,7 @@
 
     <groupId>sir.barchable</groupId>
     <artifactId>barchomat</artifactId>
-    <version>0.2</version>
+    <version>0.3</version>
     <url>https://github.com/sir-barchable/barchomat</url>
 
     <build>
@@ -19,6 +19,30 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
+                </configuration>
+            </plugin>
+
+            <!-- Compile the message definitions into Protocol.json -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.4.0</version>
+                <executions>
+                    <execution>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <mainClass>sir.barchable.clash.protocol.ProtocolTool</mainClass>
+                    <arguments>
+                        <argument>-d</argument>
+                        <argument>src/main/messages</argument>
+                        <argument>-o</argument>
+                        <argument>src/main/resources/sir/barchable/clash/protocol/Protocol.json</argument>
+                    </arguments>
                 </configuration>
             </plugin>
 

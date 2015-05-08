@@ -113,7 +113,7 @@ public class ClashProxy {
 
         TypeFactory typeFactory;
         if (resourceDir != null) {
-            typeFactory = new TypeFactory(ProtocolTool.read(resourceDir));
+            typeFactory = new TypeFactory(new ProtocolTool(resourceDir).read());
         } else {
             typeFactory = new TypeFactory();
         }

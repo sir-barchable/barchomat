@@ -80,7 +80,7 @@ public class Dump {
             if (!resourceDir.exists()) {
                 throw new FileNotFoundException(resourceDir.toString());
             }
-            typeFactory = new TypeFactory(ProtocolTool.read(resourceDir));
+            typeFactory = new TypeFactory(new ProtocolTool(resourceDir).read());
         } else {
             typeFactory = new TypeFactory();
         }
