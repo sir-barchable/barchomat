@@ -10,6 +10,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -64,10 +65,7 @@ public class MessageReader {
      * after parsing the type with the configured {@link TypeFactory}.
      */
     public Object readValue(String typeName, MessageInputStream in) throws IOException {
-        if (typeName == null) {
-            throw new NullPointerException("null definition");
-        }
-
+        Objects.requireNonNull(typeName, "null definition");
         return readValue(typeFactory.resolveType(typeName), in);
     }
 
@@ -79,10 +77,6 @@ public class MessageReader {
      * @return the value, or null if the value was optional and not present in the stream
      */
     public Object readValue(TypeFactory.Type definition, MessageInputStream in) throws IOException {
-        if (in == null) {
-            throw new NullPointerException("null payload");
-        }
-
         if (definition.isOptional() && !in.readBit()) {
             return null;
         }
@@ -180,7 +174,7 @@ public class MessageReader {
             }
 
             // Extra fields from extension?
-            if (struct.getExtensions() != null) {
+            if (!struct.getExtensions().isEmpty()) {
                 Integer id = (Integer) fields.get(TypeFactory.ID_FIELD);
                 if (id == null) {
                     throw new PduException("id field missing from " + definition.getName());

@@ -2,16 +2,18 @@ package sir.barchable.clash.protocol;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
- * Date: 6/04/15
+ * Model for protocol definition in JSON.
  *
  * @author Sir Barchable
+ *         Date: 6/04/15
  */
 public class Protocol {
-    private List<StructDefinition> messages = new ArrayList<>();
+    private List<StructDefinition> messages;
 
     public Protocol(@JsonProperty("messages") List<StructDefinition> messages) {
         this.messages = messages;
@@ -29,17 +31,20 @@ public class Protocol {
         private final List<Extension> extensions;
 
         public StructDefinition(
-            @JsonProperty("id") Integer id,
-            @JsonProperty("name") String name,
+            @JsonProperty(value = "id") Integer id,
+            @JsonProperty(value = "name", required = true) String name,
             @JsonProperty("comment") String comment,
             @JsonProperty("fields") List<FieldDefinition> fields,
             @JsonProperty("extensions") List<Extension> extensions
         ) {
+            if (name == null) {
+                throw new NullPointerException("null type name");
+            }
             this.id = id;
             this.name = name;
-            this.fields = fields;
+            this.fields = fields == null ? Collections.emptyList() : fields;
             this.comment = comment;
-            this.extensions = extensions;
+            this.extensions = extensions == null ? Collections.emptyList() : extensions;
         }
 
         public Integer getId() {
@@ -63,9 +68,6 @@ public class Protocol {
         }
 
         public FieldDefinition getField(String name) {
-            if (name == null) {
-                throw new NullPointerException("null field name");
-            }
             for (FieldDefinition field : fields) {
                 if (name.equals(field.getName())) {
                     return field;
@@ -75,11 +77,9 @@ public class Protocol {
         }
 
         public Extension getExtension(int id) {
-            if (extensions != null) {
-                for (Extension extension : extensions) {
-                    if (extension.getId() == id) {
-                        return extension;
-                    }
+            for (Extension extension : extensions) {
+                if (extension.getId() == id) {
+                    return extension;
                 }
             }
             return null;
@@ -108,11 +108,12 @@ public class Protocol {
             private String dflt;
 
             public FieldDefinition(
-                @JsonProperty("name") String name,
-                @JsonProperty("type") String type,
+                @JsonProperty(value = "name") String name,
+                @JsonProperty(value = "type", required = true) String type,
                 @JsonProperty("comment") String comment,
                 @JsonProperty("default") String dflt
             ) {
+                Objects.requireNonNull(type, "null field type");
                 this.name = name;
                 this.type = type;
                 this.comment = comment;
@@ -147,13 +148,14 @@ public class Protocol {
             private List<FieldDefinition> fields;
 
             public Extension(
-                @JsonProperty("id") Integer id,
+                @JsonProperty(value = "id", required = true) Integer id,
                 @JsonProperty("comment") String comment,
                 @JsonProperty("fields") List<FieldDefinition> fields
             ) {
+                Objects.requireNonNull("null extension id");
                 this.id = id;
                 this.comment = comment;
-                this.fields = fields;
+                this.fields = fields == null ? Collections.emptyList() : fields;
             }
 
             public Integer getId() {

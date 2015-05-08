@@ -53,7 +53,7 @@ the game executable in the same directory and start the proxy from the command l
 The proxy will log a startup message if all is well:
     
     10:06:59 INFO  Reading protocol definition from Protocol.json
-    10:07:00 DEBUG Reading logic from com.supercell.clashofclans-7.1.1-Android-4.0.3.apk
+    10:07:00 DEBUG Reading logic from com.supercell.clashofclans-7.65-Android-4.0.3.apk
     10:07:00 INFO  Listening on 9339  
 
 The second part is harder; you have to convince your device to talk to the proxy rather than the real Clash server. 
@@ -92,8 +92,10 @@ If you know Java, fork the code and start hacking from the outside (ClashProxy.j
 (VillageAnalyzer.java). If anything useful comes of it mail me at *sir.barchable@gmail.com*. 
 
 If you're handy with stream capture tools like [tcpflow][2] you can help out with protocol analysis.
-We've described the protocol packet structure in a collection of JSON files, so no programming is required.
+We've described the protocol packet structure in a collection of [JSON files][4], so no programming 
+is required.
  
 [1]: http://www.thekelleys.org.uk/dnsmasq/doc.html
 [2]: https://github.com/simsong/tcpflow
 [3]: https://github.com/sir-barchable/barchomat/releases/
+[4]: src/main/messages/messages.md

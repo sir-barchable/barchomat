@@ -1,11 +1,19 @@
 {
   "messages" : [ {
+    "id" : 14101,
+    "name" : "AttackResult",
+    "fields" : [ {
+      "type" : "LONG"
+    } ],
+    "extensions" : [ ]
+  }, {
     "id" : 14315,
     "name" : "ChatToAllianceStream",
     "fields" : [ {
       "name" : "text",
       "type" : "STRING"
-    } ]
+    } ],
+    "extensions" : [ ]
   }, {
     "name" : "CommandComponent",
     "fields" : [ {
@@ -128,6 +136,13 @@
         "type" : "INT"
       } ]
     }, {
+      "id" : 603,
+      "comment" : "End combat",
+      "fields" : [ {
+        "name" : "tick",
+        "type" : "INT"
+      } ]
+    }, {
       "id" : 604,
       "comment" : "Cast spell",
       "fields" : [ {
@@ -167,11 +182,13 @@
     }, {
       "name" : "commands",
       "type" : "CommandComponent[]"
-    } ]
+    } ],
+    "extensions" : [ ]
   }, {
     "id" : 10108,
     "name" : "KeepAlive",
-    "fields" : [ ]
+    "fields" : [ ],
+    "extensions" : [ ]
   }, {
     "id" : 10101,
     "name" : "Login",
@@ -232,21 +249,24 @@
     }, {
       "name" : "clientSeed",
       "type" : "INT"
-    } ]
+    } ],
+    "extensions" : [ ]
   }, {
     "id" : 10113,
     "name" : "SetDeviceToken",
     "fields" : [ {
       "name" : "token",
       "type" : "BYTE[]"
-    } ]
+    } ],
+    "extensions" : [ ]
   }, {
     "id" : 14113,
     "name" : "VisitHome",
     "fields" : [ {
       "name" : "homeId",
       "type" : "LONG"
-    } ]
+    } ],
+    "extensions" : [ ]
   }, {
     "name" : "AllianceDonation",
     "fields" : [ {
@@ -255,7 +275,8 @@
     }, {
       "name" : "troops",
       "type" : "ResourceComponent[]"
-    } ]
+    } ],
+    "extensions" : [ ]
   }, {
     "name" : "ClanComponent",
     "fields" : [ {
@@ -272,7 +293,8 @@
     }, {
       "name" : "rank",
       "type" : "INT"
-    } ]
+    } ],
+    "extensions" : [ ]
   }, {
     "name" : "ClanIdComponent",
     "fields" : [ {
@@ -281,13 +303,15 @@
     }, {
       "name" : "clanName",
       "type" : "STRING"
-    } ]
+    } ],
+    "extensions" : [ ]
   }, {
     "name" : "IdComponent",
     "fields" : [ {
       "name" : "id",
       "type" : "LONG"
-    } ]
+    } ],
+    "extensions" : [ ]
   }, {
     "name" : "ResourceComponent",
     "fields" : [ {
@@ -296,7 +320,8 @@
     }, {
       "name" : "value",
       "type" : "INT"
-    } ]
+    } ],
+    "extensions" : [ ]
   }, {
     "name" : "ResourceListComponent",
     "fields" : [ {
@@ -347,7 +372,8 @@
     }, {
       "name" : "goblinElixir",
       "type" : "ResourceComponent[]"
-    } ]
+    } ],
+    "extensions" : [ ]
   }, {
     "name" : "UnitComponent",
     "fields" : [ {
@@ -359,7 +385,8 @@
     }, {
       "name" : "level",
       "type" : "INT"
-    } ]
+    } ],
+    "extensions" : [ ]
   }, {
     "name" : "UserComponent",
     "fields" : [ {
@@ -442,14 +469,16 @@
       "type" : "INT"
     }, {
       "type" : "INT"
-    } ]
+    } ],
+    "extensions" : [ ]
   }, {
     "name" : "UserHeaderComponent",
     "fields" : [ {
       "type" : "INT"
     }, {
       "type" : "INT"
-    } ]
+    } ],
+    "extensions" : [ ]
   }, {
     "name" : "WarLogEntry",
     "fields" : [ {
@@ -484,7 +513,7 @@
       "name" : "attacksUsed",
       "type" : "INT"
     }, {
-      "name" : "enemyAttacksUsed",
+      "name" : "xpEarned",
       "type" : "INT"
     }, {
       "type" : "INT"
@@ -500,26 +529,63 @@
       "type" : "INT"
     }, {
       "type" : "INT"
-    } ]
+    } ],
+    "extensions" : [ ]
   }, {
     "id" : 24324,
-    "name" : "AllianceData2",
+    "name" : "AllianceData",
     "fields" : [ {
       "name" : "clanDescription",
       "type" : "STRING"
     }, {
-      "type" : "BYTE[25]"
+      "type" : "INT"
+    }, {
+      "type" : "INT"
+    }, {
+      "type" : "?LONG"
+    }, {
+      "name" : "clanId",
+      "type" : "LONG"
     }, {
       "name" : "clanName",
       "type" : "STRING"
-    } ]
+    }, {
+      "name" : "badge",
+      "type" : "INT"
+    }, {
+      "type" : "INT"
+    }, {
+      "type" : "INT"
+    }, {
+      "type" : "INT"
+    }, {
+      "type" : "INT"
+    }, {
+      "type" : "INT"
+    }, {
+      "type" : "INT"
+    }, {
+      "type" : "INT"
+    }, {
+      "type" : "INT"
+    }, {
+      "type" : "INT"
+    }, {
+      "type" : "INT"
+    }, {
+      "type" : "INT"
+    }, {
+      "type" : "INT"
+    } ],
+    "extensions" : [ ]
   }, {
     "id" : 24311,
     "name" : "AllianceStream",
     "fields" : [ {
       "name" : "entries",
       "type" : "AllianceStreamEntry[]"
-    } ]
+    } ],
+    "extensions" : [ ]
   }, {
     "id" : 24312,
     "name" : "AllianceStreamEntry",
@@ -630,12 +696,28 @@
       } ]
     } ]
   }, {
+    "id" : 14106,
+    "name" : "AttackHome",
+    "comment" : "Revenge attack",
+    "fields" : [ {
+      "name" : "homeId",
+      "type" : "LONG"
+    }, {
+      "type" : "INT"
+    }, {
+      "type" : "INT"
+    }, {
+      "type" : "INT"
+    } ],
+    "extensions" : [ ]
+  }, {
     "name" : "AvatarStream",
     "comment" : "Mail stream. Clan mail, defense, etc. ID is 24411 (if and when this work is done...)",
     "fields" : [ {
       "name" : "entries",
       "type" : "AvatarStreamEntry[]"
-    } ]
+    } ],
+    "extensions" : [ ]
   }, {
     "name" : "AvatarStreamEntry",
     "fields" : [ {
@@ -656,7 +738,8 @@
     }, {
       "name" : "version",
       "type" : "INT"
-    } ]
+    } ],
+    "extensions" : [ ]
   }, {
     "id" : 24107,
     "name" : "EnemyHomeData",
@@ -664,22 +747,25 @@
       "name" : "age",
       "type" : "INT"
     }, {
-      "type" : "INT"
+      "type" : "INT",
+      "default" : "-1"
     }, {
       "name" : "timeStamp",
       "type" : "INT"
     }, {
       "type" : "INT"
     }, {
-      "name" : "userId",
+      "name" : "homeId",
       "type" : "LONG"
     }, {
       "name" : "remainingShield",
       "type" : "INT"
     }, {
-      "type" : "INT"
+      "type" : "INT",
+      "default" : "1200"
     }, {
-      "type" : "INT"
+      "type" : "INT",
+      "default" : "60"
     }, {
       "name" : "homeVillage",
       "type" : "?ZIP_STRING"
@@ -689,7 +775,22 @@
     }, {
       "name" : "resources",
       "type" : "ResourceListComponent"
-    } ]
+    }, {
+      "type" : "INT"
+    }, {
+      "name" : "attacker",
+      "type" : "UserComponent"
+    }, {
+      "name" : "attackerResources",
+      "type" : "ResourceListComponent"
+    }, {
+      "type" : "INT"
+    }, {
+      "type" : "INT"
+    }, {
+      "type" : "?LONG"
+    } ],
+    "extensions" : [ ]
   }, {
     "id" : 24715,
     "name" : "GlobalChatLine",
@@ -712,7 +813,8 @@
     }, {
       "name" : "clan",
       "type" : "?ClanIdComponent"
-    } ]
+    } ],
+    "extensions" : [ ]
   }, {
     "id" : 20103,
     "name" : "LoginFailed",
@@ -741,7 +843,8 @@
       "type" : "STRING"
     }, {
       "type" : "STRING"
-    } ]
+    } ],
+    "extensions" : [ ]
   }, {
     "id" : 20104,
     "name" : "LoginOk",
@@ -797,7 +900,8 @@
     }, {
       "name" : "country",
       "type" : "STRING"
-    } ]
+    } ],
+    "extensions" : [ ]
   }, {
     "id" : 24101,
     "name" : "OwnHomeData",
@@ -805,22 +909,25 @@
       "name" : "age",
       "type" : "INT"
     }, {
-      "type" : "INT"
+      "type" : "INT",
+      "default" : "-1"
     }, {
       "name" : "timeStamp",
       "type" : "INT"
     }, {
       "type" : "INT"
     }, {
-      "name" : "userId",
+      "name" : "homeId",
       "type" : "LONG"
     }, {
       "name" : "remainingShield",
       "type" : "INT"
     }, {
-      "type" : "INT"
+      "type" : "INT",
+      "default" : "1200"
     }, {
-      "type" : "INT"
+      "type" : "INT",
+      "default" : "60"
     }, {
       "name" : "homeVillage",
       "type" : "?ZIP_STRING"
@@ -830,7 +937,13 @@
     }, {
       "name" : "resources",
       "type" : "ResourceListComponent"
-    } ]
+    } ],
+    "extensions" : [ ]
+  }, {
+    "id" : 20108,
+    "name" : "ServerKeepAlive",
+    "fields" : [ ],
+    "extensions" : [ ]
   }, {
     "id" : 24326,
     "name" : "TrapData",
@@ -847,7 +960,8 @@
     }, {
       "name" : "garrison",
       "type" : "UnitComponent[]"
-    } ]
+    } ],
+    "extensions" : [ ]
   }, {
     "id" : 24113,
     "name" : "VisitedHomeData",
@@ -855,17 +969,20 @@
       "name" : "age",
       "type" : "INT"
     }, {
-      "type" : "INT"
+      "type" : "INT",
+      "default" : "-1"
     }, {
-      "name" : "userId",
+      "name" : "homeId",
       "type" : "LONG"
     }, {
       "name" : "remainingShield",
       "type" : "INT"
     }, {
-      "type" : "INT"
+      "type" : "INT",
+      "default" : "1200"
     }, {
-      "type" : "INT"
+      "type" : "INT",
+      "default" : "60"
     }, {
       "name" : "homeVillage",
       "type" : "?ZIP_STRING"
@@ -875,7 +992,8 @@
     }, {
       "name" : "resources",
       "type" : "ResourceListComponent"
-    } ]
+    } ],
+    "extensions" : [ ]
   }, {
     "id" : 25000,
     "name" : "WarHomeData",
@@ -886,7 +1004,7 @@
       "name" : "homeId",
       "type" : "LONG"
     }, {
-      "name" : "warVillage",
+      "name" : "homeVillage",
       "type" : "ZIP_STRING"
     }, {
       "type" : "INT"
@@ -898,13 +1016,15 @@
     }, {
       "name" : "resources",
       "type" : "ResourceListComponent"
-    } ]
+    } ],
+    "extensions" : [ ]
   }, {
     "id" : 24338,
     "name" : "WarLog",
     "fields" : [ {
       "name" : "entries",
       "type" : "WarLogEntry[]"
-    } ]
+    } ],
+    "extensions" : [ ]
   } ]
 }

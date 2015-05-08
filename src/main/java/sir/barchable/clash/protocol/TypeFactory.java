@@ -19,6 +19,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * Turn type definition strings like "LONG" and "CommandComponent[]" into
+ * {@link sir.barchable.clash.protocol.TypeFactory.Type type models} for use in the serialization
+ * code.
+ *
  * @author Sir Barchable
  *         Date: 21/04/15
  */
@@ -108,12 +112,15 @@ public class TypeFactory {
 
         // Now resolve and cache types
         for (StructDefinition structDefinition : protocol.getMessages()) {
+            // Cache field types
             for (FieldDefinition fieldDefinition : structDefinition.getFields()) {
                 String typeName = fieldDefinition.getType();
                 if (!typeDefinitions.containsKey(typeName)) {
                     typeDefinitions.put(typeName, resolveType(typeName));
                 }
             }
+            // Cache the struct type
+            typeDefinitions.put(structDefinition.getName(), resolveType(structDefinition.getName()));
         }
     }
 
