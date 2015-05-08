@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sir.barchable.clash.ResourceException;
 import sir.barchable.clash.model.Logic;
+import sir.barchable.clash.model.json.Village;
 import sir.barchable.clash.protocol.*;
 import sir.barchable.clash.protocol.Connection;
 import sir.barchable.clash.model.SessionState;
@@ -51,10 +52,12 @@ public class ServerSession {
      */
     private LoadoutManager loadoutManager;
 
-    private ServerSession(Logic logic, MessageFactory messageFactory, Connection clientConnection, String loadout) throws IOException {
+    private boolean dirty;
+
+    private ServerSession(Logic logic, MessageFactory messageFactory, Connection clientConnection, String loadout, File homeFile) throws IOException {
         this.messageFactory = messageFactory;
         this.clientConnection = clientConnection;
-        this.villageLoader = new VillageLoader(logic, messageFactory, new File("villages"));
+        this.villageLoader = new VillageLoader(logic, messageFactory, homeFile, new File("villages"));
         this.loadoutManager = new LoadoutManager(logic, new File("loadouts"));
         if (loadout != null) {
             if (!loadoutManager.contains(loadout)) {
@@ -79,8 +82,8 @@ public class ServerSession {
      * <p>
      * Normal completion is usually the result of an EOF on the input stream.
      */
-    public static ServerSession newSession(Logic logic, MessageFactory messageFactory, Connection clientConnection, String loadout) throws IOException {
-        ServerSession session = new ServerSession(logic, messageFactory, clientConnection, loadout);
+    public static ServerSession newSession(Logic logic, MessageFactory messageFactory, Connection clientConnection, String loadout, File homeFile) throws IOException {
+        ServerSession session = new ServerSession(logic, messageFactory, clientConnection, loadout, homeFile);
         localSession.set(session);
         try {
 
@@ -99,6 +102,10 @@ public class ServerSession {
             localSession.set(null);
         }
         return session;
+    }
+
+    private void save() {
+        villageLoader.save();
     }
 
     /**
@@ -247,30 +254,81 @@ public class ServerSession {
     }
 
     private Message endTurn(Message message) throws IOException {
+        Message response = null;
         Object[] commands = (Object[]) message.get("commands");
         if (commands != null) {
-            for (int i = 0; i < commands.length; i++) {
+            commandLoop: for (int i = 0; i < commands.length; i++) {
                 Map<String, Object> command = (Map<String, Object>) commands[i];
                 Integer id = (Integer) command.get("id");
                 if (id != null) {
                     switch (id) {
                         case 700:
-                            return loadEnemy();
+                            response = loadEnemy();
+                            break commandLoop;
 
                         case 603:
-                            return loadHome();
+                            response = loadHome();
+                            break commandLoop;
+
+                        case 501:   // Move building
+                            moveBuilding((int) command.get("x"), (int) command.get("y"), (int) command.get("buildingId"));
+                            break;
 
                         default:
+                            // We're lost; give up
                             log.debug("Not processing command {} from client", id);
+                            break commandLoop;
                     }
                 }
             }
         }
-        return null;
+
+        if (dirty) {
+            save();
+        }
+
+        return response;
+    }
+
+    private void moveBuilding(int x, int y, int buildingId) {
+        log.debug("Moving {} to {}, {}", buildingId, x, y);
+        int offset = buildingId % 1000;
+        int type = buildingId / 1000000;
+
+        Village village = villageLoader.getHomeVillage();
+        Village.Building building = null;
+
+        try {
+            switch (type) {
+                case 500:
+                    building = village.buildings[offset];
+                    break;
+
+                case 504:
+                    building = village.traps[offset];
+                    break;
+
+                case 506:
+                    building = village.decos[offset];
+                    break;
+
+                default:
+                    log.debug("You moved what?");
+                    break;
+            }
+        } catch (ArrayIndexOutOfBoundsException e) {
+            log.error("Couldn't find building {}", buildingId);
+        }
+
+        if (building != null) {
+            building.x = x;
+            building.y = y;
+            dirty = true;
+        }
     }
 
     private Message loadHome() throws IOException {
-        Message village = villageLoader.loadHomeVillage();
+        Message village = villageLoader.getOwnHomeData();
         if (village == null) {
             throw new ResourceException("No home village. Have you captured some data with the proxy?");
         }

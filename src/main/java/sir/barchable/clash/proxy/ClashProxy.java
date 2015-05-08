@@ -223,11 +223,6 @@ public class ClashProxy {
             }
 
             executor.shutdownNow();
-            try {
-                executor.awaitTermination(ProxySession.SHUTDOWN_TIMEOUT, TimeUnit.MILLISECONDS);
-            } catch (InterruptedException e) {
-                // ignore
-            }
         }
     }
 }

@@ -41,6 +41,9 @@ public class ClashServer {
     @Parameter(names = {"-w", "--working-dir"}, description = "Directory write output to")
     private File workingDir = new File(".");
 
+    @Parameter(names = {"--home"}, required = true, description = "Home village file")
+    private File homeFile;
+
     @Parameter(names = {"--loadout"}, description = "Name of loadout to apply")
     private String loadout;
 
@@ -155,7 +158,7 @@ public class ClashServer {
             try (
                 Connection clientConnection = new Connection(socket);
             ) {
-                ServerSession session = ServerSession.newSession(logic, messageFactory, clientConnection, loadout);
+                ServerSession session = ServerSession.newSession(logic, messageFactory, clientConnection, loadout, homeFile);
                 log.info("Client {} disconnected", socket);
             }
         } catch (IOException e) {
@@ -184,11 +187,6 @@ public class ClashServer {
             }
 
             executor.shutdownNow();
-            try {
-                executor.awaitTermination(ProxySession.SHUTDOWN_TIMEOUT, TimeUnit.MILLISECONDS);
-            } catch (InterruptedException e) {
-                // ignore
-            }
         }
     }
 }
