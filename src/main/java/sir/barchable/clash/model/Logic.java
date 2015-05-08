@@ -6,6 +6,8 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import static sir.barchable.clash.model.ObjectType.OID_RADIX;
+
 /**
  * Access interface for the game logic contained in csv assets. The files hold object properties organized by object
  * type and level.
@@ -34,6 +36,7 @@ import java.util.function.Predicate;
  *         Date: 22/04/15
  */
 public class Logic {
+
     private static final List<String> objectTypes = new ArrayList<String>(Collections.nCopies(100, null)) {{
         set(1, "buildings");
         set(2, "locales");
@@ -101,7 +104,7 @@ public class Logic {
 
     private Data getData(int typeId) {
         String type = getTypeName(typeId);
-        int subtype = typeId % 100;
+        int subtype = typeId % OID_RADIX;
         List<Data> data = dataMap.get(type);
         if (subtype > data.size() - 1) {
             throw new LogicException("No data for " + type + ":" + subtype);
@@ -140,7 +143,7 @@ public class Logic {
      * @param typeId type id
      */
     public String getTypeName(int typeId) {
-        int index = typeId / 1000000;
+        int index = typeId / OID_RADIX;
         String type;
         try {
             type = objectTypes.get(index);
@@ -211,7 +214,7 @@ public class Logic {
     private int getTypeId(String key) {
         for (int i = 0; i < objectTypes.size(); i++) {
             if (key.equals(objectTypes.get(i))) {
-                return i * 1000000;
+                return i * OID_RADIX;
             }
         }
         throw new LogicException("Unknown object type " + key);
@@ -252,7 +255,7 @@ public class Logic {
      */
     public boolean checkType(String typeName, int typeId) {
         int type = getTypeId(typeName);
-        return type / 1000000 == typeId / 1000000;
+        return type / OID_RADIX == typeId / OID_RADIX;
     }
 
     /**

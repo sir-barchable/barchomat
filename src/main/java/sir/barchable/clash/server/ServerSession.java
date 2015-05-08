@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static sir.barchable.clash.model.ObjectType.OID_RADIX;
 import static sir.barchable.clash.protocol.Pdu.Type.*;
 
 /**
@@ -244,9 +245,8 @@ public class ServerSession {
 
             log.info("{} done", connection.getName());
         } catch (RuntimeException | IOException e) {
-            e.printStackTrace();
             log.info(
-                "{} terminating due to exception {}",
+                "{} terminating: {}",
                 connection.getName(),
                 e.getMessage() == null ? e.toString() : e.getMessage()
             );
@@ -292,8 +292,8 @@ public class ServerSession {
 
     private void moveBuilding(int x, int y, int buildingId) {
         log.debug("Moving {} to {}, {}", buildingId, x, y);
-        int offset = buildingId % 1000;
-        int type = buildingId / 1000000;
+        int offset = buildingId % OID_RADIX;
+        int type = buildingId / OID_RADIX;
 
         Village village = villageLoader.getHomeVillage();
         Village.Building building = null;

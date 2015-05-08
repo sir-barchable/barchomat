@@ -7,8 +7,10 @@ package sir.barchable.clash.model;
  *         Date: 22/04/15
  */
 public class ObjectType {
+    public static final int OID_RADIX = 1000000;
+
     // Buildings
-    public static final int TROOP__HOUSING            = 1000000;
+    public static final int TROOP_HOUSING             = 1000000;
     public static final int TOWN_HALL                 = 1000001;
     public static final int ELIXIR_PUMP               = 1000002;
     public static final int ELIXIR_STORAGE            = 1000003;
