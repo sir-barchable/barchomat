@@ -1,16 +1,21 @@
 package sir.barchable.clash.server;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sir.barchable.clash.ResourceException;
 import sir.barchable.clash.model.Logic;
 import sir.barchable.clash.model.json.Village;
+import sir.barchable.clash.model.json.Village.Building;
 import sir.barchable.clash.protocol.*;
 import sir.barchable.clash.protocol.Connection;
 import sir.barchable.clash.model.SessionState;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -30,6 +35,9 @@ public class ServerSession {
     private AtomicBoolean running = new AtomicBoolean(true);
     private Connection clientConnection;
     private MessageFactory messageFactory;
+    private ObjectMapper objectMapper = new ObjectMapper()
+        .enable(SerializationFeature.INDENT_OUTPUT)
+        .disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
 
     /**
      * Name of the loadout to use when attacking, or null to use the one from the home data.
@@ -200,7 +208,6 @@ public class ServerSession {
                 //
 
                 Pdu pdu = connection.getIn().read();
-                log.debug("Pdu from client: {}", pdu.getType());
 
                 Message request;
                 try {
@@ -210,6 +217,9 @@ public class ServerSession {
                     log.debug("Can't respond to {}: {}", pdu.getType(), e.getMessage());
                     continue;
                 }
+
+//                objectMapper.writeValue(System.out, request.getFields());
+//                System.out.println();
 
                 //
                 // Create a response
@@ -274,6 +284,9 @@ public class ServerSession {
                             moveBuilding((int) command.get("x"), (int) command.get("y"), (int) command.get("buildingId"));
                             break;
 
+                        case 512:   // Buy decoration
+                            newBuilding((int) command.get("x"), (int) command.get("y"), (int) command.get("buildingId"));
+
                         default:
                             // We're lost; give up
                             log.debug("Not processing command {} from client", id);
@@ -290,13 +303,54 @@ public class ServerSession {
         return response;
     }
 
+    /**
+     * Add a new building, trap, or decoration.
+     *
+     * @param x x location
+     * @param y y location
+     * @param typeId building type id
+     */
+    private void newBuilding(int x, int y, int typeId) throws IOException {
+        log.debug("Adding {} at {}, {}", typeId, x, y);
+        int type = typeId / OID_RADIX;
+
+        Village village = villageLoader.getHomeVillage();
+        Building building = new Building();
+        building.x = x;
+        building.y = y;
+        building.data = typeId;
+
+        switch (type) {
+            case 1:     // Buildings
+                village.buildings = appendBuilding(village.buildings, building);
+                break;
+
+            case 12:    // Traps
+                village.traps = appendBuilding(village.traps, building);
+                break;
+
+            case 18:    // Decorations
+                village.decos = appendBuilding(village.decos, building);
+                break;
+        }
+
+        dirty = true;
+    }
+
+    private static Building[] appendBuilding(Building[] buildings, Building o) {
+        int len = buildings.length;
+        buildings = Arrays.copyOf(buildings, len + 1);
+        buildings[len] = o;
+        return buildings;
+    }
+
     private void moveBuilding(int x, int y, int buildingId) {
         log.debug("Moving {} to {}, {}", buildingId, x, y);
         int offset = buildingId % OID_RADIX;
         int type = buildingId / OID_RADIX;
 
         Village village = villageLoader.getHomeVillage();
-        Village.Building building = null;
+        Building building = null;
 
         try {
             switch (type) {
@@ -329,11 +383,7 @@ public class ServerSession {
 
     private Message loadHome() throws IOException {
         Message village = villageLoader.getOwnHomeData();
-        if (village == null) {
-            throw new ResourceException("No home village. Have you captured some data with the proxy?");
-        }
-        village.set("timeStamp", (int) (System.currentTimeMillis() / 1000));
-        // Set remaining shield to to avoid annoying attack confirmation dialog
+        // Set remaining shield to 0 to avoid annoying attack confirmation dialog
         village.set("remainingShield", 0);
         return village;
     }
@@ -349,7 +399,7 @@ public class ServerSession {
     private Message loadEnemy() throws IOException {
         Message village = villageLoader.loadEnemyVillage(nextVillage++, war);
         if (village == null) {
-            throw new ResourceException("No home village. Have you captured some data with the proxy?");
+            throw new ResourceException("No enemy villages. Have you captured some data with the proxy?");
         }
         village.set("timeStamp", (int) (System.currentTimeMillis() / 1000));
         applyLoadout(village);

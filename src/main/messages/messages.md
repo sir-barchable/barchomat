@@ -14,10 +14,10 @@ Type System
 Each file defines a type. Types are referred to by their *name* attribute or, for top level 
 messages, by their *id* attribute (the identifier passed in the PDU).
 
-Using just the *name* and *id* attributes we can define the simple structures such as the 
+Using just the *name* and *id* attributes we can define simple structures such as the 
 [KeepAlive](client/KeepAlive.json) message:
 
-```
+```json
 {
   "id": 10108,
   "name" : "KeepAlive"
@@ -30,7 +30,7 @@ time that the command was issued), *checksum* (the game state checksum), and *co
 [CommandComponent](client/CommandComponent.json) structures: 
 
 
-```
+```json
 {
   "id": 14102,
   "name": "EndClientTurn",
@@ -44,7 +44,7 @@ time that the command was issued), *checksum* (the game state checksum), and *co
 
 Each field has a *name* attribute that is used to refer to it and a *type* attribute that defines
 its serialized structure. The *type* can refer to another structure or a built in primitive, or
-an array of structures or primitive.
+an array of structures or primitives.
 
 Primitives
 ----------
@@ -88,7 +88,7 @@ the field with the *name* "id" is matched against, not the *id* attribute of the
 example, the CommandComponent has extensions that are conditional on the command id:
 
 
-```
+```json
 {
   "name": "CommandComponent",
   "fields": [

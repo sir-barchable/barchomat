@@ -70,6 +70,9 @@ public class VillageLoader {
         return homeVillage;
     }
 
+    /**
+     * Create a new enemy village structure.
+     */
     private Message newEnemyPrototype() throws IOException {
         Message village = messageFactory.newMessage(EnemyHomeData);
         village.set("timeStamp", (int) (System.currentTimeMillis() / 1000));

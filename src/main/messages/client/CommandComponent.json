@@ -62,6 +62,78 @@
         {"name": "tick", "type": "INT"}
       ]
     }, {
+      "id": 512,
+      "comment": "Buy decoration",
+      "fields": [
+        {"name": "x", "type": "INT"},
+        {"name": "y", "type": "INT"},
+        {"name": "buildingId", "type": "INT"},
+        {"name": "tick", "type": "INT"}
+      ]
+    }, {
+      "id": 532,
+      "comment": "New shop item seen",
+      "fields": [
+        {"type": "INT"},
+        {"type": "INT"},
+        {"type": "INT"},
+        {"name": "tick", "type": "INT"}
+      ]
+    }, {
+      "id": 546,
+      "comment": "Edit layout",
+      "fields": [
+        {"name": "x", "type": "INT"},
+        {"name": "y", "type": "INT"},
+        {"name": "buildingId", "type": "INT"},
+        {"name": "layout", "type": "INT"},
+        {"name": "tick", "type": "INT"}
+      ]
+    }, {
+      "id": 548,
+      "comment": "? edit layout command",
+      "fields": [
+        {"name": "layout", "type": "INT"},
+        {"type": "INT", "comment": "0 for home villages, 1 for war"},
+        {"name": "tick", "type": "INT"}
+      ]
+    }, {
+      "id": 552,
+      "comment": "Save Layout",
+      "fields": [
+        {"name": "layout", "type": "INT"},
+        {"type": "INT"},
+        {"name": "save", "type": "BOOLEAN", "comment": "true to save, false to cancel"},
+        {"name": "tick", "type": "INT"}
+      ]
+    }, {
+      "id": 554,
+      "comment": "? edit layout command",
+      "fields": [
+        {"name": "buildingId", "type": "INT"},
+        {"name": "layout", "type": "INT"},
+        {"type": "BYTE"},
+        {"type": "INT"},
+        {"type": "BYTE"},
+        {"name": "tick", "type": "INT"}
+      ]
+    }, {
+      "id": 567,
+      "comment": "Set layout as active",
+      "fields": [
+        {"name": "layout", "type": "INT"},
+        {"type": "INT", "comment": "0 for home villages, 1 for war"},
+        {"name": "tick", "type": "INT"}
+      ]
+    }, {
+      "id": 568,
+      "comment": "Copy layout",
+      "fields": [
+        {"name": "tick", "type": "INT"},
+        {"name": "fromLayout", "type": "INT"},
+        {"name": "toLayout", "type": "INT"}
+      ]
+    }, {
       "id": 600,
       "comment": "Place attacker",
       "fields": [
