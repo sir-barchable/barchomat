@@ -1,17 +1,13 @@
 package sir.barchable.clash.server;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sir.barchable.clash.ResourceException;
 import sir.barchable.clash.model.Logic;
+import sir.barchable.clash.model.SessionState;
 import sir.barchable.clash.model.json.Village;
 import sir.barchable.clash.model.json.Village.Building;
 import sir.barchable.clash.protocol.*;
-import sir.barchable.clash.protocol.Connection;
-import sir.barchable.clash.model.SessionState;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,9 +31,6 @@ public class ServerSession {
     private AtomicBoolean running = new AtomicBoolean(true);
     private Connection clientConnection;
     private MessageFactory messageFactory;
-    private ObjectMapper objectMapper = new ObjectMapper()
-        .enable(SerializationFeature.INDENT_OUTPUT)
-        .disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
 
     /**
      * Name of the loadout to use when attacking, or null to use the one from the home data.
@@ -217,9 +210,6 @@ public class ServerSession {
                     log.debug("Can't respond to {}: {}", pdu.getType(), e.getMessage());
                     continue;
                 }
-
-//                objectMapper.writeValue(System.out, request.getFields());
-//                System.out.println();
 
                 //
                 // Create a response

@@ -1,6 +1,5 @@
 package sir.barchable.clash;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sir.barchable.clash.VillageStats.Defense;
@@ -13,6 +12,7 @@ import sir.barchable.clash.protocol.Pdu;
 import sir.barchable.clash.proxy.MessageTap;
 import sir.barchable.clash.proxy.ProxySession;
 import sir.barchable.util.Dates;
+import sir.barchable.util.Json;
 
 import java.io.IOException;
 import java.util.*;
@@ -28,7 +28,6 @@ public class VillageAnalyzer implements MessageTap {
     private static final Logger log = LoggerFactory.getLogger(VillageAnalyzer.class);
     public static final String CLAN_STATS_PREFIX = "clan.stats.";
 
-    private ObjectMapper mapper = new ObjectMapper();
     private Logic logic;
     private LootCalculator lootCalculator;
 
@@ -46,7 +45,7 @@ public class VillageAnalyzer implements MessageTap {
             case VisitedHomeData:
             case EnemyHomeData:
                 try {
-                    Village village = mapper.readValue(homeVillage, Village.class);
+                    Village village = Json.read(homeVillage, Village.class);
                     analyzeHomeVillage(type, message, village);
                 } catch (RuntimeException | IOException e) {
                     log.warn("Could not read village", e);
@@ -55,7 +54,7 @@ public class VillageAnalyzer implements MessageTap {
 
             case WarHomeData:
                 try {
-                    WarVillage village = mapper.readValue(homeVillage, WarVillage.class);
+                    WarVillage village = Json.read(homeVillage, WarVillage.class);
                     analyzeWarVillage(type, message, village);
                 } catch (IOException e) {
                     log.warn("Could not read village", e);

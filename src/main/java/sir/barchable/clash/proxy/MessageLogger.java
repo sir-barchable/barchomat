@@ -1,11 +1,8 @@
 package sir.barchable.clash.proxy;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import sir.barchable.clash.protocol.PduException;
 import sir.barchable.clash.protocol.Pdu.Type;
+import sir.barchable.util.Json;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -18,10 +15,6 @@ import static sir.barchable.clash.protocol.Pdu.Type.EndClientTurn;
  * @author Sir Barchable
  */
 public class MessageLogger {
-    private ObjectWriter jsonWriter = new ObjectMapper()
-        .enable(SerializationFeature.INDENT_OUTPUT)
-        .disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET)
-        .writer();
     private Writer out;
 
     public MessageLogger() {
@@ -60,7 +53,7 @@ public class MessageLogger {
                             out.write(field);
                         }
                         out.write(" ");
-                        jsonWriter.writeValue(out, value);
+                        Json.writePretty(value, out);
                         out.write('\n');
                         out.flush();
                     } catch (IOException e) {

@@ -1,6 +1,5 @@
 package sir.barchable.clash.server;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sir.barchable.clash.ResourceException;
@@ -10,6 +9,7 @@ import sir.barchable.clash.model.Loadout.LoadoutUnit;
 import sir.barchable.clash.model.Logic;
 import sir.barchable.clash.model.Unit;
 import sir.barchable.clash.protocol.Message;
+import sir.barchable.util.Json;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,7 +26,6 @@ import java.util.function.Function;
 public class LoadoutManager {
     private static final Logger log = LoggerFactory.getLogger(LoadoutManager.class);
 
-    private ObjectMapper objectMapper = new ObjectMapper();
     private Logic logic;
     private Map<String, Army> armies = new HashMap<>();
 
@@ -46,7 +45,7 @@ public class LoadoutManager {
 
     public void addArmy(File file) {
         try {
-            Army army = objectMapper.readValue(file, Army.class);
+            Army army = Json.read(file, Army.class);
             if (armies.put(army.getName(), army) != null) {
                 throw new ResourceException("Duplicate loadout " + army.getName());
             }
@@ -58,7 +57,7 @@ public class LoadoutManager {
 
     public void addLoadout(File file) {
         try {
-            Loadout loadout = objectMapper.readValue(file, Loadout.class);
+            Loadout loadout = Json.read(file, Loadout.class);
             if (armies.put(loadout.getName(), toArmy(loadout)) != null) {
                 throw new ResourceException("Duplicate loadout " + loadout.getName());
             }
@@ -137,7 +136,7 @@ public class LoadoutManager {
     }
 
     public Army loadLoadOut(File loadoutFile) throws IOException {
-        return objectMapper.readValue(loadoutFile, Army.class);
+        return Json.read(loadoutFile, Army.class);
     }
 
     public void applyLoadOut(Message village, String loadoutName) {

@@ -1,12 +1,11 @@
 package sir.barchable.clash.model;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sir.barchable.clash.model.json.Village;
 import sir.barchable.clash.model.json.WarVillage;
 import sir.barchable.clash.server.LogicException;
+import sir.barchable.util.Json;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,18 +19,12 @@ import java.util.List;
 public class LayoutManager {
     private static final Logger log = LoggerFactory.getLogger(LayoutManager.class);
 
-    private ObjectMapper objectMapper = new ObjectMapper();
-
     public WarVillage loadWarVillage(String villageJson) throws IOException {
-        return objectMapper.readValue(villageJson, WarVillage.class);
+        return Json.read(villageJson, WarVillage.class);
     }
 
     public Village loadVillage(String villageJson) throws IOException {
-        return objectMapper.readValue(villageJson, Village.class);
-    }
-
-    public String toJson(Object o) throws JsonProcessingException {
-        return objectMapper.writeValueAsString(o);
+        return Json.read(villageJson, Village.class);
     }
 
     /**

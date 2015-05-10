@@ -1,17 +1,21 @@
 package sir.barchable.clash.server;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sir.barchable.clash.model.*;
+import sir.barchable.clash.model.LayoutManager;
+import sir.barchable.clash.model.Logic;
 import sir.barchable.clash.model.json.Village;
 import sir.barchable.clash.model.json.WarVillage;
 import sir.barchable.clash.protocol.Message;
 import sir.barchable.clash.protocol.MessageFactory;
 import sir.barchable.clash.protocol.PduOutputStream;
 import sir.barchable.clash.proxy.MessageSaver;
+import sir.barchable.util.Json;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
@@ -32,7 +36,6 @@ public class VillageLoader {
 
     private LayoutManager layoutManager = new LayoutManager();
 
-    private ObjectMapper objectMapper = new ObjectMapper();
     private Logic logic;
     private MessageFactory messageFactory;
     private File homeFile;
@@ -47,7 +50,7 @@ public class VillageLoader {
         this.homeFile = homeFile;
         try (FileInputStream in = new FileInputStream(homeFile)) {
             ownHomeData = messageFactory.fromStream(in);
-            homeVillage = objectMapper.readValue(ownHomeData.getString("homeVillage"), Village.class);
+            homeVillage = Json.read(ownHomeData.getString("homeVillage"), Village.class);
         }
 
         enemyHomes = Files.walk(villageDir.toPath())
@@ -60,7 +63,7 @@ public class VillageLoader {
      * Load the user's home.
      */
     public Message getOwnHomeData() throws IOException {
-        String villageJson = objectMapper.writeValueAsString(homeVillage);
+        String villageJson = Json.toString(homeVillage);
         ownHomeData.set("homeVillage", villageJson);
         ownHomeData.set("timeStamp", (int) (System.currentTimeMillis() / 1000));
         return ownHomeData;
@@ -122,7 +125,7 @@ public class VillageLoader {
         enemyVillage.set("homeId", visitedVillage.get("homeId"));
         if (war) {
             // swap from home layout to war layout
-            enemyVillage.set("homeVillage", layoutManager.toJson(
+            enemyVillage.set("homeVillage", Json.toString(
                 layoutManager.setWarLayout(
                     layoutManager.loadVillage(
                         visitedVillage.getString("homeVillage")
@@ -143,7 +146,7 @@ public class VillageLoader {
         enemyVillage.set("homeId", village.get("homeId"));
 
         WarVillage warVillage = layoutManager.loadWarVillage(village.getString("homeVillage"));
-        enemyVillage.set("homeVillage", layoutManager.toJson(layoutManager.warVillageToVillage(warVillage)));
+        enemyVillage.set("homeVillage", Json.toString(layoutManager.warVillageToVillage(warVillage)));
 
         //
         // The "user" in the war home data is the visiting user, not the enemy.

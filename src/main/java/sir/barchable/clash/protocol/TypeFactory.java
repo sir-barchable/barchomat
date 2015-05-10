@@ -1,12 +1,12 @@
 package sir.barchable.clash.protocol;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sir.barchable.clash.ResourceException;
 import sir.barchable.clash.protocol.Protocol.StructDefinition;
 import sir.barchable.clash.protocol.Protocol.StructDefinition.Extension;
 import sir.barchable.clash.protocol.Protocol.StructDefinition.FieldDefinition;
+import sir.barchable.util.Json;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -75,11 +75,10 @@ public class TypeFactory {
      * Read the default protocol definition from the Protocol.json in this package.
      */
     public TypeFactory() {
-        ObjectMapper mapper = new ObjectMapper();
         try {
             log.info("Reading protocol definition from class path");
             try (InputStream in = Protocol.class.getResourceAsStream("Protocol.json")) {
-                Protocol protocol = mapper.readValue(in, Protocol.class);
+                Protocol protocol = Json.read(in, Protocol.class);
                 init(protocol);
             }
         } catch (IOException e) {

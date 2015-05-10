@@ -3,23 +3,16 @@ package sir.barchable;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sir.barchable.clash.VillageAnalyzer;
 import sir.barchable.clash.model.LogicParser;
-import sir.barchable.clash.protocol.MessageReader;
-import sir.barchable.clash.protocol.Pdu;
-import sir.barchable.clash.protocol.ProtocolTool;
-import sir.barchable.clash.protocol.TypeFactory;
-import sir.barchable.clash.protocol.Connection;
+import sir.barchable.clash.protocol.*;
 import sir.barchable.clash.proxy.MessageLogger;
 import sir.barchable.clash.proxy.MessageTapFilter;
 import sir.barchable.clash.proxy.ProxySession;
 import sir.barchable.util.Hex;
+import sir.barchable.util.Json;
 
 import java.io.*;
 import java.util.Map;
@@ -66,10 +59,6 @@ public class Dump {
 
     private TypeFactory typeFactory;
     private MessageReader messageReader;
-    private ObjectWriter jsonWriter = new ObjectMapper()
-        .enable(SerializationFeature.INDENT_OUTPUT)
-        .disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET)
-        .writer();
 
     private void run() throws IOException, InterruptedException {
         if (!workingDir.exists()) {
@@ -173,7 +162,7 @@ public class Dump {
             if (message != null) {
                 String name = typeFactory.getStructNameForId(pdu.getId()).get();
                 out.write('"' + name + "\": ");
-                jsonWriter.writeValue(out, message);
+                Json.write(message, out);
                 out.write('\n');
             }
         }

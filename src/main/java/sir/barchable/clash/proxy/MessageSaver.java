@@ -1,11 +1,11 @@
 package sir.barchable.clash.proxy;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sir.barchable.clash.model.json.WarVillage;
 import sir.barchable.clash.protocol.*;
 import sir.barchable.clash.protocol.Pdu.Type;
+import sir.barchable.util.Json;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -25,7 +25,6 @@ import static sir.barchable.util.NoopCipher.NOOP_CIPHER;
 public class MessageSaver implements PduFilter {
     private static final Logger log = LoggerFactory.getLogger(MessageSaver.class);
 
-    private ObjectMapper objectMapper = new ObjectMapper();
     private MessageFactory messageFactory;
     private File saveDir;
     private Set<Type> types;
@@ -93,7 +92,7 @@ public class MessageSaver implements PduFilter {
 
             case WarHomeData:
                 try {
-                    WarVillage warVillage = objectMapper.readValue(message.getString("homeVillage"), WarVillage.class);
+                    WarVillage warVillage = Json.read(message.getString("homeVillage"), WarVillage.class);
                     if (warVillage.name != null) {
                         villageName = warVillage.name;
                     }

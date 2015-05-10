@@ -3,12 +3,10 @@ package sir.barchable.clash.protocol;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sir.barchable.clash.ResourceException;
+import sir.barchable.util.Json;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -79,7 +77,6 @@ public class ProtocolTool {
             throw new FileNotFoundException(resourceDir.toString());
         }
 
-        ObjectMapper mapper = new ObjectMapper();
         List<Protocol.StructDefinition> definitions = new ArrayList<>();
 
         log.info("Reading protocol definition from {}", resourceDir.getAbsolutePath());
@@ -87,7 +84,7 @@ public class ProtocolTool {
             .filter(path -> path.toString().endsWith(".json"))
             .forEach(path -> {
                 try {
-                    definitions.add(mapper.readValue(path.toFile(), Protocol.StructDefinition.class));
+                    definitions.add(Json.read(path.toFile(), Protocol.StructDefinition.class));
                 } catch (IOException e) {
                     throw new ResourceException("Could not read definition file " + path.getFileName(), e);
                 }
@@ -107,9 +104,6 @@ public class ProtocolTool {
      * @param out where to write the definition
      */
     public void write(Protocol protocol, Writer out) throws IOException {
-        ObjectMapper mapper = new ObjectMapper()
-            .enable(SerializationFeature.INDENT_OUTPUT)
-            .setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        mapper.writeValue(out, protocol);
+        Json.writePretty(protocol, out);
     }
 }
