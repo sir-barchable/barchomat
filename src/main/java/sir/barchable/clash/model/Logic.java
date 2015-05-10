@@ -181,6 +181,10 @@ public class Logic {
         return getData(typeId).size() - 1;
     }
 
+    public String[] getSubTypeNames(String typeName) {
+        return getSubTypeNames(typeName, x -> true);
+    }
+
     public String[] getSubTypeNames(String typeName, Predicate<Data> filter) {
         List<Data> dataList = dataMap.get(typeName);
 
@@ -188,27 +192,28 @@ public class Logic {
             return new String[0];
         } else {
             return dataList.stream()
-                .filter(filter != null ? filter : x -> true)
+                .filter(filter)
                 .map(Data::getName).toArray(String[]::new);
         }
     }
 
     /**
-     * Attempt to resolve a type id given a subtype name.
+     * Attempt to resolve a type id given type and subtype names.
      *
-     * @param name the unqualified subtype name
+     * @param subTypeName the subtype name
      */
-    public int getSubTypeId(String name) {
-        for (Map.Entry<String, List<Data>> entry : dataMap.entrySet()) {
-            List<Data> dataList = entry.getValue();
-            for (int i = 0; i < dataList.size(); i++) {
-                Data data = dataList.get(i);
-                if (data.getName().equalsIgnoreCase(resolveAlias(name))) {
-                    return getTypeId(entry.getKey()) + i;
-                }
+    public int getTypeId(String typeName, String subTypeName) {
+        List<Data> dataList = dataMap.get(typeName);
+        if (dataList == null) {
+            throw new LogicException("Unknown object type " + typeName);
+        }
+        for (int i = 0; i < dataList.size(); i++) {
+            Data data = dataList.get(i);
+            if (data.getName().equalsIgnoreCase(resolveAlias(subTypeName))) {
+                return getTypeId(typeName) + i;
             }
         }
-        throw new LogicException("Unknown subtype " + name);
+        throw new LogicException("Unknown subtype " + subTypeName);
     }
 
     private int getTypeId(String key) {
@@ -218,6 +223,31 @@ public class Logic {
             }
         }
         throw new LogicException("Unknown object type " + key);
+    }
+
+    /**
+     * Dump known OIDs to stdout for use in constant definitions.
+     */
+    void dumpOids() {
+        for (int i = 0; i < objectTypes.size(); i++) {
+            String typeName = objectTypes.get(i);
+            if (typeName != null) {
+                System.out.printf("// %s\n\n", typeName);
+                System.out.printf(
+                    "public static final int %-47s = %d;\n",
+                    "TYPE_" + typeName.toUpperCase().replace(' ', '_'),
+                    i
+                );
+                for (String subTypeName : getSubTypeNames(typeName)) {
+                    System.out.printf(
+                        "public static final int %-47s = %d;\n",
+                        subTypeName.toUpperCase().replace(' ', '_'),
+                        this.getTypeId(typeName, subTypeName)
+                    );
+                }
+                System.out.println();
+            }
+        }
     }
 
     /**

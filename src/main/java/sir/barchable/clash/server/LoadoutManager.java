@@ -122,7 +122,7 @@ public class LoadoutManager {
     }
 
     private Unit toUnit(LoadoutUnit unit) {
-        return new Unit(logic.getSubTypeId(unit.getName()), unit.getCount(), unit.getLevel() - 1);
+        return new Unit(logic.getTypeId("characters", unit.getName()), unit.getCount(), unit.getLevel() - 1);
     }
 
     /**

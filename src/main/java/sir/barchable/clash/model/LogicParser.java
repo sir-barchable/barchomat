@@ -29,16 +29,7 @@ public final class LogicParser {
 
     public static void main(String[] args) throws IOException {
         Logic logic = loadLogic(new File("apk/assets/logic"));
-        System.out.println("Buildings: ");
-        for (int i = 0; i < 28; i++) {
-            int id = 1000000 + i;
-            System.out.println(id + ": " + logic.getFullTypeName(id));
-        }
-        System.out.println("Units: ");
-        for (int i = 0; i < 22; i++) {
-            int id = 4000000 + i;
-            System.out.println(id + ": " + logic.getFullTypeName(id));
-        }
+        logic.dumpOids();
     }
 
     public static Logic loadLogic(File file) throws IOException {
