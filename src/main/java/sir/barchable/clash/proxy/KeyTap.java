@@ -38,7 +38,6 @@ class KeyTap implements MessageTap {
                 byte[] nonce = message.getBytes("serverRandom");
                 // Generate the key
                 key = prng.scramble(nonce);
-                // Set the key in all streams
                 break;
 
             // Login failure (update?)
@@ -47,7 +46,7 @@ class KeyTap implements MessageTap {
                 break;
 
             default:
-                log.warn("Message {} before key exchange", message.getType());
+                log.warn("Pdu {} before key exchange", message.getType());
         }
     }
 }
