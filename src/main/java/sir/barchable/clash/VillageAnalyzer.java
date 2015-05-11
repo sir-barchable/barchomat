@@ -114,13 +114,16 @@ public class VillageAnalyzer implements MessageTap {
             //
 
             int dps = logic.getInt(typeId, "Damage", level);
-            dpsTotal += dps;
 
-            int hp = logic.getInt(typeId, "Hitpoints", level);
-            if (typeId == ObjectType.WALL) {
-                wallHpTotal += hp;
-            } else {
-                hpTotal += hp;
+            if (!"Tesla Tower".equals(buildingName)) { // Count teslas as traps
+                dpsTotal += dps;
+
+                int hp = logic.getInt(typeId, "Hitpoints", level);
+                if (typeId == ObjectType.WALL) {
+                    wallHpTotal += hp;
+                } else {
+                    hpTotal += hp;
+                }
             }
 
             //

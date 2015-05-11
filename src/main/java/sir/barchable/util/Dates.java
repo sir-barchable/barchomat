@@ -11,11 +11,16 @@ public class Dates {
      * @return the interval, formatted "d day(s) hh:mm:ss"
      */
     public static String formatInterval(int s) {
+        boolean neg = s < 0;
+        s = Math.abs(s);
         int d = s / 86400;
         int h = s % 86400 / 3600;
         int m = s % 3600/ 60;
         s = s % 60;
         StringBuilder buffer = new StringBuilder();
+        if (neg) {
+            buffer.append('-');
+        }
         if (d > 0) {
             buffer.append(d).append(d == 1 ? " day " : " days ");
         }

@@ -103,7 +103,7 @@ example, the CommandComponent has extensions that are conditional on the command
         {"name": "messageId", "type": "INT"},
         {"name": "unitId", "type": "INT"},
         {"type": "INT"},
-        {"name": "tick", "type": "INT"}
+        {"name": "tick", "type": "INT"}                       
       ]
     }, {
       "id": 10,
@@ -115,7 +115,7 @@ example, the CommandComponent has extensions that are conditional on the command
         {"name": "index", "type": "INT"},
         {"name": "tick", "type": "INT"}
       ]
-    }, ...
+    },
 ```
 
 Default Values
