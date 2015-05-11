@@ -1,8 +1,8 @@
 package sir.barchable.clash.proxy;
 
-import sir.barchable.clash.protocol.Clash7Random;
-import sir.barchable.clash.protocol.MessageReader;
-import sir.barchable.clash.protocol.Pdu;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import sir.barchable.clash.protocol.*;
 
 import java.util.Map;
 
@@ -10,10 +10,16 @@ import java.util.Map;
  * Manage key exchange.
  */
 class KeyFilter implements PduFilter {
-    private MessageReader reader = new MessageReader();
+    private static final Logger log = LoggerFactory.getLogger(KeyFilter.class);
+
+    private MessageFactory messageFactory;
     private Clash7Random prng;
 
     private byte[] key;
+
+    public KeyFilter(MessageFactory messageFactory) {
+        this.messageFactory = messageFactory;
+    }
 
     @Override
     public Pdu filter(Pdu pdu) {
@@ -21,7 +27,7 @@ class KeyFilter implements PduFilter {
 
             // Client generates the seed for the random number generator
             case 10101:
-                Map<String, Object> loginMessage = reader.readMessage(pdu);
+                Message loginMessage = messageFactory.fromPdu(pdu);
                 prng = new Clash7Random((Integer) loginMessage.get("clientSeed"));
                 break;
 
@@ -30,15 +36,21 @@ class KeyFilter implements PduFilter {
                 if (prng == null) {
                     throw new IllegalStateException("No login");
                 }
-                Map<String, Object> keyMessage = reader.readMessage(pdu);
-                byte[] nonce = (byte[]) keyMessage.get("serverRandom");
+                Message keyMessage = messageFactory.fromPdu(pdu);
+                byte[] nonce = keyMessage.getBytes("serverRandom");
                 // Generate the key
                 key = prng.scramble(nonce);
                 // Set the key in all streams
                 break;
 
+            // Login failure (update?)
+            case 20103:
+                Message loginFailedMessage = messageFactory.fromPdu(pdu);
+                log.info("Login failed: {}", loginFailedMessage.get("failureReason"));
+                break;
+
             default:
-                throw new IllegalStateException("Pdu " + pdu.getId() + " before key exchange");
+                log.warn("Pdu {} before key exchange", pdu.getId());
         }
         return pdu;
     }

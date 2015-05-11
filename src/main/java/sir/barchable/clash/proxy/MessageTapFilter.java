@@ -2,13 +2,12 @@ package sir.barchable.clash.proxy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sir.barchable.clash.protocol.MessageReader;
-import sir.barchable.clash.protocol.Pdu.Type;
-import sir.barchable.clash.protocol.PduException;
-import sir.barchable.clash.protocol.Pdu;
+import sir.barchable.clash.protocol.*;
 
 import java.io.IOException;
 import java.util.Map;
+
+import static sir.barchable.clash.protocol.Pdu.Type.Unknown;
 
 /**
  * A filter that deserializes Pdus and hands them off to a {@link MessageTap} for analysis.
@@ -19,21 +18,23 @@ import java.util.Map;
 public class MessageTapFilter implements PduFilter {
     private static final Logger log = LoggerFactory.getLogger(MessageTapFilter.class);
 
-    private MessageReader messageReader;
+    private MessageFactory messageFactory;
     private MessageTap[] taps;
 
-    public MessageTapFilter(MessageReader messageReader, MessageTap... taps) {
-        this.messageReader = messageReader;
+    public MessageTapFilter(MessageFactory messageFactory, MessageTap... taps) {
+        this.messageFactory = messageFactory;
         this.taps = taps;
     }
 
     @Override
     public Pdu filter(Pdu pdu) throws IOException {
         try {
-            Map<String, Object> message = messageReader.readMessage(pdu);
-            if (message != null) {
+            if (pdu.getType() == Unknown) {
+                log.warn("Unknown PDU type {}", pdu.getId());
+            } else {
+                Message message = messageFactory.fromPdu(pdu);
                 for (MessageTap tap : taps) {
-                    tap.onMessage(Type.valueOf(pdu.getId()), message);
+                    tap.onMessage(message);
                 }
             }
         } catch (PduException e) {

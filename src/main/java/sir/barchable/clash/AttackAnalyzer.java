@@ -6,7 +6,7 @@ import sir.barchable.clash.model.Logic;
 import sir.barchable.clash.model.LootCalculator.Loot;
 import sir.barchable.clash.model.LootCalculator.LootCollection;
 import sir.barchable.clash.model.SessionState;
-import sir.barchable.clash.protocol.Pdu;
+import sir.barchable.clash.protocol.Message;
 import sir.barchable.clash.proxy.MessageTap;
 import sir.barchable.clash.proxy.ProxySession;
 
@@ -31,20 +31,20 @@ public class AttackAnalyzer implements MessageTap {
     }
 
     @Override
-    public void onMessage(Pdu.Type type, Map<String, Object> message) {
-        switch (type) {
+    public void onMessage(Message message) {
+        switch (message.getType()) {
             case EnemyHomeData:
                 // Set up for attack
-                setup((Map<String, Object>) message.get("attackerResources"));
+                setup(message.getStruct("attackerResources"));
                 break;
 
             case OwnHomeData:
                 // Check for completed an attack
-                summarize((Map<String, Object>) message.get("resources"));
+                summarize(message.getStruct("resources"));
                 break;
 
             case EndClientTurn:
-                accumulateCost((Object[]) message.get("commands"));
+                accumulateCost(message.getArray("commands"));
                 break;
         }
     }

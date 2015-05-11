@@ -50,6 +50,10 @@ public class Message {
         return (Byte) fields.get(key);
     }
 
+    public byte[] getBytes(String key) {
+        return (byte[]) fields.get(key);
+    }
+
     public Integer getInt(String key) {
         return (Integer) fields.get(key);
     }
@@ -60,6 +64,10 @@ public class Message {
 
     public String getString(String key) {
         return (String) fields.get(key);
+    }
+
+    public Object[] getArray(String key) {
+        return (Object[]) fields.get(key);
     }
 
     public Map<String, Object> getFields() {

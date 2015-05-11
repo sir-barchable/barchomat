@@ -145,7 +145,7 @@ public class TypeFactory {
      */
     public Optional<String> getStructNameForId(int messageId) {
         if (messageId <= 0) {
-            throw new IllegalArgumentException();
+            throw new TypeException("Illegal ID " + messageId);
         }
         for (StructDefinition definition: structDefinitions.values()) {
             if (definition.getId() != null && definition.getId() == messageId) {

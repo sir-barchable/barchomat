@@ -80,7 +80,7 @@ public class MessageFactory {
                 throw new PduException(e);
             }
         } else {
-            throw new TypeException("No type definition for " + pduType);
+            throw new PduException("No type definition for " + pduType);
         }
     }
 

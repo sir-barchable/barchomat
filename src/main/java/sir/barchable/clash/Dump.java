@@ -1,11 +1,10 @@
-package sir.barchable;
+package sir.barchable.clash;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sir.barchable.clash.VillageAnalyzer;
 import sir.barchable.clash.model.LogicParser;
 import sir.barchable.clash.protocol.*;
 import sir.barchable.clash.proxy.MessageLogger;
@@ -58,7 +57,7 @@ public class Dump {
     }
 
     private TypeFactory typeFactory;
-    private MessageReader messageReader;
+    private MessageFactory messageFactory;
 
     private void run() throws IOException, InterruptedException {
         if (!workingDir.exists()) {
@@ -83,7 +82,7 @@ public class Dump {
             }
         }
 
-        messageReader = new MessageReader(typeFactory);
+        messageFactory = new MessageFactory(typeFactory);
 
         File clientDumpFile = new File(workingDir, "client.txt");
         File serverDumpFile = new File(workingDir, "server.txt");
@@ -111,7 +110,7 @@ public class Dump {
         File clientFile = new File(workingDir, "client.stream");
         File serverFile = new File(workingDir, "server.stream");
         MessageTapFilter tapFilter = new MessageTapFilter(
-            messageReader,
+            messageFactory,
             new VillageAnalyzer(LogicParser.loadLogic(logicFile)),
             new MessageLogger(new OutputStreamWriter(System.out)).tapFor(Pdu.Type.WarHomeData, "warVillage")
         );
@@ -121,7 +120,7 @@ public class Dump {
             // Server connection
             Connection serverConnection = new Connection("Server", new FileInputStream(serverFile), NOWHERE)
         ) {
-            ProxySession session = ProxySession.newSession(clientConnection, serverConnection, clientDumper::dump, serverDumper::dump, tapFilter);
+            ProxySession session = ProxySession.newSession(messageFactory, clientConnection, serverConnection, clientDumper::dump, serverDumper::dump, tapFilter);
             VillageAnalyzer.logSession(session);
         }
     }
@@ -158,11 +157,10 @@ public class Dump {
         }
 
         void dumpJson(Pdu pdu) throws IOException {
-            Map<String, Object> message = messageReader.readMessage(pdu);
+            Message message = messageFactory.fromPdu(pdu);
             if (message != null) {
-                String name = typeFactory.getStructNameForId(pdu.getId()).get();
-                out.write('"' + name + "\": ");
-                Json.write(message, out);
+                out.write('"' + pdu.getType().name() + "\": ");
+                Json.writePretty(message, out);
                 out.write('\n');
             }
         }

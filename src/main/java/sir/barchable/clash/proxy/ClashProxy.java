@@ -72,6 +72,8 @@ public class ClashProxy {
      */
     private Dns dns;
 
+    private MessageFactory messageFactory;
+
     /**
      * Entry point.
      *
@@ -118,7 +120,7 @@ public class ClashProxy {
         } else {
             typeFactory = new TypeFactory();
         }
-        MessageFactory messageFactory = new MessageFactory(typeFactory);
+        messageFactory = new MessageFactory(typeFactory);
 
         //
         // Load the logic files
@@ -140,11 +142,11 @@ public class ClashProxy {
 
         MessageLogger logger = new MessageLogger();
         filterChain = filterChain.addAfter(new MessageTapFilter(
-            messageFactory.getMessageReader(),
+            messageFactory,
             new VillageAnalyzer(logic),
-            new AttackAnalyzer(logic),
-            logger.tapFor(EndClientTurn),
-            logger.tapFor(WarHomeData, "warVillage")
+            new AttackAnalyzer(logic)
+//            logger.tapFor(EndClientTurn),
+//            logger.tapFor(WarHomeData, "warVillage")
         ));
 
         //
@@ -195,7 +197,7 @@ public class ClashProxy {
                 Connection clientConnection = new Connection(socket);
                 Connection serverConnection = new Connection(new Socket(serverAddress, CLASH_PORT))
             ) {
-                ProxySession session = ProxySession.newSession(clientConnection, serverConnection, filterChain);
+                ProxySession session = ProxySession.newSession(messageFactory, clientConnection, serverConnection, filterChain);
                 log.info("Client {} disconnected", socket);
                 VillageAnalyzer.logSession(session);
             }

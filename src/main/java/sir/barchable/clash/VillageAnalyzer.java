@@ -8,7 +8,7 @@ import sir.barchable.clash.model.LootCalculator.Loot;
 import sir.barchable.clash.model.LootCalculator.LootCollection;
 import sir.barchable.clash.model.json.Village;
 import sir.barchable.clash.model.json.WarVillage;
-import sir.barchable.clash.protocol.Pdu;
+import sir.barchable.clash.protocol.Message;
 import sir.barchable.clash.proxy.MessageTap;
 import sir.barchable.clash.proxy.ProxySession;
 import sir.barchable.util.Dates;
@@ -37,16 +37,16 @@ public class VillageAnalyzer implements MessageTap {
     }
 
     @Override
-    public void onMessage(Pdu.Type type, Map<String, Object> message) {
+    public void onMessage(Message message) {
         String homeVillage = (String) message.get("homeVillage");
 
-        switch (type) {
+        switch (message.getType()) {
             case OwnHomeData:
             case VisitedHomeData:
             case EnemyHomeData:
                 try {
                     Village village = Json.valueOf(homeVillage, Village.class);
-                    analyzeHomeVillage(type, message, village);
+                    analyzeHomeVillage(message, village);
                 } catch (RuntimeException | IOException e) {
                     log.warn("Could not read village", e);
                 }
@@ -55,7 +55,7 @@ public class VillageAnalyzer implements MessageTap {
             case WarHomeData:
                 try {
                     WarVillage village = Json.valueOf(homeVillage, WarVillage.class);
-                    analyzeWarVillage(type, message, village);
+                    analyzeWarVillage(message, village);
                 } catch (IOException e) {
                     log.warn("Could not read village", e);
                 }
@@ -63,13 +63,13 @@ public class VillageAnalyzer implements MessageTap {
         }
     }
 
-    private void analyzeHomeVillage(Pdu.Type type, Map<String, Object> message, Village village) {
+    private void analyzeHomeVillage(Message message, Village village) {
         SessionState sessionState = ProxySession.getSession().getSessionState();
 
-        int age = (Integer) message.get("age");
-        Integer timeStamp = (Integer) message.get("timeStamp");
+        int age = message.getInt("age");
+        Integer timeStamp = message.getInt("timeStamp");
 
-        Map<String, Object> user = (Map<String, Object>) message.get("user");
+        Map<String, Object> user = message.getStruct("user");
         String userName = (String) user.get("userName");
         Long userId = (Long) user.get("userId");
 
@@ -174,13 +174,13 @@ public class VillageAnalyzer implements MessageTap {
         // Storage
         //
 
-        Map<String, Object> resources = (Map<String, Object>) message.get("resources");
+        Map<String, Object> resources = message.getStruct("resources");
         LootCollection loot = sumStorage(resources).withCollectorLoot(
             new Loot(collectorTotals.get("Gold"), collectorTotals.get("Elixir"), collectorTotals.get("DarkElixir"))
         );
 
         int timeToGemboxDrop = village.respawnVars.time_to_gembox_drop < 0 ? 0 : village.respawnVars.time_to_gembox_drop;
-        if (type == OwnHomeData) {
+        if (message.getType() == OwnHomeData) {
             if (sessionState.getUserId() == 0) {
                 log.info("Welcome {}", userName);
                 // OwnHomeData. Remember town hall level for loot calculations
@@ -227,7 +227,7 @@ public class VillageAnalyzer implements MessageTap {
         log.info("Collectors: {}", loot.getCollectorLoot());
         log.info("Total: {}", loot.total());
 
-        if (type != OwnHomeData) {
+        if (message.getType() != OwnHomeData) {
             // Apply raid penalty
             if (sessionState.getTownHallLevel() == 0) {
                 log.warn("User town hall level not set, can't calculate loot penalty.");
@@ -283,7 +283,7 @@ public class VillageAnalyzer implements MessageTap {
         );
     }
 
-    private void analyzeWarVillage(Pdu.Type type, Map<String, Object> message, WarVillage village) {
+    private void analyzeWarVillage(Message message, WarVillage village) {
         SessionState sessionState = ProxySession.getSession().getSessionState();
 
         long userId = (long) village.avatar_id_high << 32 | village.avatar_id_low & 0xffffffffl;

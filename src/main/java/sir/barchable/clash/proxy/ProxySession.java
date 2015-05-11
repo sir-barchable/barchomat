@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sir.barchable.clash.model.SessionState;
 import sir.barchable.clash.protocol.Connection;
+import sir.barchable.clash.protocol.MessageFactory;
 import sir.barchable.clash.protocol.PduException;
 
 import java.io.EOFException;
@@ -20,13 +21,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class ProxySession {
     private static final Logger log = LoggerFactory.getLogger(ProxySession.class);
 
-    /**
-     * Shutdown timeout in milliseconds
-     */
-    public static final int SHUTDOWN_TIMEOUT = 2500;
-
     private AtomicBoolean running = new AtomicBoolean(true);
 
+    private MessageFactory messageFactory;
     private PduFilterChain filterChain;
     private Connection clientConnection;
     private Connection serverConnection;
@@ -38,7 +35,8 @@ public class ProxySession {
      */
     private CountDownLatch latch = new CountDownLatch(2);
 
-    private ProxySession(Connection clientConnection, Connection serverConnection, PduFilter... filters) {
+    private ProxySession(MessageFactory messageFactory, Connection clientConnection, Connection serverConnection, PduFilter... filters) {
+        this.messageFactory = messageFactory;
         this.clientConnection = clientConnection;
         this.serverConnection = serverConnection;
         this.filterChain = new PduFilterChain(filters);
@@ -68,8 +66,8 @@ public class ProxySession {
      * <p>
      * Normal completion is usually the result of an EOF on one of the input streams.
      */
-    public static ProxySession newSession(Connection clientConnection, Connection serverConnection, PduFilter... filters) {
-        ProxySession session = new ProxySession(clientConnection, serverConnection, filters);
+    public static ProxySession newSession(MessageFactory messageFactory, Connection clientConnection, Connection serverConnection, PduFilter... filters) throws IOException {
+        ProxySession session = new ProxySession(messageFactory, clientConnection, serverConnection, filters);
         localSession.set(session);
         try {
             session.start();
@@ -82,42 +80,38 @@ public class ProxySession {
         return session;
     }
 
-    private void start() {
+    private void start() throws IOException {
         // A pipe for messages from client -> server
         Pipe clientPipe = new Pipe(clientConnection.getName(), clientConnection.getIn(), serverConnection.getOut());
         // A pipe for messages from server -> client
         Pipe serverPipe = new Pipe(serverConnection.getName(), serverConnection.getIn(), clientConnection.getOut());
 
-        KeyFilter keyListener = new KeyFilter();
-        PduFilter loginFilter = filterChain.addAfter(keyListener);
+        KeyTap keyListener = new KeyTap();
+        PduFilter loginFilter = filterChain.addAfter(new MessageTapFilter(messageFactory, keyListener));
 
-        try {
-            // First capture the login message from the client
-            clientPipe.filterThrough(loginFilter);
-            // and the the key from the server
-            serverPipe.filterThrough(loginFilter);
+        // Key exchange.
+        clientPipe.filterThrough(loginFilter);
+        serverPipe.filterThrough(loginFilter);
 
-            byte[] key = keyListener.getKey();
+        byte[] key = keyListener.getKey();
 
-            if (key == null) {
-                log.error("Key exchange did not complete");
-            } else {
-                // Re-key the streams
-                clientConnection.setKey(key);
-                serverConnection.setKey(key);
-                // Proxy messages from client -> server
-                runPipe(clientPipe);
-                // Proxy messages from server -> client
-                runPipe(serverPipe);
-            }
-        } catch (PduException | IOException e) {
-            log.error("Key exchange did not complete: " + e);
+        if (key == null) {
+            throw new PduException("Key exchange did not complete");
+        } else {
+            // Re-key the streams
+            clientConnection.setKey(key);
+            serverConnection.setKey(key);
+
+            // Proxy messages from client -> server
+            runPipe(clientPipe);
+
+            // Proxy messages from server -> client
+            runPipe(serverPipe);
         }
     }
 
     /**
-     * This is used by {@link #newSession(Connection, Connection, PduFilter...)} to wait for the pipe threads to
-     * complete.
+     * This is used by {@link #newSession} to wait for the pipe threads to complete.
      */
     void await() throws InterruptedException {
         latch.await();
