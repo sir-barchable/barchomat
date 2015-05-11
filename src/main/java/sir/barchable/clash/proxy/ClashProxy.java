@@ -5,6 +5,7 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sir.barchable.clash.AttackAnalyzer;
 import sir.barchable.clash.VillageAnalyzer;
 import sir.barchable.clash.model.Logic;
 import sir.barchable.clash.model.LogicParser;
@@ -141,6 +142,7 @@ public class ClashProxy {
         filterChain = filterChain.addAfter(new MessageTapFilter(
             messageFactory.getMessageReader(),
             new VillageAnalyzer(logic),
+            new AttackAnalyzer(logic),
             logger.tapFor(EndClientTurn),
             logger.tapFor(WarHomeData, "warVillage")
         ));
@@ -195,7 +197,7 @@ public class ClashProxy {
             ) {
                 ProxySession session = ProxySession.newSession(clientConnection, serverConnection, filterChain);
                 log.info("Client {} disconnected", socket);
-                VillageAnalyzer.logSession(session); ;
+                VillageAnalyzer.logSession(session);
             }
         } catch (IOException e) {
             log.info("Could not proxy connection from {}: {}", socket.getInetAddress(), e.toString());

@@ -76,30 +76,84 @@ public class Logic {
         this.dataMap = dataMap;
     }
 
+    /**
+     * Get the level zero integer property of a type.
+     *
+     * @param typeId the type
+     * @param column the property name
+     *
+     * @return the property value
+     */
     public int getInt(int typeId, String column) {
         return getInt(typeId, column, 0);
     }
+
+    /**
+     * Get an integer property of a type.
+     *
+     * @param typeId the type
+     * @param column the property name
+     * @param level the object level
+     *
+     * @return the property value
+     */
 
     public int getInt(int typeId, String column, int level) {
         Object value = getData(typeId).get(column, level);
         return value == null ? 0 : (Integer) value;
     }
 
+    /**
+     * Get the level zero integer property of a type.
+     *
+     * @param typeName the type name
+     * @param column the property name
+     *
+     * @return the property value
+     */
+
     public int getInt(String typeName, String column) {
         return getInt(typeName, column, 0);
     }
+
+    /**
+     * Get an integer property of a type.
+     *
+     * @param typeName the type name
+     * @param column the property name
+     * @param level the object level
+     *
+     * @return the property value
+     */
 
     public int getInt(String typeName, String column, int level) {
         Object value = getData(typeName).get(column, level);
         return value == null ? 0 : (Integer) value;
     }
 
-    public String getString(int id, String column) {
-        return getString(id, column, 0);
+    /**
+     * Get the level zero String valued property of a type.
+     *
+     * @param typeId the type
+     * @param column the property name
+     *
+     * @return the property value
+     */
+    public String getString(int typeId, String column) {
+        return getString(typeId, column, 0);
     }
 
-    public String getString(int id, String column, int level) {
-        return (String) getData(id).get(column, level);
+    /**
+     * Get a String valued property of a type.
+     *
+     * @param typeId the type
+     * @param column the property name
+     * @param level the object level
+     *
+     * @return the property value
+     */
+    public String getString(int typeId, String column, int level) {
+        return (String) getData(typeId).get(column, level);
     }
 
     private Data getData(int typeId) {

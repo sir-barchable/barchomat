@@ -9,7 +9,10 @@ package sir.barchable.util;
 public class NoopCipher implements Cipher {
     public static final NoopCipher NOOP_CIPHER = new NoopCipher();
 
-    private NoopCipher() { }
+    /**
+     * But see {@link #NOOP_CIPHER}
+     */
+    public NoopCipher() { }
 
     @Override
     public byte[] encrypt(byte[] b) {

@@ -10,7 +10,7 @@
       "fields": [
         {"type": "INT"},
         {"name": "messageId", "type": "INT"},
-        {"name": "unitId", "type": "INT"},
+        {"name": "typeId", "type": "INT"},
         {"type": "INT"},
         {"name": "tick", "type": "INT"}
       ]
@@ -20,7 +20,7 @@
       "fields": [
         {"type": "INT"},
         {"name": "homeId", "type": "INT"},
-        {"name": "unitId", "type": "INT"},
+        {"name": "typeId", "type": "INT"},
         {"name": "index", "type": "INT"},
         {"name": "tick", "type": "INT"}
       ]
@@ -46,7 +46,7 @@
       "fields": [
         {"name": "buildingId", "type": "INT"},
         {"type": "INT"},
-        {"name": "unitType", "type": "INT"},
+        {"name": "typeId", "type": "INT"},
         {"name": "count", "type": "INT"},
         {"name": "tick", "type": "INT"}
       ]
@@ -56,7 +56,7 @@
       "fields": [
         {"name": "buildingId", "type": "INT"},
         {"type": "INT"},
-        {"name": "unitType", "type": "INT"},
+        {"name": "typeId", "type": "INT"},
         {"name": "count", "type": "INT"},
         {"type": "INT"},
         {"name": "tick", "type": "INT"}
@@ -139,7 +139,7 @@
       "fields": [
         {"name": "x", "type": "INT"},
         {"name": "y", "type": "INT"},
-        {"name": "unitType", "type": "INT"},
+        {"name": "typeId", "type": "INT"},
         {"name": "tick", "type": "INT"}
       ]
     }, {
@@ -154,7 +154,7 @@
       "fields": [
         {"name": "x", "type": "INT"},
         {"name": "y", "type": "INT"},
-        {"name": "spellType", "type": "INT"},
+        {"name": "typeId", "type": "INT"},
         {"name": "tick", "type": "INT"}
       ]
     }, {

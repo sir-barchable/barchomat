@@ -20,11 +20,11 @@ public class LayoutManager {
     private static final Logger log = LoggerFactory.getLogger(LayoutManager.class);
 
     public WarVillage loadWarVillage(String villageJson) throws IOException {
-        return Json.read(villageJson, WarVillage.class);
+        return Json.valueOf(villageJson, WarVillage.class);
     }
 
     public Village loadVillage(String villageJson) throws IOException {
-        return Json.read(villageJson, Village.class);
+        return Json.valueOf(villageJson, Village.class);
     }
 
     /**

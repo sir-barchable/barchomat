@@ -92,7 +92,7 @@ public class MessageSaver implements PduFilter {
 
             case WarHomeData:
                 try {
-                    WarVillage warVillage = Json.read(message.getString("homeVillage"), WarVillage.class);
+                    WarVillage warVillage = Json.valueOf(message.getString("homeVillage"), WarVillage.class);
                     if (warVillage.name != null) {
                         villageName = warVillage.name;
                     }

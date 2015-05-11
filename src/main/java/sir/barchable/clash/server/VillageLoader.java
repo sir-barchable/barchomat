@@ -50,7 +50,7 @@ public class VillageLoader {
         this.homeFile = homeFile;
         try (FileInputStream in = new FileInputStream(homeFile)) {
             ownHomeData = messageFactory.fromStream(in);
-            homeVillage = Json.read(ownHomeData.getString("homeVillage"), Village.class);
+            homeVillage = Json.valueOf(ownHomeData.getString("homeVillage"), Village.class);
         }
 
         enemyHomes = Files.walk(villageDir.toPath())

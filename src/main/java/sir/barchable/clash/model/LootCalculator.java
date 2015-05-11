@@ -84,16 +84,34 @@ public class LootCalculator {
     }
 
     public static class LootCollection {
-        private Loot collectorLoot;
-        private Loot storageLoot;
-        private Loot castleLoot;
-        private Loot townHallLoot;
+        private Loot collectorLoot = Loot.ZERO;
+        private Loot storageLoot = Loot.ZERO;
+        private Loot castleLoot = Loot.ZERO;
+        private Loot townHallLoot = Loot.ZERO;
+
+        public LootCollection() { }
 
         public LootCollection(Loot collectorLoot, Loot storageLoot, Loot castleLoot, Loot townHallLoot) {
             this.collectorLoot = collectorLoot;
             this.storageLoot = storageLoot;
             this.castleLoot = castleLoot;
             this.townHallLoot = townHallLoot;
+        }
+
+        public LootCollection withCollectorLoot(Loot loot) {
+            return new LootCollection(loot, storageLoot, castleLoot, townHallLoot);
+        }
+
+        public LootCollection withStorageLoot(Loot loot) {
+            return new LootCollection(collectorLoot, loot, castleLoot, townHallLoot);
+        }
+
+        public LootCollection withCastleLoot(Loot loot) {
+            return new LootCollection(collectorLoot, storageLoot, loot, townHallLoot);
+        }
+
+        public LootCollection withTownHallLoot(Loot loot) {
+            return new LootCollection(collectorLoot, storageLoot, castleLoot, loot);
         }
 
         public Loot getCollectorLoot() {
@@ -118,12 +136,20 @@ public class LootCalculator {
                 .add(castleLoot)
                 .add(townHallLoot);
         }
+
+        public boolean isEmpty() {
+            return total().equals(Loot.ZERO);
+        }
     }
 
     public static class Loot {
+        public static final Loot ZERO = new Loot();
+
         private int gold;
         private int elixir;
         private int darkElixir;
+
+        public Loot() { }
 
         public Loot(int gold, int elixir, int darkElixir) {
             this.gold = gold;
@@ -151,12 +177,45 @@ public class LootCalculator {
             );
         }
 
+        public Loot subtract(Loot subtrahend) {
+            return new Loot(
+                gold - subtrahend.gold,
+                elixir - subtrahend.elixir,
+                darkElixir - subtrahend.darkElixir
+            );
+        }
+
         public Loot percent(int percent) {
             return new Loot(
                 gold * percent / 100,
                 elixir * percent / 100,
                 darkElixir * percent / 100
             );
+        }
+
+        public boolean isEmpty() {
+            return equals(ZERO);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Loot loot = (Loot) o;
+
+            if (gold != loot.gold) return false;
+            if (elixir != loot.elixir) return false;
+            return darkElixir == loot.darkElixir;
+
+        }
+
+        @Override
+        public int hashCode() {
+            int result = gold;
+            result = 31 * result + elixir;
+            result = 31 * result + darkElixir;
+            return result;
         }
 
         @Override

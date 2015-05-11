@@ -45,7 +45,7 @@ public class VillageAnalyzer implements MessageTap {
             case VisitedHomeData:
             case EnemyHomeData:
                 try {
-                    Village village = Json.read(homeVillage, Village.class);
+                    Village village = Json.valueOf(homeVillage, Village.class);
                     analyzeHomeVillage(type, message, village);
                 } catch (RuntimeException | IOException e) {
                     log.warn("Could not read village", e);
@@ -54,7 +54,7 @@ public class VillageAnalyzer implements MessageTap {
 
             case WarHomeData:
                 try {
-                    WarVillage village = Json.read(homeVillage, WarVillage.class);
+                    WarVillage village = Json.valueOf(homeVillage, WarVillage.class);
                     analyzeWarVillage(type, message, village);
                 } catch (IOException e) {
                     log.warn("Could not read village", e);
@@ -88,14 +88,6 @@ public class VillageAnalyzer implements MessageTap {
         collectorTotals.put("Elixir", 0);
         collectorTotals.put("Gold", 0);
         collectorTotals.put("DarkElixir", 0);
-
-        Map<String, Integer> storageTotals = new LinkedHashMap<>();
-        storageTotals.put("Elixir", 0);
-        storageTotals.put("Gold", 0);
-        storageTotals.put("DarkElixir", 0);
-        storageTotals.put("WarElixir", 0);
-        storageTotals.put("WarGold", 0);
-        storageTotals.put("WarDarkElixir", 0);
 
         //
         // Sum stats for all buildings
@@ -180,26 +172,8 @@ public class VillageAnalyzer implements MessageTap {
         //
 
         Map<String, Object> resources = (Map<String, Object>) message.get("resources");
-        if (resources != null) {
-            Object[] resourceCounts = (Object[]) resources.get("resourceCounts");
-            for (int i = 0; i < resourceCounts.length; i++) {
-                Map<String, Object> resource = (Map<String, Object>) resourceCounts[i];
-                int typeId = (int) resource.get("type");
-                String storageType = logic.getSubTypeName(typeId);
-                int resourceValue = (int) resource.get("value");
-                storageTotals.put(storageType, resourceValue);
-            }
-        }
-
-        // todo: Does the town hall get the first 1000, or is it shared with other storage if below 1000?
-        int thGold = min(storageTotals.get("Gold"), 1000);
-        int thElixir = min(storageTotals.get("Elixir"), 1000);
-
-        LootCollection loot = new LootCollection(
-            new Loot(collectorTotals.get("Gold"), collectorTotals.get("Elixir"), collectorTotals.get("DarkElixir")),
-            new Loot(storageTotals.get("Gold") - thGold, storageTotals.get("Elixir") - thElixir, storageTotals.get("DarkElixir")),
-            new Loot(storageTotals.get("WarGold"), storageTotals.get("WarElixir"), storageTotals.get("WarDarkElixir")),
-            new Loot(thGold, thElixir, 0)
+        LootCollection loot = sumStorage(resources).withCollectorLoot(
+            new Loot(collectorTotals.get("Gold"), collectorTotals.get("Elixir"), collectorTotals.get("DarkElixir"))
         );
 
         int timeToGemboxDrop = village.respawnVars.time_to_gembox_drop < 0 ? 0 : village.respawnVars.time_to_gembox_drop;
@@ -273,6 +247,37 @@ public class VillageAnalyzer implements MessageTap {
             }
             clanStats.put(userId, villageStats);
         }
+    }
+
+    public LootCollection sumStorage(Map<String, Object> resources) {
+        Map<String, Integer> storageTotals = new LinkedHashMap<>();
+        storageTotals.put("Elixir", 0);
+        storageTotals.put("Gold", 0);
+        storageTotals.put("DarkElixir", 0);
+        storageTotals.put("WarElixir", 0);
+        storageTotals.put("WarGold", 0);
+        storageTotals.put("WarDarkElixir", 0);
+
+        if (resources != null) {
+            Object[] resourceCounts = (Object[]) resources.get("resourceCounts");
+            for (int i = 0; i < resourceCounts.length; i++) {
+                Map<String, Object> resource = (Map<String, Object>) resourceCounts[i];
+                int typeId = (int) resource.get("type");
+                String storageType = logic.getSubTypeName(typeId);
+                int resourceValue = (int) resource.get("value");
+                storageTotals.put(storageType, resourceValue);
+            }
+        }
+
+        int thGold = min(storageTotals.get("Gold"), 1000);
+        int thElixir = min(storageTotals.get("Elixir"), 1000);
+
+        return new LootCollection(
+            Loot.ZERO,
+            new Loot(storageTotals.get("Gold") - thGold, storageTotals.get("Elixir") - thElixir, storageTotals.get("DarkElixir")),
+            new Loot(storageTotals.get("WarGold"), storageTotals.get("WarElixir"), storageTotals.get("WarDarkElixir")),
+            new Loot(thGold, thElixir, 0)
+        );
     }
 
     private void analyzeWarVillage(Pdu.Type type, Map<String, Object> message, WarVillage village) {

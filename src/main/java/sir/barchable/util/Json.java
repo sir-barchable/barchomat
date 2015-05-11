@@ -14,7 +14,7 @@ import java.io.*;
  * @author Sir Barchable
  *         Date: 11/05/15
  */
-public class Json {
+public final class Json {
 
     private static final ObjectMapper mapper = new ObjectMapper()
         .disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
@@ -23,6 +23,11 @@ public class Json {
         .enable(SerializationFeature.INDENT_OUTPUT)
         .disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET)
         .writer();
+
+    /**
+     * Static API.
+     */
+    private Json() { }
 
     public static String toString(Object o) throws JsonProcessingException {
         return mapper.writeValueAsString(o);
@@ -48,7 +53,7 @@ public class Json {
         prettyWriter.writeValue(out, o);
     }
 
-    public static <T> T read(String json, Class<T> type) throws IOException {
+    public static <T> T valueOf(String json, Class<T> type) throws IOException {
         return mapper.readValue(json, type);
     }
 
