@@ -140,7 +140,7 @@ public class LoadoutManager {
     }
 
     public void applyLoadOut(Message village, String loadoutName) {
-        Map<String, Object> resources = village.getStruct("attackerResources");
+        Map<String, Object> resources = village.getFields("attackerResources");
         if (resources == null) {
             throw new IllegalArgumentException("Incomplete village definition (no resources)");
         }

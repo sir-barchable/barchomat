@@ -155,7 +155,7 @@ public class VillageLoader {
         // definition.
         //
 
-        Map<String, Object> user = village.getStruct("user");
+        Map<String, Object> user = village.getFields("user");
         user.put("userName", warVillage.name);
         Map<String, Object> clan = (Map<String, Object>) user.get("clan");
         if (clan != null) { // should always be non-null

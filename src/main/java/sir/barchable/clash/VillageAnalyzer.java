@@ -69,9 +69,9 @@ public class VillageAnalyzer implements MessageTap {
         int age = message.getInt("age");
         Integer timeStamp = message.getInt("timeStamp");
 
-        Map<String, Object> user = message.getStruct("user");
-        String userName = (String) user.get("userName");
-        Long userId = (Long) user.get("userId");
+        Message user = message.getMessage("user");
+        String userName = user.getString("userName");
+        Long userId = user.getLong("userId");
 
         Map<String, Object> clan = (Map<String, Object>) user.get("clan");
         String clanName = null;
@@ -174,7 +174,7 @@ public class VillageAnalyzer implements MessageTap {
         // Storage
         //
 
-        Map<String, Object> resources = message.getStruct("resources");
+        Message resources = message.getMessage("resources");
         LootCollection loot = sumStorage(resources).withCollectorLoot(
             new Loot(collectorTotals.get("Gold"), collectorTotals.get("Elixir"), collectorTotals.get("DarkElixir"))
         );
@@ -252,7 +252,7 @@ public class VillageAnalyzer implements MessageTap {
         }
     }
 
-    public LootCollection sumStorage(Map<String, Object> resources) {
+    public LootCollection sumStorage(Message resources) {
         Map<String, Integer> storageTotals = new LinkedHashMap<>();
         storageTotals.put("Elixir", 0);
         storageTotals.put("Gold", 0);
@@ -262,12 +262,11 @@ public class VillageAnalyzer implements MessageTap {
         storageTotals.put("WarDarkElixir", 0);
 
         if (resources != null) {
-            Object[] resourceCounts = (Object[]) resources.get("resourceCounts");
-            for (int i = 0; i < resourceCounts.length; i++) {
-                Map<String, Object> resource = (Map<String, Object>) resourceCounts[i];
-                int typeId = (int) resource.get("type");
+            Message[] resourceCounts = resources.getArray("resourceCounts");
+            for (Message resourceCount : resourceCounts) {
+                int typeId = resourceCount.getInt("type");
                 String storageType = logic.getSubTypeName(typeId);
-                int resourceValue = (int) resource.get("value");
+                int resourceValue = resourceCount.getInt("value");
                 storageTotals.put(storageType, resourceValue);
             }
         }

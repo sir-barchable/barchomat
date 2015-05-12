@@ -35,11 +35,6 @@ public class MessageReader {
         this.typeFactory = typeFactory;
     }
 
-    public Message newMessage(Pdu.Type type) {
-        StructDefinition definition = typeFactory.getStructDefinitionForId(type.id());
-        return new Message(definition);
-    }
-
     /**
      * Read a message.
      *

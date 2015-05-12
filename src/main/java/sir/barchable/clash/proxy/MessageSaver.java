@@ -11,7 +11,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import static sir.barchable.clash.protocol.Pdu.Type.*;
 import static sir.barchable.util.NoopCipher.NOOP_CIPHER;
@@ -84,9 +87,9 @@ public class MessageSaver implements PduFilter {
             case OwnHomeData:
             case VisitedHomeData:
             case EnemyHomeData:
-                Map<String, Object> user = message.getStruct("user");
+                Message user = message.getMessage("user");
                 if (user != null) {
-                    villageName = (String) user.get("userName");
+                    villageName = user.getString("userName");
                 }
                 break;
 

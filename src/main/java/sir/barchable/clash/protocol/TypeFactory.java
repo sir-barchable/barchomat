@@ -297,6 +297,10 @@ public class TypeFactory {
             return array;
         }
 
+        public boolean isStruct() {
+            return structDefinition != null && !array && !optional;
+        }
+
         public int getLength() {
             return length;
         }

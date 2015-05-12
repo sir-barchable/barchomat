@@ -44,12 +44,17 @@ public class MessageFactory {
      * @param type the message type
      * @return a new message with an empty field set
      */
+
     public Message newMessage(Pdu.Type type) {
-        Protocol.StructDefinition definition = typeFactory.getStructDefinitionForId(type.id());
-        if (definition == null) {
-            throw new TypeException("No type definition for " + type);
+        Optional<String> structName = typeFactory.getStructNameForId(type.id());
+        if (!structName.isPresent()) {
+            throw new TypeException("No type definition for id " + type.id());
         }
-        return new Message(definition);
+        return new Message(typeFactory, structName.get());
+    }
+
+    public Message newMessage(String type) {
+        return new Message(typeFactory, type);
     }
 
     /**
@@ -73,9 +78,10 @@ public class MessageFactory {
         Optional<String> structName = typeFactory.getStructNameForId(pduType.id());
         if (structName.isPresent()) {
             try {
-                TypeFactory.Type type = typeFactory.resolveType(structName.get());
+                String name = structName.get();
+                TypeFactory.Type type = typeFactory.resolveType(name);
                 Map<String, Object> fields = (Map<String, Object>) reader.readValue(type, MessageInputStream.toMessageInputStream(in));
-                return new Message(type.getStructDefinition(), fields);
+                return new Message(typeFactory, name, fields);
             } catch (IOException e) {
                 throw new PduException(e);
             }

@@ -17,7 +17,7 @@
     {"name": "level", "type": "INT"},
     {"name": "points", "type": "INT"},
     {"name": "gemCount", "type": "INT"},
-    {"name": "gemCount", "type": "INT"},
+    {"type": "INT"},
     {"type": "INT"},
     {"type": "INT"},
     {"name": "trophyCount", "type": "INT"},
