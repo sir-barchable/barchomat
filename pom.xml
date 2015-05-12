@@ -55,7 +55,7 @@
                     <archive>
                         <index>true</index>
                         <manifest>
-                            <mainClass>sir.barchable.clash.proxy.ClashProxy</mainClass>
+                            <mainClass>sir.barchable.clash.Main</mainClass>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
                         <manifestEntries>

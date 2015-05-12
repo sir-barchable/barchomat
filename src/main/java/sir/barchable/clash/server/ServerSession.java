@@ -2,8 +2,9 @@ package sir.barchable.clash.server;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sir.barchable.clash.ClashServices;
+import sir.barchable.clash.Main;
 import sir.barchable.clash.ResourceException;
-import sir.barchable.clash.model.Logic;
 import sir.barchable.clash.model.SessionState;
 import sir.barchable.clash.model.json.Village;
 import sir.barchable.clash.model.json.Village.Building;
@@ -27,7 +28,6 @@ import static sir.barchable.clash.protocol.Pdu.Type.*;
  */
 public class ServerSession {
     private static final Logger log = LoggerFactory.getLogger(ServerSession.class);
-
     private AtomicBoolean running = new AtomicBoolean(true);
     private Connection clientConnection;
     private MessageFactory messageFactory;
@@ -56,11 +56,11 @@ public class ServerSession {
 
     private boolean dirty;
 
-    private ServerSession(Logic logic, MessageFactory messageFactory, Connection clientConnection, String loadout, File homeFile) throws IOException {
-        this.messageFactory = messageFactory;
+    private ServerSession(ClashServices services, Connection clientConnection, Main.ServerCommand command) throws IOException {
+        this.messageFactory = services.getMessageFactory();
         this.clientConnection = clientConnection;
-        this.villageLoader = new VillageLoader(logic, messageFactory, homeFile, new File("villages"));
-        this.loadoutManager = new LoadoutManager(logic, new File("loadouts"));
+        this.villageLoader = new VillageLoader(services, command.getHomeFile(), new File("villages"));
+        this.loadoutManager = new LoadoutManager(services.getLogic(), new File("loadouts"));
         if (loadout != null) {
             if (!loadoutManager.contains(loadout)) {
                 log.warn("Loadout {} not found", loadout);
@@ -84,8 +84,8 @@ public class ServerSession {
      * <p>
      * Normal completion is usually the result of an EOF on the input stream.
      */
-    public static ServerSession newSession(Logic logic, MessageFactory messageFactory, Connection clientConnection, String loadout, File homeFile) throws IOException {
-        ServerSession session = new ServerSession(logic, messageFactory, clientConnection, loadout, homeFile);
+    public static ServerSession newSession(ClashServices services, Connection clientConnection, Main.ServerCommand command) throws IOException {
+        ServerSession session = new ServerSession(services, clientConnection, command);
         localSession.set(session);
         try {
 

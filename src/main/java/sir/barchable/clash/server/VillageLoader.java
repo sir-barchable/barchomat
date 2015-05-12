@@ -2,8 +2,8 @@ package sir.barchable.clash.server;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sir.barchable.clash.ClashServices;
 import sir.barchable.clash.model.LayoutManager;
-import sir.barchable.clash.model.Logic;
 import sir.barchable.clash.model.json.Village;
 import sir.barchable.clash.model.json.WarVillage;
 import sir.barchable.clash.protocol.Message;
@@ -33,23 +33,20 @@ import static sir.barchable.util.NoopCipher.NOOP_CIPHER;
 public class VillageLoader {
     private static final Logger log = LoggerFactory.getLogger(VillageLoader.class);
     private static final Pattern VISITED_HOME_PATTERN = Pattern.compile("(Enemy|Visited|War)HomeData.*\\.pdu");
-
     private LayoutManager layoutManager = new LayoutManager();
 
-    private Logic logic;
     private MessageFactory messageFactory;
     private File homeFile;
     private Village homeVillage;
     private Message ownHomeData;
     private File[] enemyHomes;
 
-    public VillageLoader(Logic logic, MessageFactory messageFactory, File homeFile, File villageDir) throws IOException {
-        this.logic = logic;
-        this.messageFactory = messageFactory;
+    public VillageLoader(ClashServices services, File homeFile, File villageDir) throws IOException {
+        this.messageFactory = services.getMessageFactory();
 
         this.homeFile = homeFile;
         try (FileInputStream in = new FileInputStream(homeFile)) {
-            ownHomeData = messageFactory.fromStream(in);
+            ownHomeData = services.getMessageFactory().fromStream(in);
             homeVillage = Json.valueOf(ownHomeData.getString("homeVillage"), Village.class);
         }
 

@@ -1,23 +1,10 @@
 package sir.barchable.clash;
 
-import com.beust.jcommander.JCommander;
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.ParameterException;
+import com.beust.jcommander.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sir.barchable.clash.model.LogicParser;
-import sir.barchable.clash.protocol.*;
-import sir.barchable.clash.proxy.MessageLogger;
-import sir.barchable.clash.proxy.MessageTapFilter;
-import sir.barchable.clash.proxy.ProxySession;
-import sir.barchable.util.Hex;
-import sir.barchable.util.Json;
 
 import java.io.*;
-import java.util.Map;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static sir.barchable.util.BitBucket.NOWHERE;
 
 /**
  * @author Sir Barchable
@@ -25,30 +12,107 @@ import static sir.barchable.util.BitBucket.NOWHERE;
 public class Main {
     private static final Logger log = LoggerFactory.getLogger(Main.class);
 
-    @Parameter(names = {"-d", "--definition-dir"}, description = "Directory to load the protocol definition from")
-    private File resourceDir;
+    @ParametersDelegate
+    private Env env = new Env();
 
-    @Parameter(names = {"-l", "--logic"}, description = "Directory/file to load the game logic from")
-    private File logicFile;
+    private ProxyCommand proxyCommand = new ProxyCommand();
+    private ServerCommand serverCommand = new ServerCommand();
+    private DumpCommand dumpCommand = new DumpCommand();
 
-    @Parameter(names = {"-w", "--working-dir"}, description = "Directory to read streams from")
-    private File workingDir = new File(".");
+    @Parameters(commandDescription = "Run the clash proxy")
+    public static class ProxyCommand {
+        @Parameter(names = {"-s", "--save"}, description = "Save messages to the 'villages' directory")
+        private boolean save;
+
+        @Parameter(names = {"-n", "--name-server"}, description = "Name server to read up-stream server address from")
+        private String nameServer = "8.8.8.8";
+
+        public boolean getSave() {
+            return save;
+        }
+
+        public String getNameServer() {
+            return nameServer;
+        }
+    }
+
+    @Parameters(commandDescription = "Run the clash server")
+    public static class ServerCommand {
+        @Parameter(names = {"--home"}, required = true, description = "Home village file")
+        private File homeFile;
+
+        @Parameter(names = {"--loadout"}, description = "Name of loadout to apply")
+        private String loadout;
+
+        public File getHomeFile() {
+            return homeFile;
+        }
+
+        public String getLoadout() {
+            return loadout;
+        }
+    }
+
+    @Parameters(commandDescription = "Decode captured tcp dumps")
+    public static class DumpCommand {
+        @Parameter(names = {"-h", "--hex"}, description = "Dump messages as hex")
+        private boolean dumpHex;
+
+        @Parameter(names = {"-j", "--json"}, description = "Dump messages as json")
+        private boolean dumpJson;
+
+        public boolean getDumpHex() {
+            return dumpHex;
+        }
+
+        public boolean getDumpJson() {
+            return dumpJson;
+        }
+    }
 
     public static void main(String[] args) throws IOException {
         Main main = new Main();
         JCommander commander = new JCommander(main);
+
+        commander.addCommand("proxy", main.proxyCommand);
+        commander.addCommand("server", main.serverCommand);
+        commander.addCommand("dump", main.dumpCommand);
+
         try {
             commander.parse(args);
-            main.run();
+            main.run(commander.getParsedCommand());
         } catch (ParameterException e) {
             commander.usage();
         } catch (Exception e) {
-            log.error("", e);
-            System.err.println("Oops: " + e.getMessage());
+            System.err.println("Oops: " + e);
         }
     }
 
-    private void run() {
+    private void run(String command) throws IOException, InterruptedException {
+        ClashServices services = new ClashServices(env);
 
+        if (command == null) {
+            throw new ParameterException("Missing command");
+        }
+
+        switch (command) {
+            case "proxy":
+                ClashProxy proxy = new ClashProxy(services, proxyCommand);
+                proxy.run();
+                break;
+
+            case "server":
+                ClashServer server = new ClashServer(services, serverCommand);
+                server.run();
+                break;
+
+            case "dump":
+                Dump dump = new Dump(services, dumpCommand);
+                dump.run();
+                break;
+
+            default:
+                throw new ParameterException("Unknown command '" + command + "'");
+        }
     }
 }

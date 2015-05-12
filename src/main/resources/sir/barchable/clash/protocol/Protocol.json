@@ -2,697 +2,1404 @@
   "messages" : [ {
     "id" : 14101,
     "name" : "AttackResult",
+    "comment" : null,
     "fields" : [ {
-      "type" : "LONG"
+      "name" : null,
+      "type" : "LONG",
+      "comment" : null,
+      "default" : null
     } ],
     "extensions" : [ ]
   }, {
     "id" : 14315,
     "name" : "ChatToAllianceStream",
+    "comment" : null,
     "fields" : [ {
       "name" : "text",
-      "type" : "STRING"
+      "type" : "STRING",
+      "comment" : null,
+      "default" : null
     } ],
     "extensions" : [ ]
   }, {
+    "id" : null,
     "name" : "CommandComponent",
+    "comment" : null,
     "fields" : [ {
       "name" : "id",
-      "type" : "INT"
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     } ],
     "extensions" : [ {
       "id" : 4,
       "comment" : "Donate unit in response to troop request",
       "fields" : [ {
-        "type" : "INT"
+        "name" : null,
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       }, {
         "name" : "messageId",
-        "type" : "INT"
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       }, {
-        "name" : "unitId",
-        "type" : "INT"
+        "name" : "typeId",
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       }, {
-        "type" : "INT"
+        "name" : null,
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       }, {
         "name" : "tick",
-        "type" : "INT"
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       } ]
     }, {
       "id" : 10,
       "comment" : "Donate unit to clan war castle",
       "fields" : [ {
-        "type" : "INT"
+        "name" : null,
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       }, {
         "name" : "homeId",
-        "type" : "INT"
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       }, {
-        "name" : "unitId",
-        "type" : "INT"
+        "name" : "typeId",
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       }, {
         "name" : "index",
-        "type" : "INT"
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       }, {
         "name" : "tick",
-        "type" : "INT"
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       } ]
     }, {
       "id" : 501,
       "comment" : "Move building",
       "fields" : [ {
         "name" : "x",
-        "type" : "INT"
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       }, {
         "name" : "y",
-        "type" : "INT"
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       }, {
         "name" : "buildingId",
-        "type" : "INT"
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       }, {
         "name" : "tick",
-        "type" : "INT"
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       } ]
     }, {
       "id" : 506,
       "comment" : "Collect resources",
       "fields" : [ {
         "name" : "buildingId",
-        "type" : "INT"
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       }, {
         "name" : "tick",
-        "type" : "INT"
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       } ]
     }, {
       "id" : 508,
       "comment" : "Train troops",
       "fields" : [ {
         "name" : "buildingId",
-        "type" : "INT"
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       }, {
-        "type" : "INT"
+        "name" : null,
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       }, {
-        "name" : "unitType",
-        "type" : "INT"
+        "name" : "typeId",
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       }, {
         "name" : "count",
-        "type" : "INT"
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       }, {
         "name" : "tick",
-        "type" : "INT"
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       } ]
     }, {
       "id" : 509,
       "comment" : "Cancel troop production",
       "fields" : [ {
         "name" : "buildingId",
-        "type" : "INT"
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       }, {
-        "type" : "INT"
+        "name" : null,
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       }, {
-        "name" : "unitType",
-        "type" : "INT"
+        "name" : "typeId",
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       }, {
         "name" : "count",
-        "type" : "INT"
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       }, {
-        "type" : "INT"
+        "name" : null,
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       }, {
         "name" : "tick",
-        "type" : "INT"
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
+      } ]
+    }, {
+      "id" : 512,
+      "comment" : "Buy decoration",
+      "fields" : [ {
+        "name" : "x",
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
+      }, {
+        "name" : "y",
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
+      }, {
+        "name" : "buildingId",
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
+      }, {
+        "name" : "tick",
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
+      } ]
+    }, {
+      "id" : 532,
+      "comment" : "New shop item seen",
+      "fields" : [ {
+        "name" : null,
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
+      }, {
+        "name" : null,
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
+      }, {
+        "name" : null,
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
+      }, {
+        "name" : "tick",
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
+      } ]
+    }, {
+      "id" : 546,
+      "comment" : "Edit layout",
+      "fields" : [ {
+        "name" : "x",
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
+      }, {
+        "name" : "y",
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
+      }, {
+        "name" : "buildingId",
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
+      }, {
+        "name" : "layout",
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
+      }, {
+        "name" : "tick",
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
+      } ]
+    }, {
+      "id" : 548,
+      "comment" : "? edit layout command",
+      "fields" : [ {
+        "name" : "layout",
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
+      }, {
+        "name" : null,
+        "type" : "INT",
+        "comment" : "0 for home villages, 1 for war",
+        "default" : null
+      }, {
+        "name" : "tick",
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
+      } ]
+    }, {
+      "id" : 552,
+      "comment" : "Save Layout",
+      "fields" : [ {
+        "name" : "layout",
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
+      }, {
+        "name" : null,
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
+      }, {
+        "name" : "save",
+        "type" : "BOOLEAN",
+        "comment" : "true to save, false to cancel",
+        "default" : null
+      }, {
+        "name" : "tick",
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
+      } ]
+    }, {
+      "id" : 554,
+      "comment" : "? edit layout command",
+      "fields" : [ {
+        "name" : "buildingId",
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
+      }, {
+        "name" : "layout",
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
+      }, {
+        "name" : null,
+        "type" : "BYTE",
+        "comment" : null,
+        "default" : null
+      }, {
+        "name" : null,
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
+      }, {
+        "name" : null,
+        "type" : "BYTE",
+        "comment" : null,
+        "default" : null
+      }, {
+        "name" : "tick",
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
+      } ]
+    }, {
+      "id" : 567,
+      "comment" : "Set layout as active",
+      "fields" : [ {
+        "name" : "layout",
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
+      }, {
+        "name" : null,
+        "type" : "INT",
+        "comment" : "0 for home villages, 1 for war",
+        "default" : null
+      }, {
+        "name" : "tick",
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
+      } ]
+    }, {
+      "id" : 568,
+      "comment" : "Copy layout",
+      "fields" : [ {
+        "name" : "tick",
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
+      }, {
+        "name" : "fromLayout",
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
+      }, {
+        "name" : "toLayout",
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       } ]
     }, {
       "id" : 600,
       "comment" : "Place attacker",
       "fields" : [ {
         "name" : "x",
-        "type" : "INT"
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       }, {
         "name" : "y",
-        "type" : "INT"
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       }, {
-        "name" : "unitType",
-        "type" : "INT"
+        "name" : "typeId",
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       }, {
         "name" : "tick",
-        "type" : "INT"
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       } ]
     }, {
       "id" : 603,
       "comment" : "End combat",
       "fields" : [ {
         "name" : "tick",
-        "type" : "INT"
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       } ]
     }, {
       "id" : 604,
       "comment" : "Cast spell",
       "fields" : [ {
         "name" : "x",
-        "type" : "INT"
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       }, {
         "name" : "y",
-        "type" : "INT"
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       }, {
-        "name" : "spellType",
-        "type" : "INT"
+        "name" : "typeId",
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       }, {
         "name" : "tick",
-        "type" : "INT"
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       } ]
     }, {
       "id" : 700,
       "comment" : "Next village during attack selection",
       "fields" : [ {
-        "type" : "INT"
+        "name" : null,
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       }, {
-        "type" : "INT"
+        "name" : null,
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       }, {
         "name" : "tick",
-        "type" : "INT"
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       } ]
     } ]
   }, {
     "id" : 14102,
     "name" : "EndClientTurn",
+    "comment" : null,
     "fields" : [ {
       "name" : "tick",
-      "type" : "INT"
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "checksum",
-      "type" : "INT"
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "commands",
-      "type" : "CommandComponent[]"
+      "type" : "CommandComponent[]",
+      "comment" : null,
+      "default" : null
     } ],
     "extensions" : [ ]
   }, {
     "id" : 10108,
     "name" : "KeepAlive",
+    "comment" : null,
     "fields" : [ ],
     "extensions" : [ ]
   }, {
     "id" : 10101,
     "name" : "Login",
+    "comment" : null,
     "fields" : [ {
       "name" : "userId",
-      "type" : "LONG"
+      "type" : "LONG",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "userToken",
-      "type" : "STRING"
+      "type" : "STRING",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "majorVersion",
-      "type" : "INT"
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "minorVersion",
-      "type" : "INT"
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "masterHash",
-      "type" : "STRING"
+      "type" : "STRING",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "STRING"
+      "name" : null,
+      "type" : "STRING",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "openUdid",
-      "type" : "STRING"
+      "type" : "STRING",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "mac",
-      "type" : "STRING"
+      "type" : "STRING",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "phoneModel",
-      "type" : "STRING"
+      "type" : "STRING",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "locale",
-      "type" : "INT"
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "language",
-      "type" : "STRING"
+      "type" : "STRING",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "advertisingIdentifier",
-      "type" : "STRING"
+      "type" : "STRING",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "osVersion",
-      "type" : "STRING"
+      "type" : "STRING",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "BYTE[5]"
+      "name" : null,
+      "type" : "BYTE[5]",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "androidDeviceId",
-      "type" : "STRING"
+      "type" : "STRING",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "facebookAttributionId",
-      "type" : "STRING"
+      "type" : "STRING",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "advertisingTrackingEnabled",
-      "type" : "BYTE"
+      "type" : "BYTE",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "vendorUuid",
-      "type" : "STRING"
+      "type" : "STRING",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "clientSeed",
-      "type" : "INT"
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     } ],
     "extensions" : [ ]
   }, {
     "id" : 10113,
     "name" : "SetDeviceToken",
+    "comment" : null,
     "fields" : [ {
       "name" : "token",
-      "type" : "BYTE[]"
+      "type" : "BYTE[]",
+      "comment" : null,
+      "default" : null
     } ],
     "extensions" : [ ]
   }, {
     "id" : 14113,
     "name" : "VisitHome",
+    "comment" : null,
     "fields" : [ {
       "name" : "homeId",
-      "type" : "LONG"
+      "type" : "LONG",
+      "comment" : null,
+      "default" : null
     } ],
     "extensions" : [ ]
   }, {
+    "id" : null,
     "name" : "AllianceDonation",
+    "comment" : null,
     "fields" : [ {
       "name" : "userId",
-      "type" : "LONG"
+      "type" : "LONG",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "troops",
-      "type" : "ResourceComponent[]"
+      "type" : "ResourceComponent[]",
+      "comment" : null,
+      "default" : null
     } ],
     "extensions" : [ ]
   }, {
+    "id" : null,
     "name" : "ClanComponent",
+    "comment" : null,
     "fields" : [ {
       "name" : "clanId",
-      "type" : "LONG"
+      "type" : "LONG",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "clanName",
-      "type" : "STRING"
+      "type" : "STRING",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "badge",
-      "type" : "INT"
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "rank",
-      "type" : "INT"
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     } ],
     "extensions" : [ ]
   }, {
+    "id" : null,
     "name" : "ClanIdComponent",
+    "comment" : null,
     "fields" : [ {
       "name" : "clanId",
-      "type" : "LONG"
+      "type" : "LONG",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "clanName",
-      "type" : "STRING"
+      "type" : "STRING",
+      "comment" : null,
+      "default" : null
     } ],
     "extensions" : [ ]
   }, {
+    "id" : null,
     "name" : "IdComponent",
+    "comment" : null,
     "fields" : [ {
       "name" : "id",
-      "type" : "LONG"
+      "type" : "LONG",
+      "comment" : null,
+      "default" : null
     } ],
     "extensions" : [ ]
   }, {
+    "id" : null,
     "name" : "ResourceComponent",
+    "comment" : null,
     "fields" : [ {
       "name" : "type",
-      "type" : "INT"
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "value",
-      "type" : "INT"
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     } ],
     "extensions" : [ ]
   }, {
+    "id" : null,
     "name" : "ResourceListComponent",
+    "comment" : null,
     "fields" : [ {
       "name" : "resourceCapacities",
-      "type" : "ResourceComponent[]"
+      "type" : "ResourceComponent[]",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "resourceCounts",
-      "type" : "ResourceComponent[]"
+      "type" : "ResourceComponent[]",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "unitCounts",
-      "type" : "ResourceComponent[]"
+      "type" : "ResourceComponent[]",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "spellCounts",
-      "type" : "ResourceComponent[]"
+      "type" : "ResourceComponent[]",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "unitLevels",
-      "type" : "ResourceComponent[]"
+      "type" : "ResourceComponent[]",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "spellLevels",
-      "type" : "ResourceComponent[]"
+      "type" : "ResourceComponent[]",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "heroLevels",
-      "type" : "ResourceComponent[]"
+      "type" : "ResourceComponent[]",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "heroHealth",
-      "type" : "ResourceComponent[]"
+      "type" : "ResourceComponent[]",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "heroState",
-      "type" : "ResourceComponent[]"
+      "type" : "ResourceComponent[]",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "allianceUnits",
-      "type" : "UnitComponent[]"
+      "type" : "UnitComponent[]",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "missions",
-      "type" : "INT[]"
+      "type" : "INT[]",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "achievements",
-      "type" : "INT[]"
+      "type" : "INT[]",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "achievementProgress",
-      "type" : "ResourceComponent[]"
+      "type" : "ResourceComponent[]",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "goblinStars",
-      "type" : "ResourceComponent[]"
+      "type" : "ResourceComponent[]",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "goblinGold",
-      "type" : "ResourceComponent[]"
+      "type" : "ResourceComponent[]",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "goblinElixir",
-      "type" : "ResourceComponent[]"
+      "type" : "ResourceComponent[]",
+      "comment" : null,
+      "default" : null
     } ],
     "extensions" : [ ]
   }, {
+    "id" : null,
     "name" : "UnitComponent",
+    "comment" : null,
     "fields" : [ {
       "name" : "typeId",
-      "type" : "INT"
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "count",
-      "type" : "INT"
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "level",
-      "type" : "INT"
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     } ],
     "extensions" : [ ]
   }, {
+    "id" : null,
     "name" : "UserComponent",
+    "comment" : null,
     "fields" : [ {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "userId",
-      "type" : "LONG"
+      "type" : "LONG",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "homeId",
-      "type" : "LONG"
+      "type" : "LONG",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "clan",
-      "type" : "?ClanComponent"
+      "type" : "?ClanComponent",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "league",
-      "type" : "?LONG"
+      "type" : "?LONG",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "lastLeague",
-      "type" : "?LONG"
+      "type" : "?LONG",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "leagueType",
-      "type" : "INT"
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "castleLevel",
-      "type" : "INT"
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "userName",
-      "type" : "STRING"
+      "type" : "STRING",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "facebookId",
-      "type" : "STRING"
+      "type" : "STRING",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "level",
-      "type" : "INT"
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "points",
-      "type" : "INT"
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "gemCount",
-      "type" : "INT"
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "name" : "gemCount",
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "trophyCount",
-      "type" : "INT"
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "?LONG"
+      "name" : null,
+      "type" : "?LONG",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "BOOLEAN"
+      "name" : null,
+      "type" : "BOOLEAN",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     } ],
     "extensions" : [ ]
   }, {
+    "id" : null,
     "name" : "UserHeaderComponent",
+    "comment" : null,
     "fields" : [ {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     } ],
     "extensions" : [ ]
   }, {
+    "id" : null,
     "name" : "WarLogEntry",
+    "comment" : null,
     "fields" : [ {
       "name" : "clanId",
-      "type" : "LONG"
+      "type" : "LONG",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "clanName",
-      "type" : "STRING"
+      "type" : "STRING",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "clanLevel",
-      "type" : "INT"
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "enemyClanId",
-      "type" : "LONG"
+      "type" : "LONG",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "enemyClanName",
-      "type" : "STRING"
+      "type" : "STRING",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "enemyClanLevel",
-      "type" : "INT"
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "stars",
-      "type" : "INT"
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "enemyStars",
-      "type" : "INT"
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "attacksUsed",
-      "type" : "INT"
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "xpEarned",
-      "type" : "INT"
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "BYTE"
+      "name" : null,
+      "type" : "BYTE",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     } ],
     "extensions" : [ ]
   }, {
     "id" : 24324,
     "name" : "AllianceData",
+    "comment" : null,
     "fields" : [ {
       "name" : "clanDescription",
-      "type" : "STRING"
+      "type" : "STRING",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "?LONG"
+      "name" : null,
+      "type" : "?LONG",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "clanId",
-      "type" : "LONG"
+      "type" : "LONG",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "clanName",
-      "type" : "STRING"
+      "type" : "STRING",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "badge",
-      "type" : "INT"
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     } ],
     "extensions" : [ ]
   }, {
     "id" : 24311,
     "name" : "AllianceStream",
+    "comment" : null,
     "fields" : [ {
       "name" : "entries",
-      "type" : "AllianceStreamEntry[]"
+      "type" : "AllianceStreamEntry[]",
+      "comment" : null,
+      "default" : null
     } ],
     "extensions" : [ ]
   }, {
     "id" : 24312,
     "name" : "AllianceStreamEntry",
+    "comment" : null,
     "fields" : [ {
       "name" : "id",
-      "type" : "INT"
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "messageId",
-      "type" : "INT"
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "BYTE"
+      "name" : null,
+      "type" : "BYTE",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "userId",
-      "type" : "LONG"
+      "type" : "LONG",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "homeId",
-      "type" : "LONG"
+      "type" : "LONG",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "userName",
-      "type" : "STRING"
+      "type" : "STRING",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     } ],
     "extensions" : [ {
       "id" : 1,
       "comment" : "Troop request",
       "fields" : [ {
-        "type" : "INT"
+        "name" : null,
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       }, {
-        "type" : "INT"
+        "name" : null,
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       }, {
-        "type" : "INT"
+        "name" : null,
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       }, {
         "name" : "donations",
-        "type" : "AllianceDonation[]"
+        "type" : "AllianceDonation[]",
+        "comment" : null,
+        "default" : null
       }, {
         "name" : "text",
-        "type" : "?STRING"
+        "type" : "?STRING",
+        "comment" : null,
+        "default" : null
       } ]
     }, {
       "id" : 2,
       "comment" : "Send chat line",
       "fields" : [ {
         "name" : "text",
-        "type" : "STRING"
+        "type" : "STRING",
+        "comment" : null,
+        "default" : null
       } ]
     }, {
       "id" : 3,
       "comment" : "Accept/reject a join request",
       "fields" : [ {
         "name" : "text",
-        "type" : "STRING"
+        "type" : "STRING",
+        "comment" : null,
+        "default" : null
       }, {
         "name" : "actionedByUserName",
-        "type" : "STRING"
+        "type" : "STRING",
+        "comment" : null,
+        "default" : null
       }, {
         "name" : "action",
-        "type" : "INT"
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       } ]
     }, {
       "id" : 4,
       "comment" : "Join or leave",
       "fields" : [ {
         "name" : "action",
-        "type" : "INT"
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       }, {
         "name" : "actionedByUserId",
-        "type" : "LONG"
+        "type" : "LONG",
+        "comment" : null,
+        "default" : null
       }, {
         "name" : "actionedByUserName",
-        "type" : "STRING"
+        "type" : "STRING",
+        "comment" : null,
+        "default" : null
       } ]
     }, {
       "id" : 5,
       "comment" : "Share replay",
       "fields" : [ {
-        "type" : "INT"
+        "name" : null,
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       }, {
-        "type" : "INT"
+        "name" : null,
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       }, {
-        "type" : "INT"
+        "name" : null,
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       }, {
-        "type" : "BYTE"
+        "name" : null,
+        "type" : "BYTE",
+        "comment" : null,
+        "default" : null
       }, {
         "name" : "text",
-        "type" : "STRING"
+        "type" : "STRING",
+        "comment" : null,
+        "default" : null
       }, {
         "name" : "enemyName",
-        "type" : "STRING"
+        "type" : "STRING",
+        "comment" : null,
+        "default" : null
       }, {
         "name" : "replay",
         "type" : "STRING",
-        "comment" : "JSON description of battle"
+        "comment" : "JSON description of battle",
+        "default" : null
       }, {
-        "type" : "INT"
+        "name" : null,
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       }, {
-        "type" : "INT"
+        "name" : null,
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       }, {
-        "type" : "INT"
+        "name" : null,
+        "type" : "INT",
+        "comment" : null,
+        "default" : null
       } ]
     } ]
   }, {
@@ -701,28 +1408,46 @@
     "comment" : "Revenge attack",
     "fields" : [ {
       "name" : "homeId",
-      "type" : "LONG"
+      "type" : "LONG",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     } ],
     "extensions" : [ ]
   }, {
+    "id" : null,
     "name" : "AvatarStream",
     "comment" : "Mail stream. Clan mail, defense, etc. ID is 24411 (if and when this work is done...)",
     "fields" : [ {
       "name" : "entries",
-      "type" : "AvatarStreamEntry[]"
+      "type" : "AvatarStreamEntry[]",
+      "comment" : null,
+      "default" : null
     } ],
     "extensions" : [ ]
   }, {
+    "id" : null,
     "name" : "AvatarStreamEntry",
+    "comment" : null,
     "fields" : [ {
       "name" : "id",
-      "type" : "INT"
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     } ],
     "extensions" : [ {
       "id" : 0,
@@ -732,298 +1457,502 @@
   }, {
     "id" : 20000,
     "name" : "Encryption",
+    "comment" : null,
     "fields" : [ {
       "name" : "serverRandom",
-      "type" : "BYTE[]"
+      "type" : "BYTE[]",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "version",
-      "type" : "INT"
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     } ],
     "extensions" : [ ]
   }, {
     "id" : 24107,
     "name" : "EnemyHomeData",
+    "comment" : null,
     "fields" : [ {
       "name" : "age",
-      "type" : "INT"
-    }, {
       "type" : "INT",
+      "comment" : null,
+      "default" : null
+    }, {
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
       "default" : "-1"
     }, {
       "name" : "timeStamp",
-      "type" : "INT"
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "homeId",
-      "type" : "LONG"
+      "type" : "LONG",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "remainingShield",
-      "type" : "INT"
-    }, {
       "type" : "INT",
+      "comment" : null,
+      "default" : null
+    }, {
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
       "default" : "1200"
     }, {
+      "name" : null,
       "type" : "INT",
+      "comment" : null,
       "default" : "60"
     }, {
       "name" : "homeVillage",
-      "type" : "?ZIP_STRING"
+      "type" : "?ZIP_STRING",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "user",
-      "type" : "UserComponent"
+      "type" : "UserComponent",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "resources",
-      "type" : "ResourceListComponent"
+      "type" : "ResourceListComponent",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "attacker",
-      "type" : "UserComponent"
+      "type" : "UserComponent",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "attackerResources",
-      "type" : "ResourceListComponent"
+      "type" : "ResourceListComponent",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "?LONG"
+      "name" : null,
+      "type" : "?LONG",
+      "comment" : null,
+      "default" : null
     } ],
     "extensions" : [ ]
   }, {
     "id" : 24715,
     "name" : "GlobalChatLine",
+    "comment" : null,
     "fields" : [ {
       "name" : "text",
-      "type" : "STRING"
+      "type" : "STRING",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "userName",
-      "type" : "STRING"
+      "type" : "STRING",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "userId",
-      "type" : "LONG"
+      "type" : "LONG",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "homeId",
-      "type" : "LONG"
+      "type" : "LONG",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "clan",
-      "type" : "?ClanIdComponent"
+      "type" : "?ClanIdComponent",
+      "comment" : null,
+      "default" : null
     } ],
     "extensions" : [ ]
   }, {
     "id" : 20103,
     "name" : "LoginFailed",
+    "comment" : null,
     "fields" : [ {
       "name" : "failureReason",
-      "type" : "INT"
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "name" : "fingerPrint",
-      "type" : "STRING"
+      "name" : null,
+      "type" : "STRING",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "hostName",
-      "type" : "STRING"
+      "type" : "STRING",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "downloadUrl",
-      "type" : "STRING"
+      "type" : "STRING",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "appStoreUrl",
-      "type" : "STRING"
+      "type" : "STRING",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "BYTE"
+      "name" : null,
+      "type" : "BYTE",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "STRING"
+      "name" : "fingerPrint",
+      "type" : "ZIP_STRING",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "STRING"
+      "name" : null,
+      "type" : "STRING",
+      "comment" : null,
+      "default" : null
     } ],
     "extensions" : [ ]
   }, {
     "id" : 20104,
     "name" : "LoginOk",
+    "comment" : null,
     "fields" : [ {
       "name" : "userId",
-      "type" : "LONG"
+      "type" : "LONG",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "homeId",
-      "type" : "LONG"
+      "type" : "LONG",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "userToken",
-      "type" : "STRING"
+      "type" : "STRING",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "facebookId",
-      "type" : "STRING"
+      "type" : "STRING",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "gameCenterId",
-      "type" : "STRING"
+      "type" : "STRING",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "majorVersion",
-      "type" : "INT"
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "minorVersion",
-      "type" : "INT"
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "revision",
-      "type" : "INT"
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "environment",
-      "type" : "STRING"
+      "type" : "STRING",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "loginCount",
-      "type" : "INT"
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "timeOnline",
-      "type" : "INT"
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "facebookAppId",
-      "type" : "STRING"
+      "type" : "STRING",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "lastLoginDate",
-      "type" : "STRING"
+      "type" : "STRING",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "joinDate",
-      "type" : "STRING"
+      "type" : "STRING",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "googlePlusId",
-      "type" : "STRING"
+      "type" : "STRING",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "country",
-      "type" : "STRING"
+      "type" : "STRING",
+      "comment" : null,
+      "default" : null
     } ],
     "extensions" : [ ]
   }, {
     "id" : 24101,
     "name" : "OwnHomeData",
+    "comment" : null,
     "fields" : [ {
       "name" : "age",
-      "type" : "INT"
-    }, {
       "type" : "INT",
+      "comment" : null,
+      "default" : null
+    }, {
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
       "default" : "-1"
     }, {
       "name" : "timeStamp",
-      "type" : "INT"
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "homeId",
-      "type" : "LONG"
+      "type" : "LONG",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "remainingShield",
-      "type" : "INT"
-    }, {
       "type" : "INT",
+      "comment" : null,
+      "default" : null
+    }, {
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
       "default" : "1200"
     }, {
+      "name" : null,
       "type" : "INT",
+      "comment" : null,
       "default" : "60"
     }, {
       "name" : "homeVillage",
-      "type" : "?ZIP_STRING"
+      "type" : "?ZIP_STRING",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "user",
-      "type" : "UserComponent"
+      "type" : "UserComponent",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "resources",
-      "type" : "ResourceListComponent"
+      "type" : "ResourceListComponent",
+      "comment" : null,
+      "default" : null
     } ],
     "extensions" : [ ]
   }, {
     "id" : 20108,
     "name" : "ServerKeepAlive",
+    "comment" : null,
     "fields" : [ ],
     "extensions" : [ ]
   }, {
     "id" : 24326,
     "name" : "TrapData",
+    "comment" : null,
     "fields" : [ {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "teslas",
-      "type" : "STRING"
+      "type" : "STRING",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "traps",
-      "type" : "STRING"
+      "type" : "STRING",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "garrison",
-      "type" : "UnitComponent[]"
+      "type" : "UnitComponent[]",
+      "comment" : null,
+      "default" : null
     } ],
     "extensions" : [ ]
   }, {
     "id" : 24113,
     "name" : "VisitedHomeData",
+    "comment" : null,
     "fields" : [ {
       "name" : "age",
-      "type" : "INT"
-    }, {
       "type" : "INT",
+      "comment" : null,
+      "default" : null
+    }, {
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
       "default" : "-1"
     }, {
       "name" : "homeId",
-      "type" : "LONG"
+      "type" : "LONG",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "remainingShield",
-      "type" : "INT"
-    }, {
       "type" : "INT",
+      "comment" : null,
+      "default" : null
+    }, {
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
       "default" : "1200"
     }, {
+      "name" : null,
       "type" : "INT",
+      "comment" : null,
       "default" : "60"
     }, {
       "name" : "homeVillage",
-      "type" : "?ZIP_STRING"
+      "type" : "?ZIP_STRING",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "user",
-      "type" : "UserComponent"
+      "type" : "UserComponent",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "resources",
-      "type" : "ResourceListComponent"
+      "type" : "ResourceListComponent",
+      "comment" : null,
+      "default" : null
     } ],
     "extensions" : [ ]
   }, {
     "id" : 25000,
     "name" : "WarHomeData",
+    "comment" : null,
     "fields" : [ {
       "name" : "userId",
-      "type" : "LONG"
+      "type" : "LONG",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "homeId",
-      "type" : "LONG"
+      "type" : "LONG",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "homeVillage",
-      "type" : "ZIP_STRING"
+      "type" : "ZIP_STRING",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "INT"
+      "name" : null,
+      "type" : "INT",
+      "comment" : null,
+      "default" : null
     }, {
-      "type" : "BOOLEAN"
+      "name" : null,
+      "type" : "BOOLEAN",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "user",
-      "type" : "UserComponent"
+      "type" : "UserComponent",
+      "comment" : null,
+      "default" : null
     }, {
       "name" : "resources",
-      "type" : "ResourceListComponent"
+      "type" : "ResourceListComponent",
+      "comment" : null,
+      "default" : null
     } ],
     "extensions" : [ ]
   }, {
     "id" : 24338,
     "name" : "WarLog",
+    "comment" : null,
     "fields" : [ {
       "name" : "entries",
-      "type" : "WarLogEntry[]"
+      "type" : "WarLogEntry[]",
+      "comment" : null,
+      "default" : null
     } ],
     "extensions" : [ ]
   } ]
