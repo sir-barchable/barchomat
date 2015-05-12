@@ -32,7 +32,7 @@ import static sir.barchable.util.NoopCipher.NOOP_CIPHER;
  */
 public class VillageLoader {
     private static final Logger log = LoggerFactory.getLogger(VillageLoader.class);
-    private static final Pattern VISITED_HOME_PATTERN = Pattern.compile("(Enemy|Visited|War)HomeData.*\\.pdu");
+    private static final Pattern VISITED_HOME_PATTERN = Pattern.compile("(HomeBattleReplay|((Enemy|Visited|War)Home))Data.*\\.pdu");
     private LayoutManager layoutManager = new LayoutManager();
 
     private MessageFactory messageFactory;
@@ -106,6 +106,7 @@ public class VillageLoader {
                     break;
 
                 case WarHomeData:
+                case HomeBattleReplayData:
                     village = warHomeToEnemyHome(village);
                     break;
             }

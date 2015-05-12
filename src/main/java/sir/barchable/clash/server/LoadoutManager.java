@@ -3,11 +3,8 @@ package sir.barchable.clash.server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sir.barchable.clash.ResourceException;
-import sir.barchable.clash.model.Army;
-import sir.barchable.clash.model.Loadout;
+import sir.barchable.clash.model.*;
 import sir.barchable.clash.model.Loadout.LoadoutUnit;
-import sir.barchable.clash.model.Logic;
-import sir.barchable.clash.model.Unit;
 import sir.barchable.clash.protocol.Message;
 import sir.barchable.util.Json;
 
@@ -17,6 +14,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Function;
+
+import static sir.barchable.clash.model.ObjectType.ARCHER_QUEEN;
+import static sir.barchable.clash.model.ObjectType.BARBARIAN_KING;
 
 /**
  * Load and apply army load-outs.
@@ -80,34 +80,31 @@ public class LoadoutManager {
 
         if (loadout.getArmy() != null) {
             for (LoadoutUnit loadoutUnit : loadout.getArmy()) {
-                Unit unit = toUnit(loadoutUnit);
-                logic.assertType("characters", unit.getId());
+                Unit unit = toUnit("characters", loadoutUnit);
                 units.add(unit);
             }
         }
 
         if (loadout.getSpells() != null) {
             for (LoadoutUnit loadoutUnit : loadout.getSpells()) {
-                Unit unit = toUnit(loadoutUnit);
-                logic.assertType("spells", unit.getId());
+                Unit unit = toUnit("spells", loadoutUnit);
                 spells.add(unit);
             }
         }
 
         Integer king = loadout.getKing();
         if (king != null) {
-            heroes.add(new Unit(28000000, 1, king - 1));
+            heroes.add(new Unit(BARBARIAN_KING, 1, king - 1));
         }
 
         Integer queen = loadout.getQueen();
         if (queen != null) {
-            heroes.add(new Unit(28000001, 1, queen - 1));
+            heroes.add(new Unit(ARCHER_QUEEN, 1, queen - 1));
         }
 
         if (loadout.getGarrison() != null) {
             for (LoadoutUnit loadoutUnit : loadout.getGarrison()) {
-                Unit unit = toUnit(loadoutUnit);
-                logic.assertType("characters", unit.getId());
+                Unit unit = toUnit("characters", loadoutUnit);
                 garrison.add(unit);
             }
         }
@@ -120,8 +117,8 @@ public class LoadoutManager {
         return army;
     }
 
-    private Unit toUnit(LoadoutUnit unit) {
-        return new Unit(logic.getTypeId("characters", unit.getName()), unit.getCount(), unit.getLevel() - 1);
+    private Unit toUnit(String type, LoadoutUnit unit) {
+        return new Unit(logic.getTypeId(type, unit.getName()), unit.getCount(), unit.getLevel() - 1);
     }
 
     /**

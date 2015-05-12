@@ -38,7 +38,7 @@ public class MessageSaver implements PduFilter {
      * @param saveDir where to save the messages
      */
     public MessageSaver(MessageFactory messageFactory, File saveDir) throws FileNotFoundException {
-        this(messageFactory, saveDir, OwnHomeData, VisitedHomeData, EnemyHomeData, WarHomeData);
+        this(messageFactory, saveDir, OwnHomeData, VisitedHomeData, EnemyHomeData, WarHomeData, HomeBattleReplayData);
     }
 
     /**
@@ -94,6 +94,7 @@ public class MessageSaver implements PduFilter {
                 break;
 
             case WarHomeData:
+            case HomeBattleReplayData:
                 try {
                     WarVillage warVillage = Json.valueOf(message.getString("homeVillage"), WarVillage.class);
                     if (warVillage.name != null) {

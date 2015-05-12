@@ -36,7 +36,7 @@ public class AttackAnalyzer implements MessageTap {
         switch (message.getType()) {
             case EnemyHomeData:
                 // Set up for attack
-                setup(message);
+                setup(message.getMessage("resources"));
                 break;
 
             case OwnHomeData:
