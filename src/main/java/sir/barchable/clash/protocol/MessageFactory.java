@@ -66,7 +66,7 @@ public class MessageFactory {
     public Message fromPdu(Pdu pdu) {
         try (ByteArrayInputStream in = new ByteArrayInputStream(pdu.getPayload())) {
             return fromStream(pdu.getType(), in);
-        } catch (IOException e) {
+        } catch (TypeException | IOException e) {
             throw new PduException(e);
         }
     }
@@ -82,7 +82,7 @@ public class MessageFactory {
                 TypeFactory.Type type = typeFactory.resolveType(name);
                 Map<String, Object> fields = (Map<String, Object>) reader.readValue(type, MessageInputStream.toMessageInputStream(in));
                 return new Message(typeFactory, name, fields);
-            } catch (IOException e) {
+            } catch (TypeException | IOException e) {
                 throw new PduException(e);
             }
         } else {

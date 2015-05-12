@@ -90,24 +90,22 @@ public class ProxySession {
         PduFilter loginFilter = filterChain.addAfter(new MessageTapFilter(messageFactory, keyListener));
 
         // Key exchange.
-        clientPipe.filterThrough(loginFilter);
-        serverPipe.filterThrough(loginFilter);
+        do {
+            clientPipe.filterThrough(loginFilter);
+            serverPipe.filterThrough(loginFilter);
+        } while (keyListener.getKey() == null);
 
         byte[] key = keyListener.getKey();
 
-        if (key == null) {
-            throw new PduException("Key exchange did not complete");
-        } else {
-            // Re-key the streams
-            clientConnection.setKey(key);
-            serverConnection.setKey(key);
+        // Re-key the streams
+        clientConnection.setKey(key);
+        serverConnection.setKey(key);
 
-            // Proxy messages from client -> server
-            runPipe(clientPipe);
+        // Proxy messages from client -> server
+        runPipe(clientPipe);
 
-            // Proxy messages from server -> client
-            runPipe(serverPipe);
-        }
+        // Proxy messages from server -> client
+        runPipe(serverPipe);
     }
 
     /**

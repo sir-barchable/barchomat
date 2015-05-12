@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 
 /**
+ * Common entry point for the command line tools.
+ *
  * @author Sir Barchable
  */
 public class Main {
@@ -82,6 +84,9 @@ public class Main {
             commander.parse(args);
             main.run(commander.getParsedCommand());
         } catch (ParameterException e) {
+            if (e.getMessage() != null) {
+                System.err.println(e.getMessage());
+            }
             commander.usage();
         } catch (Exception e) {
             System.err.println("Oops: " + e);

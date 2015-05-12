@@ -3,6 +3,7 @@ package sir.barchable.clash;
 import sir.barchable.clash.protocol.Connection;
 import sir.barchable.clash.protocol.Message;
 import sir.barchable.clash.protocol.Pdu;
+import sir.barchable.clash.protocol.PduException;
 import sir.barchable.clash.proxy.MessageLogger;
 import sir.barchable.clash.proxy.MessageTapFilter;
 import sir.barchable.clash.proxy.ProxySession;
@@ -104,11 +105,15 @@ public class Dump {
         }
 
         void dumpJson(Pdu pdu) throws IOException {
-            Message message = services.getMessageFactory().fromPdu(pdu);
-            if (message != null) {
-                out.write('"' + pdu.getType().name() + "\": ");
-                Json.writePretty(message, out);
-                out.write('\n');
+            try {
+                Message message = services.getMessageFactory().fromPdu(pdu);
+                if (message != null) {
+                    out.write('"' + pdu.getType().name() + "\": ");
+                    Json.writePretty(message.getFields(), out);
+                    out.write('\n');
+                }
+            } catch (PduException e) {
+                // ignore
             }
         }
 
