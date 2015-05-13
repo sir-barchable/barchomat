@@ -1603,6 +1603,17 @@
     } ],
     "extensions" : [ ]
   }, {
+    "id" : 24114,
+    "name" : "HomeBattleReplayData",
+    "comment" : null,
+    "fields" : [ {
+      "name" : "replay",
+      "type" : "ZIP_STRING",
+      "comment" : null,
+      "default" : null
+    } ],
+    "extensions" : [ ]
+  }, {
     "id" : 20103,
     "name" : "LoginFailed",
     "comment" : null,

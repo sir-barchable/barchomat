@@ -1,12 +1,13 @@
 Barchomat
 =========
 
-**Sir Barchable's Clash of Clans Proxy**
+**Sir Barchable's Clash of Clans Server**
 
 ## What?
 
 This is a little program that sits between your game of Clash and the server at Supercell, and watches the messages
-that pass between them.
+that pass between them. It can also emulate the Supercell server, allowing you to experiment with layouts and attack
+strategies while off-line.
 
 ## Why?
 
@@ -15,22 +16,9 @@ performance of the 40+ players in your clan the paper and pencil approach is ted
 
 ## What can it do?
 
-Not a lot at the moment. The initial release just dumps stats as you view villages, and sums up stats for the clans 
-you've scouted when your session ends.
-
-    08:47:49 INFO  Eclipse
-    08:47:49 INFO  DPS: 185, HP: 20490 (walls 52300)
-    08:47:49 INFO  Troops: [lvl 4 Barbarian x 6, lvl 4 Archer x 4]
-    08:47:49 INFO  Town Hall: Loot[g=1000, e=1000, de=0]
-    08:47:49 INFO  Storage: Loot[g=17934, e=18540, de=0]
-    08:47:49 INFO  Castle: Loot[g=0, e=0, de=0]
-    08:47:49 INFO  Collectors: Loot[g=6520, e=9939, de=0]
-    08:47:49 INFO  Total: Loot[g=25454, e=29479, de=0]
-    08:47:49 INFO  After penalty of 10%: Loot[g=22908, e=26531, de=0]
-    
-    08:47:49 INFO  40 villages in Боги Войн with total Defense[hp=1832305, wallHp=13423500, dps=36391]
-    
-We're working on player stat collection and collation. Things will progress faster if you help out.    
+It runs in two modes—proxy mode, and server mode. In proxy mode it monitors a real game session, collects statistics, 
+and saves village layouts that you scout. In server mode it allows you to edit and attack the villages layouts that 
+you've collected. We're working on player stat collection and collation. Things will progress faster if you help out.    
 
 ## Do I have root my device/install your dodgy hack?
 
@@ -39,7 +27,8 @@ No, this is a completely separate program. No mods are required.
 ## Will I get banned for using this?
 
 No, the proxy doesn't modify the traffic in any way. All it does is monitor the conversation that you're having with 
-Supercell, so there's no way of telling that it's in use.
+Supercell, so there's no way of telling that it's in use. When using the server no communication with Supercell happens
+at all.
 
 ## OK, how do I make it go?
 
@@ -48,7 +37,7 @@ To run the proxy you'll need Java 8, a copy of the proxy, and a copy of the game
 the android version of executable, which you'll need to find yourself (Google "clash of clans apk"). Put the proxy and 
 the game executable in the same directory and start the proxy from the command line:
 
-    java -jar barchomat.jar
+    java -jar barchomat.jar proxy
     
 The proxy will log a startup message if all is well:
     
@@ -85,6 +74,22 @@ see the connection logged in your console:
 If you don't see any output from the proxy, and your game runs fine, it's likely that the device is not picking up the 
 alternate DNS entries. If your game freezes or displays an error there's a problem with the connection between the 
 device and the proxy.  
+
+## Server mode
+
+Server mode is very basic at the moment, it only emulates attacks. Before running in server mode, run the proxy for a 
+bit and collect some village snapshots. To start the app in server mode use the command:
+
+    java -jar barchomat.jar server
+    
+When you attack you'll be presented with the villages you collected while in proxy mode. While in server mode the
+changes you make to your village won't be sent to Supercell; the next time you connect to the real server you'll get 
+your old village back.
+
+Don't worry about mucking up your real-life settings by playing on the server. The game doesn't save state on your 
+device, so there's no way to permanently alter your village without a connection to Supercell. Every time you connect 
+your device loads fresh copy from the server. **However**, this doesn't apply to your connection with the 
+AppStore/Google Play. Any gems you buy are real.
 
 ## This is crap, and I want to help make it better
   

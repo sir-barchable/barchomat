@@ -16,7 +16,7 @@ import static sir.barchable.clash.protocol.Pdu.Type.EnemyHomeData;
  *         Date: 4/05/15
  */
 public class TestRoundTrip {
-    @Test
+//    @Test
     public void rw() throws IOException {
         MessageFactory factory = new MessageFactory(new TypeFactory(new ProtocolTool(new File("src/main/messages")).read()));
 
