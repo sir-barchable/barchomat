@@ -1,7 +1,9 @@
 package sir.barchable.clash.protocol;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import sir.barchable.clash.protocol.Protocol.StructDefinition;
 import sir.barchable.clash.protocol.Protocol.StructDefinition.FieldDefinition;
+import sir.barchable.util.Json;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -28,10 +30,14 @@ public class Message {
         this.typeName = typeName;
         TypeFactory.Type type = typeFactory.resolveType(typeName);
         if (!type.isStruct()) {
-            throw new TypeException("Not a struct type");
+            throw new TypeException("Not a struct");
         }
         this.definition = type.getStructDefinition();
-        this.fields = fields == null ?  new LinkedHashMap<>() : fields;
+        if (fields == null) {
+            this.fields = new LinkedHashMap<>();
+        } else {
+            this.fields = fields;
+        }
     }
 
     public StructDefinition getDefinition() {
@@ -51,6 +57,10 @@ public class Message {
         fields.put(key, value);
     }
 
+    public void set(String key, Message value) {
+        fields.put(key, value == null ? null : value.getFields());
+    }
+
     public Object get(String key) {
         return fields.get(key);
     }
@@ -60,8 +70,18 @@ public class Message {
     }
 
     public Message getMessage(String key) {
-        FieldDefinition field = definition.getField(key);
-        return new Message(typeFactory, field.getType(), (Map<String, Object>) fields.get(key));
+        FieldDefinition fieldDefinition = definition.getField(key);
+        Map<String, Object> fields = (Map<String, Object>) this.fields.get(key);
+
+        Message message;
+        if (fields == null) {
+            // Lazy construction
+            message = new Message(typeFactory, fieldDefinition.getType());
+            this.fields.put(key, message.getFields());
+        } else {
+            message = new Message(typeFactory, fieldDefinition.getType(), fields);
+        }
+        return message;
     }
 
     public Boolean getBoolean(String key) {
@@ -112,5 +132,15 @@ public class Message {
 
     public String getTypeName() {
         return typeName;
+    }
+
+    @Override
+    public String toString() {
+        try {
+            return Json.toString(fields);
+        } catch (JsonProcessingException e) {
+            // Shouldn't happen
+            throw new PduException(e);
+        }
     }
 }

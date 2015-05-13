@@ -2,6 +2,6 @@
   "id": 24114,
   "name": "HomeBattleReplayData",
   "fields": [
-    {"name": "homeVillage", "type": "ZIP_STRING"}
+    {"name": "replay", "type": "ZIP_STRING"}
   ]
 }

@@ -4,6 +4,7 @@ import sir.barchable.clash.protocol.Protocol.StructDefinition.FieldDefinition;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -119,6 +120,9 @@ public class MessageWriter {
 
     private void writeStruct(TypeFactory.Type type, Object o, MessageOutputStream out) throws IOException {
         Map<String, Object> struct = (Map<String, Object>) o;
+        if (struct == null) {
+            struct = Collections.emptyMap();
+        }
         int fieldIndex = 0;
         for (FieldDefinition fieldDefinition : type.getStructDefinition().getFields()) {
             fieldIndex++;

@@ -9,6 +9,7 @@ import sir.barchable.util.Json;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -45,6 +46,26 @@ public class LayoutManager {
         return village;
     }
 
+    public Village setTraps(Village village, WarVillage.Building[] teslas, WarVillage.Building[] traps) throws IOException {
+        if (teslas != null) {
+            List<Village.Building> buildings = new ArrayList<>(Arrays.asList(village.buildings));
+            for (WarVillage.Building tesla : teslas) {
+                buildings.add(warBuildingToBuilding(tesla));
+            }
+            village.buildings = buildings.toArray(new Village.Building[buildings.size()]);
+        }
+
+        if (traps != null) {
+            List<Village.Building> villageTraps = new ArrayList<>();
+            for (WarVillage.Building trap : traps) {
+                villageTraps.add(warBuildingToBuilding(trap));
+            }
+            village.traps = villageTraps.toArray(new Village.Building[villageTraps.size()]);
+        }
+
+        return village;
+    }
+
     public Village warVillageToVillage(WarVillage warVillage) throws IOException {
         Village village = new Village();
         village.active_layout = 1;
@@ -63,27 +84,31 @@ public class LayoutManager {
 
         List<Village.Building> buildings = new ArrayList<>();
         for (WarVillage.Building warBuilding : warVillage.buildings) {
-            Village.Building building = new Village.Building();
-            building.data = warBuilding.data;
-            building.lvl = warBuilding.lvl;
-            building.hp = warBuilding.hp;
-            building.x = warBuilding.x;
-            building.y = warBuilding.y;
-            building.aim_angle = warBuilding.aim_angle;
-            building.air_mode = warBuilding.air_mode;
-            building.ammo = warBuilding.ammo;
-            building.attack_mode = warBuilding.attack_mode;
-            if (warBuilding.hero_upg != null) {
-                building.hero_upg = new Village.Building.Unit();
-                building.hero_upg.level = warBuilding.hero_upg.level;
-                building.hero_upg.t = warBuilding.hero_upg.t;
-            }
+            Village.Building building = warBuildingToBuilding(warBuilding);
             buildings.add(building);
         }
-
         village.buildings = buildings.toArray(new Village.Building[buildings.size()]);
 
         return village;
+    }
+
+    private Village.Building warBuildingToBuilding(WarVillage.Building warBuilding) {
+        Village.Building building = new Village.Building();
+        building.data = warBuilding.data;
+        building.lvl = warBuilding.lvl;
+        building.hp = warBuilding.hp;
+        building.x = warBuilding.x;
+        building.y = warBuilding.y;
+        building.aim_angle = warBuilding.aim_angle;
+        building.air_mode = warBuilding.air_mode;
+        building.ammo = warBuilding.ammo;
+        building.attack_mode = warBuilding.attack_mode;
+        if (warBuilding.hero_upg != null) {
+            building.hero_upg = new Village.Building.Unit();
+            building.hero_upg.level = warBuilding.hero_upg.level;
+            building.hero_upg.t = warBuilding.hero_upg.t;
+        }
+        return building;
     }
 
     /**

@@ -2,8 +2,9 @@ package sir.barchable.clash.server;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sir.barchable.clash.ClashServices;
 import sir.barchable.clash.model.LayoutManager;
+import sir.barchable.clash.model.Unit;
+import sir.barchable.clash.model.json.Replay;
 import sir.barchable.clash.model.json.Village;
 import sir.barchable.clash.model.json.WarVillage;
 import sir.barchable.clash.protocol.Message;
@@ -18,10 +19,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
-import static sir.barchable.clash.protocol.Pdu.Type.EnemyHomeData;
 import static sir.barchable.util.NoopCipher.NOOP_CIPHER;
 
 /**
@@ -30,10 +30,11 @@ import static sir.barchable.util.NoopCipher.NOOP_CIPHER;
  *
  * @author Sir Barchable
  */
-public class VillageLoader {
-    private static final Logger log = LoggerFactory.getLogger(VillageLoader.class);
+public class VillageManager {
+    private static final Logger log = LoggerFactory.getLogger(VillageManager.class);
     private static final Pattern VISITED_HOME_PATTERN = Pattern.compile("(HomeBattleReplay|((Enemy|Visited|War)Home))Data.*\\.pdu");
-    private LayoutManager layoutManager = new LayoutManager();
+    private LayoutManager layoutManager;
+    private LoadoutManager loadoutManager;
 
     private MessageFactory messageFactory;
     private File homeFile;
@@ -41,12 +42,14 @@ public class VillageLoader {
     private Message ownHomeData;
     private File[] enemyHomes;
 
-    public VillageLoader(ClashServices services, File homeFile, File villageDir) throws IOException {
-        this.messageFactory = services.getMessageFactory();
+    public VillageManager(MessageFactory messageFactory, LoadoutManager loadoutManager, File homeFile, File villageDir) throws IOException {
+        this.messageFactory = messageFactory;
+        this.loadoutManager = loadoutManager;
+        this.layoutManager = new LayoutManager();
 
         this.homeFile = homeFile;
         try (FileInputStream in = new FileInputStream(homeFile)) {
-            ownHomeData = services.getMessageFactory().fromStream(in);
+            ownHomeData = messageFactory.fromStream(in);
             homeVillage = Json.valueOf(ownHomeData.getString("homeVillage"), Village.class);
         }
 
@@ -54,6 +57,7 @@ public class VillageLoader {
             .map(Path::toFile)
             .filter(file -> VISITED_HOME_PATTERN.matcher(file.getName()).matches())
             .toArray(File[]::new);
+
     }
 
     /**
@@ -74,10 +78,14 @@ public class VillageLoader {
      * Create a new enemy village structure.
      */
     private Message newEnemyPrototype() throws IOException {
-        Message village = messageFactory.newMessage(EnemyHomeData);
-        village.set("timeStamp", (int) (System.currentTimeMillis() / 1000));
-        village.set("age", 0);
-        return village;
+        try (FileInputStream in = new FileInputStream("EnemyHomeDataPrototype.pdu")) {
+            return messageFactory.fromStream(in);
+        }
+
+//        Message village = messageFactory.newMessage(EnemyHomeData);
+//        village.set("timeStamp", (int) (System.currentTimeMillis() / 1000));
+//        village.set("age", 0);
+//        return village;
     }
 
     /**
@@ -101,18 +109,37 @@ public class VillageLoader {
 
             // Convert if necessary
             switch (village.getType()) {
+                case EnemyHomeData:
+                    village = filterEnemyHome(village, war);
+                    break;
+
                 case VisitedHomeData:
                     village = visitedHomeToEnemyHome(village, war);
                     break;
 
                 case WarHomeData:
-                case HomeBattleReplayData:
                     village = warHomeToEnemyHome(village);
+                    break;
+
+                case HomeBattleReplayData:
+                    village = replayToEnemyHome(village);
                     break;
             }
 
             return village;
         }
+    }
+
+    private Message filterEnemyHome(Message enemyVillage, boolean war) throws IOException {
+        Message homeVillage = getOwnHomeData();
+
+        if (war) {
+            setWarLayout(enemyVillage);
+        }
+
+        enemyVillage.set("attacker", homeVillage.get("user"));
+        enemyVillage.set("attackerResources", homeVillage.get("resources"));
+        return enemyVillage;
     }
 
     private Message visitedHomeToEnemyHome(Message visitedVillage, boolean war) throws IOException {
@@ -121,21 +148,29 @@ public class VillageLoader {
 
         // Copy data from visited -> enemy
         enemyVillage.set("homeId", visitedVillage.get("homeId"));
+        enemyVillage.set("homeVillage", visitedVillage.get("homeVillage"));
         if (war) {
-            // swap from home layout to war layout
-            enemyVillage.set("homeVillage", Json.toString(
-                layoutManager.setWarLayout(
-                    layoutManager.loadVillage(
-                        visitedVillage.getString("homeVillage")
-                    )
-                )
-            ));
+            setWarLayout(enemyVillage);
         }
         enemyVillage.set("user", visitedVillage.get("user"));
         enemyVillage.set("resources", visitedVillage.get("resources"));
         enemyVillage.set("attacker", homeVillage.get("user"));
         enemyVillage.set("attackerResources", homeVillage.get("resources"));
         return enemyVillage;
+    }
+
+    /**
+     * Swap to war layout. Copies the war layout to the home layout and updates the village json.
+     */
+    private void setWarLayout(Message enemyVillage) throws IOException {
+        // swap from home layout to war layout
+        enemyVillage.set("homeVillage", Json.toString(
+            layoutManager.setWarLayout(
+                layoutManager.loadVillage(
+                    enemyVillage.getString("homeVillage")
+                )
+            )
+        ));
     }
 
     private Message warHomeToEnemyHome(Message village) throws IOException {
@@ -153,15 +188,60 @@ public class VillageLoader {
         // definition.
         //
 
-        Map<String, Object> user = village.getFields("user");
-        user.put("userName", warVillage.name);
-        Map<String, Object> clan = (Map<String, Object>) user.get("clan");
-        if (clan != null) { // should always be non-null
-            clan.put("clanName", warVillage.alliance_name);
-            clan.put("badge", warVillage.badge_id);
+        Message user = village.getMessage("user");
+        user.set("userName", warVillage.name);
+        Message clan = messageFactory.newMessage("ClanComponent");
+        user.set("clan", clan.getFields());
+        clan.set("clanName", warVillage.alliance_name);
+        clan.set("badge", warVillage.badge_id);
+        enemyVillage.set("user", user.getFields());
+
+        // Attacker values from home data
+        enemyVillage.set("attacker", homeVillage.get("user"));
+        enemyVillage.set("attackerResources", homeVillage.get("resources"));
+        return enemyVillage;
+    }
+
+    private Message replayToEnemyHome(Message replayMessage) throws IOException {
+        Replay replay = Json.valueOf(replayMessage.getString("replay"), Replay.class);
+        Message homeVillage = getOwnHomeData();
+        Message enemyVillage = newEnemyPrototype();
+        WarVillage warVillage = replay.defender;
+
+        Village village = replay.level;
+        village.war = null;
+        village.wave_num = null;
+
+        //
+        // Dig out the good bits from the 608 "hidden shit" command
+        //
+
+        WarVillage.Building[] teslas = null;
+        WarVillage.Building[] traps = null;
+        Unit[] garrison = null;
+
+        for (Replay.Exec exec : replay.cmd) {
+            if (exec.ct == 608) {
+                teslas = exec.c.bu;
+                traps = exec.c.tr;
+                garrison = exec.c.au;
+                break;
+            }
         }
-        enemyVillage.set("user", user);
-        enemyVillage.set("resources", village.get("resources"));
+        layoutManager.setTraps(village, teslas, traps);
+        loadoutManager.setGarrison(enemyVillage, garrison);
+
+        long homeId = (long) warVillage.avatar_id_high << 32 | warVillage.avatar_id_low & 0xffffffffl;
+        enemyVillage.set("homeId", homeId);
+        enemyVillage.set("homeVillage", Json.toString(village));
+
+        Message user = enemyVillage.getMessage("user");
+        user.set("userName", warVillage.name);
+        Message clan = messageFactory.newMessage("ClanComponent");
+        user.set("clan", clan.getFields());
+        clan.set("clanName", warVillage.alliance_name);
+        clan.set("badge", warVillage.badge_id);
+        user.set("castleLevel", 3);
 
         // Attacker values from home data
         enemyVillage.set("attacker", homeVillage.get("user"));

@@ -47,7 +47,7 @@ public class ServerSession {
     /**
      * File system access.
      */
-    private VillageLoader villageLoader;
+    private VillageManager villageManager;
 
     /**
      * Loadout management
@@ -59,15 +59,19 @@ public class ServerSession {
     private ServerSession(ClashServices services, Connection clientConnection, Main.ServerCommand command) throws IOException {
         this.messageFactory = services.getMessageFactory();
         this.clientConnection = clientConnection;
-        this.villageLoader = new VillageLoader(services, command.getHomeFile(), new File("villages"));
-        this.loadoutManager = new LoadoutManager(services.getLogic(), new File("loadouts"));
-        if (loadout != null) {
+        this.loadoutManager = new LoadoutManager(services.getLogic(), new File(services.getWorkingDir(), "loadouts"));
+        this.villageManager = new VillageManager(messageFactory, loadoutManager, command.getHomeFile(), new File(services.getWorkingDir(), "villages"));
+
+        String loadout = command.getLoadout();
+        if (command.getLoadout() != null) {
             if (!loadoutManager.contains(loadout)) {
                 log.warn("Loadout {} not found", loadout);
             } else {
                 this.loadout = loadout;
             }
         }
+
+        this.war = command.getWar();
     }
 
     public SessionState getSessionState() {
@@ -107,7 +111,7 @@ public class ServerSession {
     }
 
     private void save() {
-        villageLoader.save();
+        villageManager.save();
     }
 
     /**
@@ -245,6 +249,7 @@ public class ServerSession {
 
             log.info("{} done", connection.getName());
         } catch (RuntimeException | IOException e) {
+            e.printStackTrace();
             log.info(
                 "{} terminating: {}",
                 connection.getName(),
@@ -304,7 +309,7 @@ public class ServerSession {
         log.debug("Adding {} at {}, {}", typeId, x, y);
         int type = typeId / OID_RADIX;
 
-        Village village = villageLoader.getHomeVillage();
+        Village village = villageManager.getHomeVillage();
         Building building = new Building();
         building.x = x;
         building.y = y;
@@ -339,7 +344,7 @@ public class ServerSession {
         int offset = buildingId % OID_RADIX;
         int type = buildingId / OID_RADIX;
 
-        Village village = villageLoader.getHomeVillage();
+        Village village = villageManager.getHomeVillage();
         Building building = null;
 
         try {
@@ -372,7 +377,7 @@ public class ServerSession {
     }
 
     private Message loadHome() throws IOException {
-        Message village = villageLoader.getOwnHomeData();
+        Message village = villageManager.getOwnHomeData();
         // Set remaining shield to 0 to avoid annoying attack confirmation dialog
         village.set("remainingShield", 0);
         return village;
@@ -387,7 +392,7 @@ public class ServerSession {
     private int nextVillage;
 
     private Message loadEnemy() throws IOException {
-        Message village = villageLoader.loadEnemyVillage(nextVillage++, war);
+        Message village = villageManager.loadEnemyVillage(nextVillage++, war);
         if (village == null) {
             throw new ResourceException("No enemy villages. Have you captured some data with the proxy?");
         }

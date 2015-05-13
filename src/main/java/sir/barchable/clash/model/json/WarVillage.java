@@ -21,6 +21,13 @@ public class WarVillage {
     public Building[] traps;
     public Building[] decos;
 
+    // Replay fields
+    public Resource[] units;
+    public Resource[] unit_upgrades;
+    public Resource[] spells;
+    public Resource[] spell_upgrades;
+    // End replay fields
+
     public int avatar_id_high;
     public int avatar_id_low;
     public String name;

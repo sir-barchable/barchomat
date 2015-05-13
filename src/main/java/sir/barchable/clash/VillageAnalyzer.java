@@ -21,6 +21,8 @@ import static java.lang.Math.min;
 import static sir.barchable.clash.protocol.Pdu.Type.OwnHomeData;
 
 /**
+ * Sum hit-points, dps, and resources for a village.
+ *
  * @author Sir Barchable
  *         Date: 20/04/15
  */
@@ -149,10 +151,10 @@ public class VillageAnalyzer implements MessageTap {
                 } else {
                     // Time passed since reset
                     int timePassed = maxTime - resTime;
+
                     // Resources produced during that time
 
-//                    resourceValue = timePassed * resourcePerHour / 3600;
-
+                    // resourceValue = timePassed * resourcePerHour / 3600;
                     int h = timePassed / 3600;
                     int m = timePassed % 3600 / 60;
                     int s = timePassed % 60;
@@ -285,7 +287,7 @@ public class VillageAnalyzer implements MessageTap {
     private void analyzeWarVillage(Message message, WarVillage village) {
         SessionState sessionState = ProxySession.getSession().getSessionState();
 
-        long userId = (long) village.avatar_id_high << 32 | village.avatar_id_low & 0xffffffffl;
+        long homeId = (long) village.avatar_id_high << 32 | village.avatar_id_low & 0xffffffffl;
         String userName = village.name;
         String clanName = village.alliance_name;
 
@@ -360,7 +362,7 @@ public class VillageAnalyzer implements MessageTap {
                 clanStats = new HashMap<>();
                 sessionState.setAttribute(statKey, clanStats);
             }
-            clanStats.put(userId, villageStats);
+            clanStats.put(homeId, villageStats);
         }
     }
 

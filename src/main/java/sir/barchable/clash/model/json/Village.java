@@ -17,6 +17,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @JsonInclude(NON_NULL)
 public class Village {
     public Integer wave_num;
+    public Boolean war;
     public Boolean android_client;
 
     public Integer active_layout;

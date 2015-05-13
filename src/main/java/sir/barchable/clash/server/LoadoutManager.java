@@ -205,4 +205,8 @@ public class LoadoutManager {
     public boolean contains(String loadout) {
         return armies.containsKey(loadout);
     }
+
+    public void setGarrison(Message enemyVillage, Unit[] garrison) {
+        enemyVillage.getMessage("resources").set("allianceUnits", toUnitComponents(garrison));
+    }
 }

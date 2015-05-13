@@ -46,12 +46,19 @@ public class Main {
         @Parameter(names = {"--loadout"}, description = "Name of loadout to apply")
         private String loadout;
 
+        @Parameter(names = {"--war"}, description = "Attack war layouts")
+        private boolean war;
+
         public File getHomeFile() {
             return homeFile;
         }
 
         public String getLoadout() {
             return loadout;
+        }
+
+        public boolean getWar() {
+            return war;
         }
     }
 
