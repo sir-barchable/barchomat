@@ -112,6 +112,7 @@ public class ServerSession {
 
     private void save() {
         villageManager.save();
+        dirty = false;
     }
 
     /**
@@ -249,7 +250,6 @@ public class ServerSession {
 
             log.info("{} done", connection.getName());
         } catch (RuntimeException | IOException e) {
-            e.printStackTrace();
             log.info(
                 "{} terminating: {}",
                 connection.getName(),
@@ -260,11 +260,10 @@ public class ServerSession {
 
     private Message endTurn(Message message) throws IOException {
         Message response = null;
-        Object[] commands = (Object[]) message.get("commands");
+        Message[] commands = message.getArray("commands");
         if (commands != null) {
-            commandLoop: for (int i = 0; i < commands.length; i++) {
-                Map<String, Object> command = (Map<String, Object>) commands[i];
-                Integer id = (Integer) command.get("id");
+            commandLoop: for (Message command : commands) {
+                Integer id = command.getInt("id");
                 if (id != null) {
                     switch (id) {
                         case 700:
@@ -276,11 +275,11 @@ public class ServerSession {
                             break commandLoop;
 
                         case 501:   // Move building
-                            moveBuilding((int) command.get("x"), (int) command.get("y"), (int) command.get("buildingId"));
+                            moveBuilding(command.getInt("x"), command.getInt("y"), command.getInt("buildingId"));
                             break;
 
                         case 512:   // Buy decoration
-                            newBuilding((int) command.get("x"), (int) command.get("y"), (int) command.get("buildingId"));
+                            newBuilding(command.getInt("x"), command.getInt("y"), command.getInt("buildingId"));
 
                         default:
                             // We're lost; give up
@@ -380,6 +379,7 @@ public class ServerSession {
         Message village = villageManager.getOwnHomeData();
         // Set remaining shield to 0 to avoid annoying attack confirmation dialog
         village.set("remainingShield", 0);
+
         return village;
     }
 

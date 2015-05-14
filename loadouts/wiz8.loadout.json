@@ -1,0 +1,19 @@
+{
+  "name": "wiz8",
+  "army": [
+    {"name": "Barbarian", "level": 5, "count": 20},
+    {"name": "Archer", "level": 5, "count": 20},
+    {"name": "Wall Breaker", "level": 5, "count": 6},
+    {"name": "Wizard", "level": 5, "count": 12},
+    {"name": "Giant", "level": 5, "count": 12},
+    {"name": "Minion", "level": 4, "count": 20}
+  ],
+  "spells": [
+    {"name": "Heal", "level": 5, "count": 1},
+    {"name": "Rage", "level": 5, "count": 2}
+  ],
+  "garrison": [
+    {"name": "Barbarian", "level": 5, "count": 15},
+    {"name": "Archer", "level": 5, "count": 10}
+  ]
+}

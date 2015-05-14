@@ -2,6 +2,7 @@ package sir.barchable.clash.proxy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sir.barchable.clash.model.json.Replay;
 import sir.barchable.clash.model.json.WarVillage;
 import sir.barchable.clash.protocol.*;
 import sir.barchable.clash.protocol.Pdu.Type;
@@ -83,27 +84,27 @@ public class MessageSaver implements PduFilter {
         Message message = messageFactory.fromPdu(pdu);
         String villageName = "anon";
 
-        switch (message.getType()) {
-            case OwnHomeData:
-            case VisitedHomeData:
-            case EnemyHomeData:
-                Message user = message.getMessage("user");
-                if (user != null) {
+        try {
+            switch (message.getType()) {
+                case OwnHomeData:
+                case VisitedHomeData:
+                case EnemyHomeData:
+                    Message user = message.getMessage("user");
                     villageName = user.getString("userName");
-                }
-                break;
+                    break;
 
-            case WarHomeData:
-            case HomeBattleReplayData:
-                try {
+                case WarHomeData:
                     WarVillage warVillage = Json.valueOf(message.getString("homeVillage"), WarVillage.class);
-                    if (warVillage.name != null) {
-                        villageName = warVillage.name;
-                    }
-                } catch (IOException e) {
-                    // fall through
-                }
-                break;
+                    villageName = warVillage.name;
+                    break;
+
+                case HomeBattleReplayData:
+                    Replay replay = Json.valueOf(message.getString("replay"), Replay.class);
+                    villageName = replay.defender.name;
+                    break;
+            }
+        } catch (RuntimeException | IOException e) {
+            log.warn("Couldn't extract name from pdu {}: {}", pdu.getId(), e.toString());
         }
 
         return sanitize(villageName);
@@ -117,7 +118,7 @@ public class MessageSaver implements PduFilter {
         StringBuilder sb = new StringBuilder(len);
         for (int i = 0; i < len; i++) {
             char ch = s.charAt(i);
-            if (ch < ' ' || (ch == '.' && i == 0) || ":\\/]".indexOf(ch) != -1) {
+            if ( ch < ' ' || ":\\/]".indexOf(ch) != -1) {
                 sb.append('_');
             } else {
                 sb.append(ch);

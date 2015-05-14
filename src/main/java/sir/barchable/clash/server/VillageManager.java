@@ -64,8 +64,7 @@ public class VillageManager {
      * Load the user's home.
      */
     public Message getOwnHomeData() throws IOException {
-        String villageJson = Json.toString(homeVillage);
-        ownHomeData.set("homeVillage", villageJson);
+        ownHomeData.set("homeVillage", Json.toString(homeVillage));
         ownHomeData.set("timeStamp", (int) (System.currentTimeMillis() / 1000));
         return ownHomeData;
     }

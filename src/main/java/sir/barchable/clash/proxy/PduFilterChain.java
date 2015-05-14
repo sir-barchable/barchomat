@@ -1,5 +1,7 @@
 package sir.barchable.clash.proxy;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sir.barchable.clash.protocol.Pdu;
 
 import java.io.IOException;
@@ -9,6 +11,8 @@ import java.io.IOException;
  *         Date: 15/04/15
  */
 public class PduFilterChain implements PduFilter {
+    private static final Logger log = LoggerFactory.getLogger(PduFilterChain.class);
+
     private PduFilter[] chain;
 
     public PduFilterChain() {
@@ -22,9 +26,14 @@ public class PduFilterChain implements PduFilter {
     @Override
     public Pdu filter(Pdu pdu) throws IOException {
         for (PduFilter filter : chain) {
-            pdu = filter.filter(pdu);
-            if (pdu == null) {
-                break;
+            try {
+                pdu = filter.filter(pdu);
+                if (pdu == null) {
+                    break;
+                }
+            } catch (RuntimeException e) {
+                // Deal with bad filters
+                log.warn("Unexpected exception from filter", e);
             }
         }
         return pdu;
