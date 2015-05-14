@@ -36,7 +36,7 @@ public class AttackAnalyzer implements MessageTap {
         switch (message.getType()) {
             case EnemyHomeData:
                 // Set up for attack
-                setup(message.getMessage("resources"));
+                setup(message.getMessage("attackerResources"));
                 break;
 
             case OwnHomeData:
@@ -45,6 +45,7 @@ public class AttackAnalyzer implements MessageTap {
                 break;
 
             case EndClientTurn:
+                // Add up the cost of troops/spells used during the attack
                 accumulateCost(message.getArray("commands"));
                 break;
         }
@@ -110,7 +111,7 @@ public class AttackAnalyzer implements MessageTap {
         SessionState state = ProxySession.getSession().getSessionState();
         AttackState attackState = (AttackState) state.getAttribute(ATTACK_STATE_KEY);
         if (attackState != null) {
-            Loot loot = villageAnalyzer.sumStorage(resources).getStorageLoot();
+            Loot loot = villageAnalyzer.sumStorage(resources).getStorageLoot().addGold(attackState.getTotalMatchCost());
             if (!loot.isEmpty()) {
                 Loot gross = loot.subtract(attackState.getInitialLoot());
                 log.info("Raided: {}", gross);
@@ -154,7 +155,7 @@ public class AttackAnalyzer implements MessageTap {
         }
 
         public Loot getTotalCost() {
-            return totalCost;
+            return totalCost.addGold(totalMatchCost);
         }
 
         /**

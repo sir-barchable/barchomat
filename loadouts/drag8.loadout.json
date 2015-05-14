@@ -1,0 +1,14 @@
+{
+  "name": "drag8",
+  "king": 10,
+  "army": [
+    {"name": "Dragon", "level": 3, "count": 10}
+  ],
+  "spells": [
+    {"name": "Rage", "level": 5, "count": 3}
+  ],
+  "garrison": [
+    {"name": "Barbarian", "level": 5, "count": 10},
+    {"name": "Archer", "level": 5, "count": 15}
+  ]
+}

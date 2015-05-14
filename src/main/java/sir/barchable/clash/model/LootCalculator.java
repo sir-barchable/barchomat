@@ -177,6 +177,18 @@ public class LootCalculator {
             );
         }
 
+        public Loot addGold(int gold) {
+            return new Loot(this.gold + gold, elixir, darkElixir);
+        }
+
+        public Loot addElixir(int elixir) {
+            return new Loot(gold, this.elixir + elixir, darkElixir);
+        }
+
+        public Loot addDarkElixir(int darkElixir) {
+            return new Loot(gold, elixir, this.darkElixir + darkElixir);
+        }
+
         public Loot subtract(Loot subtrahend) {
             return new Loot(
                 gold - subtrahend.gold,
