@@ -40,7 +40,7 @@ public class AttackAnalyzer implements MessageTap {
                 break;
 
             case OwnHomeData:
-                // Check for completed an attack
+                // Check for completed attack
                 summarize(message.getMessage("resources"));
                 break;
 
@@ -64,8 +64,7 @@ public class AttackAnalyzer implements MessageTap {
                 switch (command.getInt("id")) {
                     case 600: // Place attacker
                     case 604: // Cast spell
-                        int typeId = (int) command.get("typeId");
-                        attackState.accumulateCost(typeId);
+                        attackState.accumulateCost(command.getInt("typeId"));
                         break;
 
                     case 700: // Next

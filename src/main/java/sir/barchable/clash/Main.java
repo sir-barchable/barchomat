@@ -19,7 +19,8 @@ public class Main {
 
     private ProxyCommand proxyCommand = new ProxyCommand();
     private ServerCommand serverCommand = new ServerCommand();
-    private DumpCommand dumpCommand = new DumpCommand();
+    private DecodeCommand decodeCommand = new DecodeCommand();
+    private LoadCommand loadCommand = new LoadCommand();
 
     @Parameters(commandDescription = "Run the clash proxy")
     public static class ProxyCommand {
@@ -63,7 +64,7 @@ public class Main {
     }
 
     @Parameters(commandDescription = "Decode captured tcp dumps")
-    public static class DumpCommand {
+    public static class DecodeCommand {
         @Parameter(names = {"-h", "--hex"}, description = "Dump messages as hex")
         private boolean dumpHex;
 
@@ -79,13 +80,24 @@ public class Main {
         }
     }
 
+    @Parameters(commandDescription = "Read/write PDU files")
+    public static class LoadCommand {
+        @Parameter(names = {"-i", "--in-file"}, description = "File to load", required = true)
+        private File inFile;
+
+        public File getInFile() {
+            return inFile;
+        }
+    }
+
     public static void main(String[] args) throws IOException {
         Main main = new Main();
         JCommander commander = new JCommander(main);
 
         commander.addCommand("proxy", main.proxyCommand);
         commander.addCommand("server", main.serverCommand);
-        commander.addCommand("dump", main.dumpCommand);
+        commander.addCommand("dump", main.decodeCommand);
+        commander.addCommand("load", main.loadCommand);
 
         try {
             commander.parse(args);
@@ -119,8 +131,13 @@ public class Main {
                 break;
 
             case "dump":
-                Dump dump = new Dump(services, dumpCommand);
+                Decode dump = new Decode(services, decodeCommand);
                 dump.run();
+                break;
+
+            case "load":
+                Load load = new Load(services, loadCommand);
+                load.run();
                 break;
 
             default:

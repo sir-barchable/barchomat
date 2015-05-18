@@ -143,6 +143,7 @@ public class LoadoutManager {
         }
 
         Army army = getLoadout(loadoutName);
+        checkLevels(army);
 
         Unit[] units = army.getUnits();
         Arrays.sort(units, (o1, o2) -> o1.getId() - o2.getId());
@@ -173,6 +174,30 @@ public class LoadoutManager {
             garrisonSpaces += unit.getCnt() * logic.getInt(unit.getId(), "HousingSpace");
         }
         log.info("Applied loadout {}, army size={}, garrison size={}", loadoutName, totalSpaces, garrisonSpaces);
+    }
+
+    /**
+     * Check that unit levels are within bounds. The game tends to crash if unknown levels are used.
+     */
+    private void checkLevels(Army army) {
+        checkLevels(army.getUnits());
+        checkLevels(army.getGarrison());
+        checkLevels(army.getSpells());
+        checkLevels(army.getHeroes());
+    }
+
+    /**
+     * Check that unit levels are within bounds. The game tends to crash if unknown levels are used.
+     */
+    private void checkLevels(Unit[] units) {
+        for (int i = 0; i < units.length; i++) {
+            Unit unit = units[i];
+            int maxLevel = logic.getMaxLevel(unit.getId());
+            if (unit.getLvl() > maxLevel) {
+                log.warn("Level {} out of range for {}", unit.getLvl() + 1, logic.getSubTypeName(unit.getId()));
+                units[i] = new Unit(unit.getId(), unit.getCnt(), maxLevel);
+            }
+        }
     }
 
     private Object toUnitComponents(Unit[] units) {
@@ -207,6 +232,9 @@ public class LoadoutManager {
     }
 
     public void setGarrison(Message enemyVillage, Unit[] garrison) {
+        if (garrison == null) {
+            garrison = new Unit[0];
+        }
         enemyVillage.getMessage("resources").set("allianceUnits", toUnitComponents(garrison));
     }
 }

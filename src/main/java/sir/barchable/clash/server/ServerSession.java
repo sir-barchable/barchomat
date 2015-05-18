@@ -253,7 +253,7 @@ public class ServerSession {
             log.info(
                 "{} terminating: {}",
                 connection.getName(),
-                e.getMessage() == null ? e.toString() : e.getMessage()
+                e
             );
         }
     }

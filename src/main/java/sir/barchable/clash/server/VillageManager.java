@@ -7,6 +7,7 @@ import sir.barchable.clash.model.Unit;
 import sir.barchable.clash.model.json.Replay;
 import sir.barchable.clash.model.json.Village;
 import sir.barchable.clash.model.json.WarVillage;
+import sir.barchable.clash.model.json.WarVillage.Building;
 import sir.barchable.clash.protocol.Message;
 import sir.barchable.clash.protocol.MessageFactory;
 import sir.barchable.clash.protocol.PduOutputStream;
@@ -215,8 +216,8 @@ public class VillageManager {
         // Dig out the good bits from the 608 "hidden shit" command
         //
 
-        WarVillage.Building[] teslas = null;
-        WarVillage.Building[] traps = null;
+        Building[] teslas = null;
+        Building[] traps = null;
         Unit[] garrison = null;
 
         for (Replay.Exec exec : replay.cmd) {

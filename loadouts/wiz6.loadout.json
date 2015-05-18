@@ -1,15 +1,15 @@
 {
   "name": "wiz6",
   "army": [
-    {"name": "Barbarian", "level": 3, "count": 20},
-    {"name": "Wall Breaker", "level": 2, "count": 6},
+    {"name": "Barbarian", "level": 3, "count": 12},
+    {"name": "Wall Breaker", "level": 3, "count": 10},
     {"name": "Wizard", "level": 2, "count": 12},
     {"name": "Giant", "level": 3, "count": 10},
     {"name": "Archer", "level": 3, "count": 20}
   ],
   "spells": [
-    {"name": "Heal", "level": 1, "count": 1},
-    {"name": "Lightning", "level": 3, "count": 1}
+    {"name": "Heal", "level": 2, "count": 1},
+    {"name": "Lightning", "level": 4, "count": 1}
   ],
   "garrison": [
     {"name": "Barbarian", "level": 5, "count": 1},
