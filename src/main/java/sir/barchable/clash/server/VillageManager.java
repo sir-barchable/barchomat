@@ -23,6 +23,7 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Pattern;
 
+import static sir.barchable.clash.protocol.Pdu.Type.EnemyHomeData;
 import static sir.barchable.util.NoopCipher.NOOP_CIPHER;
 
 /**
@@ -78,14 +79,10 @@ public class VillageManager {
      * Create a new enemy village structure.
      */
     private Message newEnemyPrototype() throws IOException {
-        try (FileInputStream in = new FileInputStream("EnemyHomeDataPrototype.pdu")) {
-            return messageFactory.fromStream(in);
-        }
-
-//        Message village = messageFactory.newMessage(EnemyHomeData);
-//        village.set("timeStamp", (int) (System.currentTimeMillis() / 1000));
-//        village.set("age", 0);
-//        return village;
+        Message village = messageFactory.newMessage(EnemyHomeData);
+        village.set("timeStamp", (int) (System.currentTimeMillis() / 1000));
+        village.set("age", 0);
+        return village;
     }
 
     /**
@@ -241,7 +238,7 @@ public class VillageManager {
         user.set("clan", clan.getFields());
         clan.set("clanName", warVillage.alliance_name);
         clan.set("badge", warVillage.badge_id);
-        user.set("castleLevel", 3);
+        user.set("castleLevel", 5);
 
         // Attacker values from home data
         enemyVillage.set("attacker", homeVillage.get("user"));

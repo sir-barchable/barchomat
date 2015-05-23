@@ -39,7 +39,11 @@ public class MessageSaver implements PduFilter {
      * @param saveDir where to save the messages
      */
     public MessageSaver(MessageFactory messageFactory, File saveDir) throws FileNotFoundException {
-        this(messageFactory, saveDir, OwnHomeData, VisitedHomeData, EnemyHomeData, WarHomeData, HomeBattleReplayData);
+        this(
+            messageFactory,
+            saveDir,
+            OwnHomeData, VisitedHomeData, EnemyHomeData, WarHomeData, HomeBattleReplayData
+        );
     }
 
     /**
@@ -81,10 +85,10 @@ public class MessageSaver implements PduFilter {
      * @return the {@link #sanitize(String) sanitized} village name, or "anon" if it can't be determined
      */
     private String guessName(Pdu pdu) {
-        Message message = messageFactory.fromPdu(pdu);
         String villageName = "anon";
 
         try {
+            Message message = messageFactory.fromPdu(pdu);
             switch (message.getType()) {
                 case OwnHomeData:
                 case VisitedHomeData:

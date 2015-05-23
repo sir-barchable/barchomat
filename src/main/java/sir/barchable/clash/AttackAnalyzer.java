@@ -86,6 +86,7 @@ public class AttackAnalyzer implements MessageTap {
 
             Map<Integer, Integer> levelMap = new HashMap<>();
 
+            // Save unit levels for cost calculations. Levels default to 0 if not set.
             Message[] troopLevels = resources.getArray("unitLevels");
             for (Message troopLevel : troopLevels) {
                 levelMap.put(troopLevel.getInt("type"), troopLevel.getInt("value"));
@@ -196,13 +197,12 @@ public class AttackAnalyzer implements MessageTap {
          * Get the level of a troop/spell used in this attack session.
          *
          * @param typeId the type of troop
-         * @return the troop level
+         * @return the troop level, or 0 if no level is set
          */
         private int getLevel(int typeId) {
             Integer level = levelMap.get(typeId);
             if (level == null) {
-                log.error("Level not known for {}", typeId);
-                return 0;
+                level = 0;
             }
             return level;
         }

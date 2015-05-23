@@ -5,7 +5,8 @@
     {"name": "Dragon", "level": 3, "count": 10}
   ],
   "spells": [
-    {"name": "Rage", "level": 5, "count": 3}
+    {"name": "Rage", "level": 5, "count": 2},
+    {"name": "Heal", "level": 4, "count": 1}
   ],
   "garrison": [
     {"name": "Barbarian", "level": 5, "count": 10},

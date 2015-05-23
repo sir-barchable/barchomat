@@ -61,7 +61,7 @@ public class ClashServer {
                 }
             }
         } catch (IOException e) {
-            // exit
+            log.debug("Terminated with exception: {}", e.toString());
         }
     }
 

@@ -36,7 +36,7 @@ public class Load {
                 Json.writePretty(getFields(message), System.out);
             }
         } else {
-            throw new IllegalArgumentException("Unknown file type (accept .pdu or .json)");
+            throw new IllegalArgumentException("Unknown file type (required .pdu)");
         }
     }
 
@@ -58,6 +58,7 @@ public class Load {
             case WarHomeData:
                 WarVillage warVillage = Json.valueOf((String) fields.get("homeVillage"), WarVillage.class);
                 fields.put("homeVillage", warVillage);
+                break;
         }
 
         return fields;

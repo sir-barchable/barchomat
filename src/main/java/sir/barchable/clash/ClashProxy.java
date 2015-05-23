@@ -102,7 +102,7 @@ public class ClashProxy {
                 }
             }
         } catch (IOException e) {
-            // exit
+            log.debug("Terminated with exception: {}", e.toString());
         }
     }
 
