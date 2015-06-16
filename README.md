@@ -94,7 +94,9 @@ AppStore/Google Play. Any gems you buy are real.
 ## This is crap, and I want to help make it better
   
 If you know Java, fork the code and start hacking from the outside (ClashProxy.java), or the inside 
-(VillageAnalyzer.java). If anything useful comes of it mail me at *sir.barchable@gmail.com*. 
+(VillageAnalyzer.java). There are some brief [build instructions][5] in the top level directory. 
+
+If anything useful comes of it mail me at *sir.barchable@gmail.com*. 
 
 If you're handy with stream capture tools like [tcpflow][2] you can help out with protocol analysis.
 We've described the protocol packet structure in a collection of [JSON files][4], so no programming 
@@ -104,3 +106,4 @@ is required.
 [2]: https://github.com/simsong/tcpflow
 [3]: https://github.com/sir-barchable/barchomat/releases/
 [4]: src/main/messages/messages.md
+[5]: BUILD.md
