@@ -86,12 +86,12 @@ When you attack you'll be presented with the villages you collected while in pro
 changes you make to your village won't be sent to Supercell; the next time you connect to the real server you'll get 
 your old village back.
 
-Don't worry about mucking up your real-life settings by playing on the server. The game doesn't save state on your 
+Don't worry about matching up your real-life settings by playing on the server. The game doesn't save state on your 
 device, so there's no way to permanently alter your village without a connection to Supercell. Every time you connect 
 your device loads fresh copy from the server. **However**, this doesn't apply to your connection with the 
 AppStore/Google Play. Any gems you buy are real.
 
-## This is crap, and I want to help make it better
+## This is crap, and I want to help make it better to play clash of clan
   
 If you know Java, fork the code and start hacking from the outside (ClashProxy.java), or the inside 
 (VillageAnalyzer.java). There are some brief [build instructions][5] in the top level directory. 
